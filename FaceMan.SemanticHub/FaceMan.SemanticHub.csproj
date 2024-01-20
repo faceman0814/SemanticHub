@@ -4,6 +4,14 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>disable</Nullable>
+		<Description>.Net 基于SK接入大语言模型的SDK，目前仅支持对话模型。已完成对接：AzureOpenAI OpenAI的 通义千问 讯飞星火 文心一言 智谱AI</Description>
+		<Copyright>FaceMan</Copyright>
+		<Authors>FaceMan</Authors>
+		<PackageProjectUrl></PackageProjectUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<RepositoryUrl>https://github.com/faceman0814/SemanticHub</RepositoryUrl>
+		<PackageReleaseNotes>.Net 基于SK接入大语言模型的SDK，目前仅支持对话模型。已完成对接：AzureOpenAI OpenAI的 通义千问 讯飞星火 文心一言 智谱AI</PackageReleaseNotes>
+		<Version>1.0.1</Version>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -13,6 +21,13 @@
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
 	  <WarningLevel>7</WarningLevel>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Include="..\README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Azure.Management.ResourceManager.Fluent" Version="1.38.1" />
