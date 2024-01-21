@@ -14,6 +14,10 @@
 也可以直接搜索Nuget包FaceMan.SemanticHub引入
 ![image](https://github.com/faceman0814/SemanticHub/assets/74786133/c27744bb-cd4a-4ec2-9c75-9420d12c4c14)
 
+# 支持功能
+ - [x] 通用聊天模型对话、流式对话
+ - [x] 自定义代理地址
+ - [ ] 
 # 计划功能
  - [ ] 图像接口
  - [ ] 语音转文字接口
