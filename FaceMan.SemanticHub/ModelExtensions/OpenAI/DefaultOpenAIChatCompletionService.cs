@@ -13,10 +13,12 @@ namespace FaceMan.SemanticHub.ModelExtensions.OpenAI
     public class DefaultOpenAIChatCompletionService
     {
         private readonly OpenAIConfig config;
-        public DefaultOpenAIChatCompletionService(string apiKey, string modelId)
+        private readonly string _url;
+        public DefaultOpenAIChatCompletionService(string apiKey, string modelId, string url)
         {
             config.ApiKey = apiKey;
             config.ModelId = modelId;
+            _url = url;
         }
         private OpenAIChatCompletionService InitOpenAIChat(OpenAIConfig config)
         {

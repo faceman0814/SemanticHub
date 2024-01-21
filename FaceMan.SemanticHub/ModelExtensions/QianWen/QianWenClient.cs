@@ -21,9 +21,10 @@ namespace FaceMan.SemanticHub.ModelExtensions.QianWen
         /// 基础请求地址
         /// </summary>
         private readonly string baseUrl = "https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation";
-        internal QianWenClient(ModelClient parent)
+        internal QianWenClient(ModelClient parent, string url = null)
         {
             Parent = parent;
+            baseUrl = url ?? baseUrl;
         }
         internal ModelClient Parent { get; }
 

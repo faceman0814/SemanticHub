@@ -20,10 +20,12 @@ namespace FaceMan.SemanticHub.ModelExtensions.QianWen
     {
         private readonly string _apiKey;
         private readonly string _model;
-        public QianWenChatCompletionService(string key, string model)
+        private readonly string _url;
+        public QianWenChatCompletionService(string key, string model, string url = null)
         {
             _apiKey = key;
             _model = model;
+            _url = url;
         }
 
         /// <summary>
@@ -60,7 +62,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.QianWen
                     //TopK = (int)settings.PresencePenalty
                 };
             }
-            ModelClient client = new(_apiKey, ModelType.QianWen);
+            ModelClient client = new(_apiKey, ModelType.QianWen, _url);
             QianWenResponseWrapper result = await client.QianWen.GetChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken);
             var message = new ChatMessageContent(AuthorRole.Assistant, result.Output.Text);
             return message;
@@ -98,7 +100,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.QianWen
                     Stop = settings != null ? settings.StopSequences : default,
                 };
             }
-            ModelClient client = new(_apiKey, ModelType.QianWen);
+            ModelClient client = new(_apiKey, ModelType.QianWen, _url);
 
             await foreach (string item in client.QianWen.GetStreamingChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken))
             {

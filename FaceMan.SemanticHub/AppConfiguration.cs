@@ -51,6 +51,7 @@
         public string Endpoint { get; set; }
         public string ApiKey { get; set; }
         public string ImageApiKey { get; set; }
+        public string ApiVersion { get; set; }
     }
 
     public class AzureOpenAIEmbeddingsConfig

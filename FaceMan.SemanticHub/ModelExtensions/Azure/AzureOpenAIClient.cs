@@ -1,50 +1,55 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
+﻿using FaceMan.SemanticHub.ModelExtensions.TextGeneration;
 
-using FaceMan.SemanticHub.ModelExtensions.TextGeneration;
-using FaceMan.SemanticHub.ModelExtensions.ZhiPu;
+using Microsoft.SemanticKernel.Connectors.OpenAI;
 
+using Newtonsoft.Json;
+
+using System.Net.Http;
 using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace FaceMan.SemanticHub.ModelExtensions.WenXin
+namespace FaceMan.SemanticHub.ModelExtensions.Azure
 {
-    public class WenXinClient
+    public class AzureOpenAIClient
     {
-        private readonly string baseUrl = "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/";
-        internal WenXinClient(ModelClient parent, string url = null)
+        /// <summary>
+        /// 基础请求地址
+        /// </summary>
+        private readonly string baseUrl = "https://faceman.openai.azure.com/";
+        private readonly string apiVersion = "2023-07-01-preview";
+        internal AzureOpenAIClient(ModelClient parent, string url = null, string _apiVersion = null)
         {
             Parent = parent;
             baseUrl = url ?? baseUrl;
+            apiVersion = _apiVersion ?? apiVersion;
         }
         internal ModelClient Parent { get; }
 
-        public async Task<WenXinResponseWrapper> GetChatMessageContentsAsync(string model, IReadOnlyList<ChatMessage> messages, ChatParameters? parameters = null, CancellationToken cancellationToken = default)
+        public async Task<AzureOpenAIResponseWrapper> GetChatMessageContentsAsync(string model, IReadOnlyList<AzureOpenAIContextMessage> messages, ChatParameters? parameters = null, CancellationToken cancellationToken = default)
         {
-            HttpRequestMessage httpRequest = new(HttpMethod.Post, baseUrl + model + $"?access_token={parameters.Token}")
+            HttpRequestMessage httpRequest = new(HttpMethod.Post, baseUrl + $"openai/deployments/{model}/chat/completions?api-version={apiVersion}")
             {
-                Content = JsonContent.Create(WenXinRequestWrapper.Create(messages, parameters),
-                options: new JsonSerializerOptions
+                Content = JsonContent.Create(AzureOpenAIRequestWrapper.Create(messages, parameters)
+                , options: new JsonSerializerOptions
                 {
                     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-                }),
+                })
             };
             HttpResponseMessage resp = await Parent.HttpClient.SendAsync(httpRequest, cancellationToken);
-            return await ModelClient.ReadResponse<WenXinResponseWrapper>(resp, cancellationToken);
+            return await ModelClient.ReadResponse<AzureOpenAIResponseWrapper>(resp, cancellationToken);
         }
 
         public async IAsyncEnumerable<string> GetStreamingChatMessageContentsAsync(string model,
-        IReadOnlyList<ChatMessage> messages,
+        IReadOnlyList<AzureOpenAIContextMessage> messages,
         ChatParameters? parameters = null,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            HttpRequestMessage httpRequest = new(HttpMethod.Post, baseUrl + model + $"?access_token={parameters.Token}")
+            HttpRequestMessage httpRequest = new(HttpMethod.Post, baseUrl + $"openai/deployments/{model}/chat/completions?api-version={apiVersion}")
             {
-                Content = JsonContent.Create(WenXinRequestWrapper.Create(messages, parameters),
+                Content = JsonContent.Create(AzureOpenAIRequestWrapper.Create(messages, parameters),
                 options: new JsonSerializerOptions
                 {
                     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
@@ -70,8 +75,12 @@ namespace FaceMan.SemanticHub.ModelExtensions.WenXin
                     {
                         continue;
                     }
-                    var result = JsonSerializer.Deserialize<WenXinResponseWrapper>(data)!;
-                    yield return result.Result;
+                    var result = System.Text.Json.JsonSerializer.Deserialize<AzureOpenAIResponseWrapper>(data)!;
+                    if (result.Choices.Any())
+                    {
+                        yield return result.Choices?.First()?.Delta?.Content;
+                    }
+                    yield return "";
                 }
                 else if (line.StartsWith("{\"error\":"))
                 {
