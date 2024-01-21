@@ -9,3 +9,5 @@
 - 智谱AI
   
 也可以直接搜索Nuget包FaceMan.SemanticHub引入
+![image](https://github.com/faceman0814/SemanticHub/assets/74786133/c27744bb-cd4a-4ec2-9c75-9420d12c4c14)
+
