@@ -13,7 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FaceMan.SemanticHub.ModelExtensions.Azure
+namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI
 {
     public class AzureOpenAIChatCompletionService : IModelExtensionsChatCompletionService
     {

@@ -3,7 +3,7 @@ using FaceMan.SemanticHub.ModelExtensions.TextGeneration;
 
 using System.Text.Json.Serialization;
 
-namespace FaceMan.SemanticHub.ModelExtensions.Azure
+namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI
 {
     public record AzureOpenAIRequestWrapper
     {

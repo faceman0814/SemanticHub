@@ -1,4 +1,4 @@
-﻿using FaceMan.SemanticHub.ModelExtensions.Azure;
+﻿using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI;
 using FaceMan.SemanticHub.ModelExtensions.TextGeneration;
 
 using System.Net.Http.Json;

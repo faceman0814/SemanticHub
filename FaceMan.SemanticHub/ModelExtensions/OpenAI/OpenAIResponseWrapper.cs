@@ -1,11 +1,6 @@
-﻿using FaceMan.SemanticHub.ModelExtensions.Azure;
+﻿using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace FaceMan.SemanticHub.ModelExtensions.OpenAI
 {

@@ -2,10 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using Azure.AI.OpenAI;
-
-using FaceMan.SemanticHub.ModelExtensions.Azure;
-using FaceMan.SemanticHub.ModelExtensions.OpenAI;
+using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI;
 using FaceMan.SemanticHub.ModelExtensions.QianWen;
 using FaceMan.SemanticHub.ModelExtensions.WenXin;
 using FaceMan.SemanticHub.ModelExtensions.XunFei;
@@ -18,7 +15,6 @@ using Newtonsoft.Json;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using System.Security.Claims;
 using System.Text;
 
 using OpenAIClient = FaceMan.SemanticHub.ModelExtensions.OpenAI.OpenAIClient;
