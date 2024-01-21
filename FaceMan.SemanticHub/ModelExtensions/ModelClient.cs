@@ -2,7 +2,10 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using Azure.AI.OpenAI;
+
 using FaceMan.SemanticHub.ModelExtensions.Azure;
+using FaceMan.SemanticHub.ModelExtensions.OpenAI;
 using FaceMan.SemanticHub.ModelExtensions.QianWen;
 using FaceMan.SemanticHub.ModelExtensions.WenXin;
 using FaceMan.SemanticHub.ModelExtensions.XunFei;
@@ -17,6 +20,8 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text;
+
+using OpenAIClient = FaceMan.SemanticHub.ModelExtensions.OpenAI.OpenAIClient;
 
 namespace FaceMan.SemanticHub.ModelExtensions
 {
@@ -42,12 +47,16 @@ namespace FaceMan.SemanticHub.ModelExtensions
                 case ModelType.AzureOpenAI:
                     HttpClient.DefaultRequestHeaders.Add("api-key", apiKey);
                     break;
+                case ModelType.OpenAI:
+                    HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+                    break;
             }
             QianWen = new QianWenClient(this, url);
             ZhiPu = new ZhiPuClient(this, url);
             XunFei = new XunFeiClient(this, url);
             WenXin = new WenXinClient(this, url);
             AzureOpenAI = new AzureOpenAIClient(this, url, apiVersion);
+            OpenAI = new OpenAIClient(this, url);
         }
 
         public QianWenClient QianWen { get; set; }
@@ -55,6 +64,7 @@ namespace FaceMan.SemanticHub.ModelExtensions
         public XunFeiClient XunFei { get; set; }
         public WenXinClient WenXin { get; set; }
         public AzureOpenAIClient AzureOpenAI { get; set; }
+        public OpenAIClient OpenAI { get; set; }
         /// <summary>
         /// 处理基础HTTP客户端。
         /// </summary>

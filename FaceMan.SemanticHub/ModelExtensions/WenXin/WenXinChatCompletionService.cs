@@ -52,9 +52,8 @@ namespace FaceMan.SemanticHub.ModelExtensions.WenXin
                 {
                     TopP = settings != null ? (float)settings.TopP : default,
                     Temperature = settings != null ? (float)settings.Temperature : default,
-                    Stop = settings != null ? settings.StopSequences : default,
-                    PenaltyScore = settings != null ? (float)settings.FrequencyPenalty : default,
                     System = system != null ? system.Content : default,
+                    MaxTokens = settings != null ? settings.MaxTokens : 1024,
                     Token = token
                 };
             }
@@ -96,9 +95,8 @@ namespace FaceMan.SemanticHub.ModelExtensions.WenXin
                 {
                     TopP = settings != null ? (float)settings.TopP : default,
                     Temperature = settings != null ? (float)settings.Temperature : default,
-                    Stop = settings != null ? settings.StopSequences : default,
-                    PenaltyScore = settings != null ? (float)settings.FrequencyPenalty : default,
                     System = system != null ? system.Content : default,
+                    MaxTokens = settings != null ? settings.MaxTokens : 1024,
                     Token = token,
                     Stream = true
                 };

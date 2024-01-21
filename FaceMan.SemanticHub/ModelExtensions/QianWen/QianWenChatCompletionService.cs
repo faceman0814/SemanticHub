@@ -56,10 +56,6 @@ namespace FaceMan.SemanticHub.ModelExtensions.QianWen
                     TopP = settings != null ? (float)settings.TopP : default,
                     MaxTokens = settings != null ? settings.MaxTokens : default,
                     Temperature = settings != null ? (float)settings.Temperature : default,
-                    Seed = settings.Seed != null ? (ulong)settings.Seed : default,
-                    Stop = settings != null ? settings.StopSequences : default,
-                    //RepetitionPenalty = (float)settings.FrequencyPenalty,
-                    //TopK = (int)settings.PresencePenalty
                 };
             }
             ModelClient client = new(_apiKey, ModelType.QianWen, _url);
@@ -96,8 +92,6 @@ namespace FaceMan.SemanticHub.ModelExtensions.QianWen
                     TopP = settings != null ? (float)settings.TopP : default,
                     MaxTokens = settings != null ? settings.MaxTokens : default,
                     Temperature = settings != null ? (float)settings.Temperature : default,
-                    Seed = settings.Seed != null ? (ulong)settings.Seed : default,
-                    Stop = settings != null ? settings.StopSequences : default,
                 };
             }
             ModelClient client = new(_apiKey, ModelType.QianWen, _url);

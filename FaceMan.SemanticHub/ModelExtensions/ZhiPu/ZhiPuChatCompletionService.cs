@@ -45,8 +45,6 @@ namespace FaceMan.SemanticHub.ModelExtensions.ZhiPu
                     MaxTokens = settings != null ? settings.MaxTokens : default,
                     Temperature = settings != null ? (float)settings.Temperature : default,
                     Stop = settings != null ? settings.StopSequences : default
-                    //RepetitionPenalty = (float)settings.FrequencyPenalty,
-                    //TopK = (int)settings.PresencePenalty
                 };
             }
             ModelClient client = new(_secret, ModelType.ZhiPu, _url);
@@ -77,7 +75,6 @@ namespace FaceMan.SemanticHub.ModelExtensions.ZhiPu
                     // max_tokens 应该在 [1, 1500]的区间
                     MaxTokens = settings != null ? settings.MaxTokens : default,
                     Temperature = settings != null ? (float)settings.Temperature : default,
-                    Stop = settings != null ? settings.StopSequences : default,
                     Stream = true
                 };
             }
