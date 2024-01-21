@@ -1,5 +1,7 @@
 # SemanticHub
-.Net 基于SK接入大语言模型的SDK，帮助使用者快速对接各大模型，目前仅支持对话模型，支持流式接口在聊天接口中整合统一的入参和出参。方便调用。
+.Net 基于SK接入大语言模型的SDK，帮助使用者快速对接各大模型，目前仅支持对话模型
+- 支持流式接口在聊天接口中整合统一的入参和出参，方便调用。
+- 支持传入模型参数。
 
 # 已完成对话模型
  - [x] AzureOpenAI
@@ -21,17 +23,25 @@
 - v1.0.1 添加AzureOpenAI、OpenAI、通义千问、智谱AI、讯飞星火、文心一言对话模型。
 
 # 使用方法
-```
+```csharp
 QianWenChatCompletionService chatgpt = new("你的key", "对话模型：例如qwen-turbo");
 ChatHistory historys = new ChatHistory();
 historys.AddSystemMessage("你是一个c#编程高手，你将用代码回答我关于.net编程的技术问题，下面是我的第一个问题：");
 historys.AddUserMessage("用c#写一个冒泡排序");
 
+//创建模型参数
+ OpenAIPromptExecutionSettings settings = new OpenAIPromptExecutionSettings()
+ {
+     MaxTokens = 1024,
+     Temperature=0.7,
+     TopP=1.0,
+     //....其他参数
+ };
 //对话
-var result = await chatgpt.GetChatMessageContentsAsync(historys);
+var result = await chatgpt.GetChatMessageContentsAsync(historys,settings);
 Console.WriteLine(result);
 //流式对话
-await foreach (string item in chatgpt.GetStreamingChatMessageContentsAsync(historys))
+await foreach (string item in chatgpt.GetStreamingChatMessageContentsAsync(historys,settings))
 {
     Console.Write(item);
 }
