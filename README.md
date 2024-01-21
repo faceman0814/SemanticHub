@@ -7,3 +7,5 @@
 - 讯飞星火
 - 文心一言
 - 智谱AI
+  
+也可以直接搜索Nuget包FaceMan.SemanticHub引入
