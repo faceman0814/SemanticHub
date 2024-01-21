@@ -5,6 +5,7 @@
 # Version
 - v1.0.1 添加AzureOpenAI、OpenAI、通义千问、智谱AI、讯飞星火、文心一言对话模型，支持传入模型参数。
 - v1.0.2 自定义代理地址，增加单元测试，统一AzureOpenAI、OpenAI与其他模型的写法
+- v1.0.3 返回消耗的token数，开发中。。。。
 
 # 已完成对话模型
  - [x] AzureOpenAI
