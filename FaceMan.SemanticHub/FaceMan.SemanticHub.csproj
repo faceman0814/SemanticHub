@@ -4,14 +4,14 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>disable</Nullable>
-		<Description>.Net 基于SK接入大语言模型的SDK，目前仅支持对话模型。已完成对接：AzureOpenAI OpenAI的 通义千问 讯飞星火 文心一言 智谱AI</Description>
+		<Description>.Net 基于SK接入AzureOpenAI、OpenAI、通义千问、讯飞星火、文心一言、智谱AI的SDK，目前仅支持对话模型。</Description>
 		<Copyright>FaceMan</Copyright>
 		<Authors>FaceMan</Authors>
 		<PackageProjectUrl></PackageProjectUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryUrl>https://github.com/faceman0814/SemanticHub</RepositoryUrl>
-		<PackageReleaseNotes>.Net 基于SK接入大语言模型的SDK，目前仅支持对话模型。已完成对接：AzureOpenAI OpenAI的 通义千问 讯飞星火 文心一言 智谱AI</PackageReleaseNotes>
-		<Version>1.0.1</Version>
+		<PackageReleaseNotes>支持自定义代理地址，统一AzureOpenAI、OpenAI与其他模型的写法</PackageReleaseNotes>
+		<Version>1.0.2</Version>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
