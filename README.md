@@ -21,7 +21,8 @@
  - [ ] 未完待续
 # Version
 - v1.0.1 添加AzureOpenAI、OpenAI、通义千问、智谱AI、讯飞星火、文心一言对话模型。
-
+- v1.0.2 自定义代理地址
+ 
 # 使用方法
 ```csharp
 QianWenChatCompletionService chatgpt = new("你的key", "对话模型：例如qwen-turbo");
