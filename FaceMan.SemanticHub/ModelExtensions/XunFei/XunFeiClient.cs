@@ -18,6 +18,8 @@ using System.Text.Json.Serialization;
 
 using static FaceMan.SemanticHub.ModelExtensions.XunFei.XunFeiChatCompletionService;
 
+using Usage = FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Usage;
+
 namespace FaceMan.SemanticHub.ModelExtensions.XunFei
 {
     public class XunFeiClient

@@ -42,9 +42,9 @@ namespace FaceMan.SemanticHub.ModelExtensions.QianWen
         public async Task<ChatMessageContent> GetChatMessageContentsAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
             var histroyList = new List<ChatMessage>();
-            ChatParameters chatParameters  = new ChatParameters()
+            ChatParameters chatParameters = new ChatParameters()
             {
-                TopP = settings != null&&settings.TopP!=1.0 ? (float)settings.TopP : (float)0.75,
+                TopP = settings != null && settings.TopP != 1.0 ? (float)settings.TopP : (float)0.75,
                 MaxTokens = settings != null ? settings.MaxTokens : 512,
                 Temperature = settings != null ? (float)settings.Temperature : (float)1.0,
             };
@@ -68,7 +68,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.QianWen
         public async Task<(ChatMessageContent, Usage)> GetChatMessageContentsByTokenAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
             var histroyList = new List<ChatMessage>();
-            ChatParameters chatParameters  = new ChatParameters()
+            ChatParameters chatParameters = new ChatParameters()
             {
                 TopP = settings != null && settings.TopP != 1.0 ? (float)settings.TopP : (float)0.75,
                 MaxTokens = settings != null ? settings.MaxTokens : 512,
@@ -99,7 +99,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.QianWen
         public async IAsyncEnumerable<(string, Usage)> GetStreamingChatMessageContentsByTokenAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
             var histroyList = new List<ChatMessage>();
-            ChatParameters chatParameters  = new ChatParameters()
+            ChatParameters chatParameters = new ChatParameters()
             {
                 TopP = settings != null && settings.TopP != 1.0 ? (float)settings.TopP : (float)0.75,
                 MaxTokens = settings != null ? settings.MaxTokens : 512,
@@ -139,7 +139,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.QianWen
         public async IAsyncEnumerable<string> GetStreamingChatMessageContentsAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
             var histroyList = new List<ChatMessage>();
-            ChatParameters chatParameters  = new ChatParameters()
+            ChatParameters chatParameters = new ChatParameters()
             {
                 TopP = settings != null && settings.TopP != 1.0 ? (float)settings.TopP : (float)0.75,
                 MaxTokens = settings != null ? settings.MaxTokens : 512,
@@ -155,7 +155,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.QianWen
                 };
                 histroyList.Add(history);
             }
-           
+
             ModelClient client = new(_apiKey, ModelType.QianWen, _url);
 
             await foreach (var item in client.QianWen.GetStreamingChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken))
