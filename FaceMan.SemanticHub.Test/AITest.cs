@@ -16,7 +16,7 @@ using OpenAIChatCompletionService = FaceMan.SemanticHub.ModelExtensions.OpenAI.O
 namespace FaceMan.SemanticHub.Test
 {
     [TestClass]
-    public class OpenAITest
+    public class AITest
     {
         [TestMethod]
         public async Task OpenAIChatMessageContentTest()
