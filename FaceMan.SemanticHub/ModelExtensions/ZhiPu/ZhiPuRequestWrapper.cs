@@ -30,8 +30,6 @@ namespace FaceMan.SemanticHub.ModelExtensions.ZhiPu
             Stream = parameters != null ? parameters.Stream : false,
             Temperature = parameters != null ? parameters.Temperature : default,
             TopP = parameters != null ? parameters.TopP : default,
-            DoSample = parameters != null ? parameters.DoSample : true,
-            Stop = parameters != null ? parameters.Stop : default,
         };
 
         public static ZhiPuRequestWrapper<TMessages> Create<TMessages>(string model, TMessages messages) => new()
@@ -76,11 +74,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.ZhiPu
         [JsonPropertyName("top_p")]
         public float? TopP { get; set; }
 
-        /// <summary>
-        /// do_sample 为 true 时启用采样策略，do_sample 为 false 时采样策略 temperature、top_p 将不生效.
-        /// </summary>
-        [JsonPropertyName("do_sample")]
-        public bool DoSample { get; set; }
+
 
         /// <summary>
         /// 使用同步调用时，此参数应当设置为 fasle 或者省略。表示模型生成完所有内容后一次性返回所有内容。
@@ -90,10 +84,16 @@ namespace FaceMan.SemanticHub.ModelExtensions.ZhiPu
         [JsonPropertyName("stream")]
         public bool Stream { get; set; }
 
-        /// <summary>
-        /// 模型在遇到stop所制定的字符时将停止生成，目前仅支持单个停止词，格式为["stop_word1"]
-        /// </summary>
-        [JsonPropertyName("stop")]
-        public object? Stop { get; set; }
+        ///// <summary>
+        ///// 模型在遇到stop所制定的字符时将停止生成，目前仅支持单个停止词，格式为["stop_word1"]
+        ///// </summary>
+        //[JsonPropertyName("stop")]
+        //public object? Stop { get; set; }
+
+        ///// <summary>
+        ///// do_sample 为 true 时启用采样策略，do_sample 为 false 时采样策略 temperature、top_p 将不生效.
+        ///// </summary>
+        //[JsonPropertyName("do_sample")]
+        //public bool DoSample { get; set; }
     }
 }
