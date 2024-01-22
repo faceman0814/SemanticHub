@@ -37,29 +37,9 @@
 
 # 使用方法
 
-```csharp
-QianWenChatCompletionService chatgpt = new("你的key", "对话模型：例如qwen-turbo");
-ChatHistory historys = new ChatHistory();
-historys.AddSystemMessage("你是一个c#编程高手，你将用代码回答我关于.net编程的技术问题，下面是我的第一个问题：");
-historys.AddUserMessage("用c#写一个冒泡排序");
+项目地址：[faceman0814/SemanticHub (github.com)](https://github.com/faceman0814/SemanticHub)
 
-//创建模型参数
- OpenAIPromptExecutionSettings settings = new OpenAIPromptExecutionSettings()
- {
-     MaxTokens = 1024,
-     Temperature=0.7,
-     TopP=1.0,
-     //....其他参数
- };
-//对话
-var result = await chatgpt.GetChatMessageContentsAsync(historys,settings);
-Console.WriteLine(result);
-//流式对话
-await foreach (string item in chatgpt.GetStreamingChatMessageContentsAsync(historys,settings))
-{
-    Console.Write(item);
-}
-```
+参考单元测试内容
 
 # 如何贡献
 
