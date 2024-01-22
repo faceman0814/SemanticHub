@@ -1,54 +1,66 @@
+
 # SemanticHub
-.Net »ùÓÚSK½ÓÈë´óÓïÑÔÄ£ĞÍµÄSDK£¬°ïÖúÊ¹ÓÃÕß¿ìËÙ¶Ô½Ó¸÷´óÄ£ĞÍ£¬Ä¿Ç°½öÖ§³Ö¶Ô»°Ä£ĞÍ
-- Ö§³ÖÁ÷Ê½½Ó¿ÚÔÚÁÄÌì½Ó¿ÚÖĞÕûºÏÍ³Ò»µÄÈë²ÎºÍ³ö²Î£¬·½±ãµ÷ÓÃ¡£
+
+.Net åŸºäºSKæ¥å…¥å¤§è¯­è¨€æ¨¡å‹çš„SDKï¼Œå¸®åŠ©ä½¿ç”¨è€…å¿«é€Ÿå¯¹æ¥å„å¤§æ¨¡å‹ï¼Œç›®å‰ä»…æ”¯æŒå¯¹è¯æ¨¡å‹
+
+- æ”¯æŒæµå¼æ¥å£åœ¨èŠå¤©æ¥å£ä¸­æ•´åˆç»Ÿä¸€çš„å…¥å‚å’Œå‡ºå‚ï¼Œæ–¹ä¾¿è°ƒç”¨ã€‚
 
 # Version
-- v1.0.1 Ìí¼ÓAzureOpenAI¡¢OpenAI¡¢Í¨ÒåÇ§ÎÊ¡¢ÖÇÆ×AI¡¢Ñ¶·ÉĞÇ»ğ¡¢ÎÄĞÄÒ»ÑÔ¶Ô»°Ä£ĞÍ£¬Ö§³Ö´«ÈëÄ£ĞÍ²ÎÊı¡£
-- v1.0.2 ×Ô¶¨Òå´úÀíµØÖ·£¬Ôö¼Óµ¥Ôª²âÊÔ£¬Í³Ò»AzureOpenAI¡¢OpenAIÓëÆäËûÄ£ĞÍµÄĞ´·¨
-- v1.0.3 ·µ»ØÏûºÄµÄtokenÊı£¬¿ª·¢ÖĞ¡£¡£¡£¡£
 
-# ÒÑÍê³É¶Ô»°Ä£ĞÍ
- - [x] AzureOpenAI
- - [x] OpenAI
- - [x] Í¨ÒåÇ§ÎÊ
- - [x] Ñ¶·ÉĞÇ»ğ
- - [x] ÎÄĞÄÒ»ÑÔ
- - [x] ÖÇÆ×AI
-  
-Ò²¿ÉÒÔÖ±½ÓËÑË÷Nuget°üFaceMan.SemanticHubÒıÈë
+- v1.0.1 æ·»åŠ AzureOpenAIã€OpenAIã€é€šä¹‰åƒé—®ã€æ™ºè°±AIã€è®¯é£æ˜Ÿç«ã€æ–‡å¿ƒä¸€è¨€å¯¹è¯æ¨¡å‹ï¼Œæ”¯æŒä¼ å…¥æ¨¡å‹å‚æ•°ã€‚
+- v1.0.2 è‡ªå®šä¹‰ä»£ç†åœ°å€ï¼Œå¢åŠ å•å…ƒæµ‹è¯•ï¼Œç»Ÿä¸€AzureOpenAIã€OpenAIä¸å…¶ä»–æ¨¡å‹çš„å†™æ³•
+- v1.0.3 è¿”å›æ¶ˆè€—çš„tokenæ•°
+- v1.0.4 å¼€å‘ä¸­ã€‚ã€‚ã€‚ã€‚
+
+  - [ ] å›¾åƒæ¥å£
+
+# å·²å®Œæˆå¯¹è¯æ¨¡å‹
+
+- [X] AzureOpenAI
+- [X] OpenAI
+- [X] é€šä¹‰åƒé—®
+- [X] è®¯é£æ˜Ÿç«
+- [X] æ–‡å¿ƒä¸€è¨€
+- [X] æ™ºè°±AI
+
+ä¹Ÿå¯ä»¥ç›´æ¥æœç´¢NugetåŒ…FaceMan.SemanticHubå¼•å…¥
 ![image](https://github.com/faceman0814/SemanticHub/assets/74786133/c27744bb-cd4a-4ec2-9c75-9420d12c4c14)
 
-# ¼Æ»®¹¦ÄÜ
- - [ ] Í¼Ïñ½Ó¿Ú
- - [ ] ÓïÒô×ªÎÄ×Ö½Ó¿Ú
- - [ ] Ôö¼ÓchatGLM¡¢Gemini µÈ¸ü¶à´óÄ£ĞÍ
- - [ ] Î´Íê´ıĞø¡£¡£¡£
+# è®¡åˆ’åŠŸèƒ½
 
- 
-# Ê¹ÓÃ·½·¨
+- [X] å¯¹è¯æ¨¡å‹
+- [X] æ”¯æŒè¿”å›Token
+- [ ] å›¾åƒæ¥å£
+- [ ] è¯­éŸ³è½¬æ–‡å­—æ¥å£
+- [ ] å¢åŠ chatGLMã€Gemini ç­‰æ›´å¤šå¤§æ¨¡å‹
+- [ ] æœªå®Œå¾…ç»­ã€‚ã€‚ã€‚
+
+# ä½¿ç”¨æ–¹æ³•
+
 ```csharp
-QianWenChatCompletionService chatgpt = new("ÄãµÄkey", "¶Ô»°Ä£ĞÍ£ºÀıÈçqwen-turbo");
+QianWenChatCompletionService chatgpt = new("ä½ çš„key", "å¯¹è¯æ¨¡å‹ï¼šä¾‹å¦‚qwen-turbo");
 ChatHistory historys = new ChatHistory();
-historys.AddSystemMessage("ÄãÊÇÒ»¸öc#±à³Ì¸ßÊÖ£¬Äã½«ÓÃ´úÂë»Ø´ğÎÒ¹ØÓÚ.net±à³ÌµÄ¼¼ÊõÎÊÌâ£¬ÏÂÃæÊÇÎÒµÄµÚÒ»¸öÎÊÌâ£º");
-historys.AddUserMessage("ÓÃc#Ğ´Ò»¸öÃ°ÅİÅÅĞò");
+historys.AddSystemMessage("ä½ æ˜¯ä¸€ä¸ªc#ç¼–ç¨‹é«˜æ‰‹ï¼Œä½ å°†ç”¨ä»£ç å›ç­”æˆ‘å…³äº.netç¼–ç¨‹çš„æŠ€æœ¯é—®é¢˜ï¼Œä¸‹é¢æ˜¯æˆ‘çš„ç¬¬ä¸€ä¸ªé—®é¢˜ï¼š");
+historys.AddUserMessage("ç”¨c#å†™ä¸€ä¸ªå†’æ³¡æ’åº");
 
-//´´½¨Ä£ĞÍ²ÎÊı
+//åˆ›å»ºæ¨¡å‹å‚æ•°
  OpenAIPromptExecutionSettings settings = new OpenAIPromptExecutionSettings()
  {
      MaxTokens = 1024,
      Temperature=0.7,
      TopP=1.0,
-     //....ÆäËû²ÎÊı
+     //....å…¶ä»–å‚æ•°
  };
-//¶Ô»°
+//å¯¹è¯
 var result = await chatgpt.GetChatMessageContentsAsync(historys,settings);
 Console.WriteLine(result);
-//Á÷Ê½¶Ô»°
+//æµå¼å¯¹è¯
 await foreach (string item in chatgpt.GetStreamingChatMessageContentsAsync(historys,settings))
 {
     Console.Write(item);
 }
 ```
 
-# ÈçºÎ¹±Ï×
-Èç¹ûÄãÏ£Íû²ÎÓë¹±Ï×£¬»¶Ó­ Pull Requests,»ò¸øÎÒÃÇ Issues
+# å¦‚ä½•è´¡çŒ®
+
+å¦‚æœä½ å¸Œæœ›å‚ä¸è´¡çŒ®ï¼Œæ¬¢è¿ Pull Requests,æˆ–ç»™æˆ‘ä»¬ Issues
