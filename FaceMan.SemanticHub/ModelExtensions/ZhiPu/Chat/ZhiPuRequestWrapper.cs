@@ -1,29 +1,52 @@
-﻿using FaceMan.SemanticHub.ModelExtensions.QianWen;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
+
+using DocumentFormat.OpenXml.Drawing.Charts;
+
 using FaceMan.SemanticHub.ModelExtensions.TextGeneration;
 
-using System.Text.Json.Serialization;
+using Microsoft.Graph;
 
-namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
+
+namespace FaceMan.SemanticHub.ModelExtensions.ZhiPu.Chat
 {
-    public record AzureOpenAIRequestWrapper
+    /// 请求包装器
+    /// </summary>
+    public record ZhiPuRequestWrapper
     {
-        public static AzureOpenAIRequestWrapper<TMessages> Create<TMessages>(TMessages messages, ChatParameters? parameters = default) => new()
+        public static ZhiPuRequestWrapper<TMessages> Create<TMessages>(string model, TMessages messages, ChatParameters parameters = default) => new()
         {
+            Model = model ?? throw new ArgumentNullException(nameof(model)),
             Messages = messages ?? throw new ArgumentNullException(nameof(messages)),
-            MaxTokens = parameters != null ? parameters.MaxTokens : 1024,
+            MaxTokens = parameters != null ? parameters.MaxTokens : null,
             Stream = parameters != null ? parameters.Stream : false,
-            Temperature = parameters != null ? parameters.Temperature : (float)0.7,
-            TopP = parameters != null ? parameters.TopP : (float)0.95,
+            Temperature = parameters != null ? parameters.Temperature : default,
+            TopP = parameters != null ? parameters.TopP : default,
         };
 
-        public static AzureOpenAIRequestWrapper<TMessages> Create<TMessages>(TMessages messages) => new()
+        public static ZhiPuRequestWrapper<TMessages> Create<TMessages>(string model, TMessages messages) => new()
         {
-            Messages = messages ?? throw new ArgumentNullException(nameof(messages))
+            Model = model ?? throw new ArgumentNullException(nameof(model)),
+            Messages = messages ?? throw new ArgumentNullException(nameof(messages)),
         };
     }
 
-    public record AzureOpenAIRequestWrapper<TMessages> : AzureOpenAIRequestWrapper
+    public record ZhiPuRequestWrapper<TMessages> : ZhiPuRequestWrapper
     {
+        /// <summary>
+        /// 所要调用的模型编码
+        /// </summary>
+        [JsonPropertyName("model")]
+        public string Model { get; set; }
+
         /// <summary>
         /// 调用语言模型时，将当前对话信息列表作为提示输入给模型， 按照 {"role": "user", "content": "你好"} 的json 数组形式进行传参； 
         /// 可能的消息类型包括 System message、User message、Assistant message 和 Tool message。
@@ -52,6 +75,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI
         public float? TopP { get; set; }
 
 
+
         /// <summary>
         /// 使用同步调用时，此参数应当设置为 fasle 或者省略。表示模型生成完所有内容后一次性返回所有内容。
         /// 如果设置为 true，模型将通过标准 Event Stream ，逐块返回模型生成内容。
@@ -59,5 +83,17 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI
         /// </summary>
         [JsonPropertyName("stream")]
         public bool Stream { get; set; }
+
+        ///// <summary>
+        ///// 模型在遇到stop所制定的字符时将停止生成，目前仅支持单个停止词，格式为["stop_word1"]
+        ///// </summary>
+        //[JsonPropertyName("stop")]
+        //public object? Stop { get; set; }
+
+        ///// <summary>
+        ///// do_sample 为 true 时启用采样策略，do_sample 为 false 时采样策略 temperature、top_p 将不生效.
+        ///// </summary>
+        //[JsonPropertyName("do_sample")]
+        //public bool DoSample { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using FaceMan.SemanticHub.ModelExtensions.TextGeneration;
+﻿using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat;
+using FaceMan.SemanticHub.ModelExtensions.TextGeneration;
 
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 
@@ -28,7 +29,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI
         }
         internal ModelClient Parent { get; }
 
-        public async Task<AzureOpenAIResponseWrapper> GetChatMessageContentsAsync(string model, IReadOnlyList<AzureOpenAIContextMessage> messages, ChatParameters? parameters = null, CancellationToken cancellationToken = default)
+        public async Task<AzureOpenAIResponseWrapper> GetChatMessageContentsAsync(string model, IReadOnlyList<AzureOpenAIContextMessage> messages, ChatParameters parameters = null, CancellationToken cancellationToken = default)
         {
             HttpRequestMessage httpRequest = new(HttpMethod.Post, baseUrl + $"openai/deployments/{model}/chat/completions?api-version={apiVersion}")
             {
@@ -44,7 +45,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI
 
         public async IAsyncEnumerable<(string, Usage)> GetStreamingChatMessageContentsAsync(string model,
         IReadOnlyList<AzureOpenAIContextMessage> messages,
-        ChatParameters? parameters = null,
+        ChatParameters parameters = null,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             HttpRequestMessage httpRequest = new(HttpMethod.Post, baseUrl + $"openai/deployments/{model}/chat/completions?api-version={apiVersion}")
@@ -67,7 +68,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI
             {
                 if (cancellationToken.IsCancellationRequested) throw new TaskCanceledException();
 
-                string? line = await reader.ReadLineAsync();
+                string line = await reader.ReadLineAsync();
                 if (line != null)
                 {
                     string data = line;

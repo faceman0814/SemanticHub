@@ -4,7 +4,7 @@ using FaceMan.SemanticHub.ModelExtensions.TextGeneration;
 
 using System.Text.Json.Serialization;
 
-namespace FaceMan.SemanticHub.ModelExtensions.OpenAI
+namespace FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat
 {
     public record OpenAIRequestWrapper
     {

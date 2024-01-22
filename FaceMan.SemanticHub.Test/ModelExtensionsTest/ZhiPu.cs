@@ -1,6 +1,7 @@
 ﻿using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI;
+using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat;
 using FaceMan.SemanticHub.ModelExtensions.XunFei;
-using FaceMan.SemanticHub.ModelExtensions.ZhiPu;
+using FaceMan.SemanticHub.ModelExtensions.ZhiPu.Chat;
 
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;

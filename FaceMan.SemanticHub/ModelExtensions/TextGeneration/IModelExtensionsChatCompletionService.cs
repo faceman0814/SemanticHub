@@ -2,13 +2,12 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI;
-
+using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 
-namespace FaceMan.SemanticHub.ModelExtensions
+namespace FaceMan.SemanticHub.ModelExtensions.TextGeneration
 {
     public interface IModelExtensionsChatCompletionService
     {
@@ -20,7 +19,7 @@ namespace FaceMan.SemanticHub.ModelExtensions
         /// <param name="kernel">SK的kernel</param>
         /// <param name="cancellationToken">是否取消</param>
         /// <returns></returns>
-        Task<(ChatMessageContent,Usage)> GetChatMessageContentsByTokenAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default);
+        Task<(ChatMessageContent, Usage)> GetChatMessageContentsByTokenAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// 流式对话————返回token使用情况

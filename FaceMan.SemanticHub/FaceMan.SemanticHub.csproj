@@ -10,8 +10,8 @@
 		<PackageProjectUrl></PackageProjectUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryUrl>https://github.com/faceman0814/SemanticHub</RepositoryUrl>
-		<PackageReleaseNotes>支持自定义代理地址，统一AzureOpenAI、OpenAI与其他模型的写法</PackageReleaseNotes>
-		<Version>1.0.2</Version>
+		<PackageReleaseNotes>支持返回消耗的token数</PackageReleaseNotes>
+		<Version>1.0.3</Version>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

@@ -9,7 +9,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace FaceMan.SemanticHub.ModelExtensions.QianWen
+namespace FaceMan.SemanticHub.ModelExtensions.QianWen.Chat
 {
     /// <summary>
     /// 用于映像请求异步任务的通用基本响应类。
@@ -32,7 +32,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.QianWen
         /// Usage of the request.
         /// </summary>
         [JsonPropertyName("usage")]
-        public QianWenUsage? Usage { get; init; }
+        public QianWenUsage Usage { get; init; }
     }
 
     /// <summary>

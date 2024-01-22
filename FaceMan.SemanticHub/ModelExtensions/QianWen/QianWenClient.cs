@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using DocumentFormat.OpenXml.Drawing;
-
+using FaceMan.SemanticHub.ModelExtensions.QianWen.Chat;
 using FaceMan.SemanticHub.ModelExtensions.TextGeneration;
 
 using System.Net.Http.Headers;

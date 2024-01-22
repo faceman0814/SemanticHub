@@ -2,8 +2,9 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI;
+using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat;
 using FaceMan.SemanticHub.ModelExtensions.TextGeneration;
+using FaceMan.SemanticHub.ModelExtensions.WenXin.Chat;
 using FaceMan.SemanticHub.ModelExtensions.ZhiPu;
 
 using System.Net.Http.Json;

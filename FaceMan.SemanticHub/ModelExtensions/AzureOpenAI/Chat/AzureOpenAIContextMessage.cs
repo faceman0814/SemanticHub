@@ -8,7 +8,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI
+namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat
 {
     public record AzureOpenAIContextMessage
     {

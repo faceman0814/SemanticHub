@@ -1,8 +1,7 @@
-﻿using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI;
-
+﻿using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat;
 using System.Text.Json.Serialization;
 
-namespace FaceMan.SemanticHub.ModelExtensions.OpenAI
+namespace FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat
 {
     public record OpenAIResponseWrapper
     {

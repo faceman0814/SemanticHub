@@ -1,4 +1,5 @@
-﻿using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI;
+﻿using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat;
+using FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat;
 using FaceMan.SemanticHub.ModelExtensions.TextGeneration;
 
 using System.Net.Http.Json;

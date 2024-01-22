@@ -13,7 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI
+namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat
 {
     public class AzureOpenAIChatCompletionService : IModelExtensionsChatCompletionService
     {
@@ -32,7 +32,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI
         public async Task<(ChatMessageContent, Usage)> GetChatMessageContentsByTokenAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
             var histroyList = new List<AzureOpenAIContextMessage>();
-            ChatParameters chatParameters  = new ChatParameters()
+            ChatParameters chatParameters = new ChatParameters()
             {
                 TopP = settings != null ? (float)settings.TopP : (float)1.0,
                 MaxTokens = settings != null ? settings.MaxTokens : 512,
@@ -67,7 +67,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI
         public async Task<ChatMessageContent> GetChatMessageContentsAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
             var histroyList = new List<AzureOpenAIContextMessage>();
-            ChatParameters chatParameters  = new ChatParameters()
+            ChatParameters chatParameters = new ChatParameters()
             {
                 TopP = settings != null ? (float)settings.TopP : (float)1.0,
                 MaxTokens = settings != null ? settings.MaxTokens : 512,
@@ -138,7 +138,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI
         public async IAsyncEnumerable<string> GetStreamingChatMessageContentsAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
             var histroyList = new List<AzureOpenAIContextMessage>();
-            ChatParameters chatParameters  = new ChatParameters()
+            ChatParameters chatParameters = new ChatParameters()
             {
                 TopP = settings != null ? (float)settings.TopP : (float)1.0,
                 MaxTokens = settings != null ? settings.MaxTokens : 512,

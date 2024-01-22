@@ -3,8 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using DocumentFormat.OpenXml.EMMA;
-
-using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI;
+using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat;
 using FaceMan.SemanticHub.ModelExtensions.TextGeneration;
 
 using Microsoft.SemanticKernel;
@@ -13,7 +12,7 @@ using Microsoft.SemanticKernel.Connectors.OpenAI;
 
 using Newtonsoft.Json;
 
-namespace FaceMan.SemanticHub.ModelExtensions.WenXin
+namespace FaceMan.SemanticHub.ModelExtensions.WenXin.Chat
 {
     public class WenXinChatCompletionService : IModelExtensionsChatCompletionService
     {
@@ -54,7 +53,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.WenXin
                 };
                 histroyList.Add(history);
             }
-          
+
             ModelClient client = new(_secret, ModelType.WenXin, _url);
             var result = await client.WenXin.GetChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken);
             return new ChatMessageContent(AuthorRole.Assistant, result.Result);
