@@ -1,4 +1,3 @@
-
 # SemanticHub
 
 .Net 基于SK接入大语言模型的SDK，帮助使用者快速对接各大模型，目前仅支持对话模型
@@ -40,6 +39,15 @@
 项目地址：[faceman0814/SemanticHub (github.com)](https://github.com/faceman0814/SemanticHub)
 
 参考单元测试内容
+
+# Tips
+
+- 单元测试时的时候不要并发点，会报错，因为他是websocket访问。
+- OpenAI 采用流式方法对话时，不会返回消耗的token。
+- 各模型厂商对token的消耗计算是不一样的，可以通过单元测试对比结果。
+- 测试中通义千问流式方法消耗的token比直接对话的要多一点。
+- 文心一言实际调用中的模型并不叫模型名，要跟官方的对标好比如ernie-bot实际在代码中的传参是completions，这个后续优化。
+- 文心一言有概率乱答
 
 # 如何贡献
 
