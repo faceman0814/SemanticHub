@@ -4,6 +4,8 @@
 
 using Azure.AI.OpenAI;
 
+using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,15 +52,15 @@ namespace FaceMan.SemanticHub.ModelExtensions.ZhiPu
         public string Role { get; set; }
     }
 
-    public record Usage
-    {
-        [JsonPropertyName("completion_tokens")]
-        public int CompletionTokens { get; set; }
-        [JsonPropertyName("prompt_tokens")]
-        public int PromptTokens { get; set; }
-        [JsonPropertyName("total_tokens")]
-        public int TotalTokens { get; set; }
-    }
+    //public record ZhiPuUsage
+    //{
+    //    [JsonPropertyName("completion_tokens")]
+    //    public int CompletionTokens { get; set; }
+    //    [JsonPropertyName("prompt_tokens")]
+    //    public int PromptTokens { get; set; }
+    //    [JsonPropertyName("total_tokens")]
+    //    public int TotalTokens { get; set; }
+    //}
     public record Delta
     {
         [JsonPropertyName("content")]

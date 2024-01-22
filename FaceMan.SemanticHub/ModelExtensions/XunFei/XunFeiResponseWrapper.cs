@@ -2,16 +2,13 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI;
+
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace FaceMan.SemanticHub.ModelExtensions.XunFei
 {
-	public record XunFeiResponseWrapper
+    public record XunFeiResponseWrapper
 	{
 		/// <summary>
 		/// 请求头，包含请求结果，可以用来看是否请求成功
@@ -62,7 +59,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
 		public Choices Choices { get; set; }
 
 		[JsonPropertyName("usage")]
-		public Usage Usage { get; set; }
+		public XunFeiUsage Usage { get; set; }
 	}
 
 	/// <summary>
@@ -111,8 +108,8 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
 	/// <summary>
 	/// 在最后一次结果返回
 	/// </summary>
-	public record Usage
-	{
+	public record XunFeiUsage
+    {
 		/// <summary>
 		/// 计算token的信息
 		/// </summary>
@@ -129,21 +126,21 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
 		/// 保留字段，可忽略
 		/// </summary>
 		[JsonPropertyName("question_tokens")]
-		public int QuestionTokens { get; set; }
+		public int question_tokens { get; set; }
 		/// <summary>
 		/// 包含历史问题的总tokens大小
 		/// </summary>
 		[JsonPropertyName("prompt_tokens")]
-		public int PromptTokens { get; set; }
+		public int prompt_tokens { get; set; }
 		/// <summary>
 		/// 回答的tokens大小
 		/// </summary>
 		[JsonPropertyName("completion_tokens")]
-		public int CompletionTokens { get; set; }
+		public int completion_tokens { get; set; }
 		/// <summary>
 		/// prompt_tokens和completion_tokens的和，也是本次交互计费的tokens大小
 		/// </summary>
 		[JsonPropertyName("total_tokens")]
-		public int TotalTokens { get; set; }
+		public int total_tokens { get; set; }
 	}
 }

@@ -4,6 +4,7 @@
 
 using DocumentFormat.OpenXml.EMMA;
 
+using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI;
 using FaceMan.SemanticHub.ModelExtensions.TextGeneration;
 
 using Microsoft.SemanticKernel;
@@ -30,7 +31,16 @@ namespace FaceMan.SemanticHub.ModelExtensions.WenXin
         public async Task<ChatMessageContent> GetChatMessageContentsAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
             var histroyList = new List<ChatMessage>();
-            ChatParameters chatParameters = null;
+            var token = await GetAccessToken();
+            var system = chatHistory.FirstOrDefault(t => t.Role == AuthorRole.System);
+            ChatParameters chatParameters = new ChatParameters()
+            {
+                TopP = settings != null ? (float)settings.TopP : (float)1.0,
+                Temperature = settings != null ? (float)settings.Temperature : (float)1.0,
+                System = system != null ? system.Content : default,
+                MaxOutputTokens = settings != null ? settings.MaxTokens : 512,
+                Token = token
+            };
             foreach (var item in chatHistory)
             {
                 if (item.Role == AuthorRole.System)
@@ -44,36 +54,25 @@ namespace FaceMan.SemanticHub.ModelExtensions.WenXin
                 };
                 histroyList.Add(history);
             }
-            var token = await GetAccessToken();
-            var system = chatHistory.FirstOrDefault(t => t.Role == AuthorRole.System);
-            if (settings != null)
-            {
-                chatParameters = new ChatParameters()
-                {
-                    TopP = settings != null ? (float)settings.TopP : default,
-                    Temperature = settings != null ? (float)settings.Temperature : default,
-                    System = system != null ? system.Content : default,
-                    MaxTokens = settings != null ? settings.MaxTokens : 1024,
-                    Token = token
-                };
-            }
-            else
-            {
-                chatParameters = new ChatParameters()
-                {
-                    System = system != null ? system.Content : default,
-                    Token = token
-                };
-            }
+          
             ModelClient client = new(_secret, ModelType.WenXin, _url);
             var result = await client.WenXin.GetChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken);
             return new ChatMessageContent(AuthorRole.Assistant, result.Result);
         }
 
-        public async IAsyncEnumerable<string> GetStreamingChatMessageContentsAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
+        public async Task<(ChatMessageContent, Usage)> GetChatMessageContentsByTokenAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
+            var token = await GetAccessToken();
+            var system = chatHistory.FirstOrDefault(t => t.Role == AuthorRole.System);
             var histroyList = new List<ChatMessage>();
-            ChatParameters chatParameters = null;
+            ChatParameters chatParameters = new ChatParameters()
+            {
+                TopP = settings != null ? (float)settings.TopP : (float)1.0,
+                Temperature = settings != null ? (float)settings.Temperature : (float)1.0,
+                System = system != null ? system.Content : default,
+                MaxOutputTokens = settings != null ? settings.MaxTokens : 512,
+                Token = token
+            };
             foreach (var item in chatHistory)
             {
                 if (item.Role == AuthorRole.System)
@@ -87,33 +86,76 @@ namespace FaceMan.SemanticHub.ModelExtensions.WenXin
                 };
                 histroyList.Add(history);
             }
+            ModelClient client = new(_secret, ModelType.WenXin, _url);
+            var result = await client.WenXin.GetChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken);
+            return (new ChatMessageContent(AuthorRole.Assistant, result.Result), result.Usage);
+        }
+
+        public async IAsyncEnumerable<string> GetStreamingChatMessageContentsAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
+        {
+            var histroyList = new List<ChatMessage>();
             var token = await GetAccessToken();
             var system = chatHistory.FirstOrDefault(t => t.Role == AuthorRole.System);
-            if (settings != null)
+            ChatParameters chatParameters = new ChatParameters()
             {
-                chatParameters = new ChatParameters()
-                {
-                    TopP = settings != null ? (float)settings.TopP : default,
-                    Temperature = settings != null ? (float)settings.Temperature : default,
-                    System = system != null ? system.Content : default,
-                    MaxTokens = settings != null ? settings.MaxTokens : 1024,
-                    Token = token,
-                    Stream = true
-                };
-            }
-            else
+                TopP = settings != null ? (float)settings.TopP : (float)1.0,
+                Temperature = settings != null ? (float)settings.Temperature : (float)1.0,
+                System = system != null ? system.Content : default,
+                MaxOutputTokens = settings != null ? settings.MaxTokens : 512,
+                Token = token,
+                Stream = true
+            };
+            foreach (var item in chatHistory)
             {
-                chatParameters = new ChatParameters()
+                if (item.Role == AuthorRole.System)
                 {
-                    System = system != null ? system.Content : default,
-                    Token = token,
-                    Stream = true
+                    continue;
+                }
+                var history = new ChatMessage()
+                {
+                    Role = item.Role.Label,
+                    Content = item.Content,
                 };
+                histroyList.Add(history);
             }
             ModelClient client = new(_secret, ModelType.WenXin, _url);
-            await foreach (string item in client.WenXin.GetStreamingChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken))
+            await foreach (var item in client.WenXin.GetStreamingChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken))
             {
-                yield return item;
+                yield return item.Item1;
+            }
+        }
+
+        public async IAsyncEnumerable<(string, Usage)> GetStreamingChatMessageContentsByTokenAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
+        {
+            var histroyList = new List<ChatMessage>();
+            var token = await GetAccessToken();
+            var system = chatHistory.FirstOrDefault(t => t.Role == AuthorRole.System);
+            ChatParameters chatParameters = new ChatParameters()
+            {
+                TopP = settings != null ? (float)settings.TopP : (float)1.0,
+                Temperature = settings != null ? (float)settings.Temperature : (float)1.0,
+                System = system != null ? system.Content : default,
+                MaxOutputTokens = settings != null ? settings.MaxTokens : 512,
+                Token = token,
+                Stream = true
+            };
+            foreach (var item in chatHistory)
+            {
+                if (item.Role == AuthorRole.System)
+                {
+                    continue;
+                }
+                var history = new ChatMessage()
+                {
+                    Role = item.Role.Label,
+                    Content = item.Content,
+                };
+                histroyList.Add(history);
+            }
+            ModelClient client = new(_secret, ModelType.WenXin, _url);
+            await foreach (var item in client.WenXin.GetStreamingChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken))
+            {
+                yield return (item.Item1, item.Item2);
             }
         }
 

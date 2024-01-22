@@ -26,6 +26,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.WenXin
 			System = parameters != null ? parameters.System : default,
 			EnableCitation = parameters != null ? parameters.EnableCitation : false,
 			DisableSearch = parameters != null ? parameters.DisableSearch : false,
+            MaxOutputTokens = parameters != null ? parameters.MaxOutputTokens : 512,
 		};
 
 		public static WenXinRequestWrapper<TMessages> Create<TMessages>(TMessages messages) => new()
@@ -102,5 +103,11 @@ namespace FaceMan.SemanticHub.ModelExtensions.WenXin
 		/// </summary>
 		[JsonPropertyName("system")]
 		public string System { get; set; }
-	}
+
+        /// <summary>
+        /// 单次限制最大token
+        /// </summary>
+        [JsonPropertyName("max_output_tokens")]
+        public int? MaxOutputTokens { get; set; }
+    }
 }

@@ -44,7 +44,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.QianWen
             return await ModelClient.ReadResponse<QianWenResponseWrapper>(resp, cancellationToken);
         }
 
-        public async IAsyncEnumerable<string> GetStreamingChatMessageContentsAsync(string model,
+        public async IAsyncEnumerable<(string, QianWenUsage)> GetStreamingChatMessageContentsAsync(string model,
         IReadOnlyList<ChatMessage> messages,
         ChatParameters? parameters = null,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
@@ -95,7 +95,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.QianWen
 
                     lastText = newText;
 
-                    yield return addedText;
+                    yield return (addedText, result.Usage);
                 }
             }
         }

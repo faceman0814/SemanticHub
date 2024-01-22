@@ -22,7 +22,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI
         [JsonPropertyName("prompt_filter_results")]
         public List<PromptFilterResults> PromptFilterResults { get; set; }
         [JsonPropertyName("usage")]
-        public Usage usage { get; set; }
+        public Usage Usage { get; set; }
     }
 
     public record Choice

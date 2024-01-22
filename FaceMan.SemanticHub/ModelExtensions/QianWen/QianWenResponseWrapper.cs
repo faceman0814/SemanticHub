@@ -26,19 +26,19 @@ namespace FaceMan.SemanticHub.ModelExtensions.QianWen
         /// The processed task status response associated with the respective request.
         /// </summary>
         [JsonPropertyName("output")]
-        public QianWenChatOutput Output { get; init; }
+        public Output Output { get; init; }
 
         /// <summary>
         /// Usage of the request.
         /// </summary>
         [JsonPropertyName("usage")]
-        public QianWenChatTokenUsage? Usage { get; init; }
+        public QianWenUsage? Usage { get; init; }
     }
 
     /// <summary>
     /// 聊天请求的令牌使用情况。
     /// </summary>
-    public record QianWenChatTokenUsage
+    public record QianWenUsage
     {
         /// <summary>
         /// 输出消息的令牌计数。
@@ -51,12 +51,17 @@ namespace FaceMan.SemanticHub.ModelExtensions.QianWen
         /// </summary>
         [JsonPropertyName("input_tokens")]
         public int InputTokens { get; init; }
+        /// <summary>
+        /// 总令牌计数。
+        /// </summary>
+        [JsonPropertyName("total_tokens")]
+        public int TotalTokens { get; init; }
     }
 
     /// <summary>
     /// 聊天请求的输出。
     /// </summary>
-    public record QianWenChatOutput
+    public record Output
     {
         /// <summary>
         /// 模型的输出内容。

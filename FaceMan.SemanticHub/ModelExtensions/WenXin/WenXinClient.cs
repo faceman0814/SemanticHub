@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI;
 using FaceMan.SemanticHub.ModelExtensions.TextGeneration;
 using FaceMan.SemanticHub.ModelExtensions.ZhiPu;
 
@@ -37,7 +38,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.WenXin
             return await ModelClient.ReadResponse<WenXinResponseWrapper>(resp, cancellationToken);
         }
 
-        public async IAsyncEnumerable<string> GetStreamingChatMessageContentsAsync(string model,
+        public async IAsyncEnumerable<(string, Usage)> GetStreamingChatMessageContentsAsync(string model,
         IReadOnlyList<ChatMessage> messages,
         ChatParameters? parameters = null,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
@@ -71,7 +72,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.WenXin
                         continue;
                     }
                     var result = JsonSerializer.Deserialize<WenXinResponseWrapper>(data)!;
-                    yield return result.Result;
+                    yield return (result.Result, result.Usage);
                 }
                 else if (line.StartsWith("{\"error\":"))
                 {

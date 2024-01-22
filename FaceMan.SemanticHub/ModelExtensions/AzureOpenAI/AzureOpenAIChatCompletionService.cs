@@ -29,10 +29,17 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI
             };
         }
 
-        public async Task<ChatMessageContent> GetChatMessageContentsAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
+        public async Task<(ChatMessageContent, Usage)> GetChatMessageContentsByTokenAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
             var histroyList = new List<AzureOpenAIContextMessage>();
-            ChatParameters chatParameters = null;
+            ChatParameters chatParameters  = new ChatParameters()
+            {
+                TopP = settings != null ? (float)settings.TopP : (float)1.0,
+                MaxTokens = settings != null ? settings.MaxTokens : 512,
+                Temperature = settings != null ? (float)settings.Temperature : (float)1.0,
+                PresencePenalty = settings != null ? (float)settings.PresencePenalty : (float)0.0,
+                FrequencyPenalty = settings != null ? (float)settings.FrequencyPenalty : (float)0.0,
+            };
             foreach (var item in chatHistory)
             {
                 var history = new AzureOpenAIContextMessage()
@@ -49,29 +56,60 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI
                 };
                 histroyList.Add(history);
             }
-            if (settings != null)
+
+            ModelClient client = new(config.ApiKey, ModelType.AzureOpenAI, config.Endpoint);
+            AzureOpenAIResponseWrapper result = await client.AzureOpenAI.GetChatMessageContentsAsync(config.DeploymentName, histroyList, chatParameters, cancellationToken);
+            var message = new ChatMessageContent(AuthorRole.Assistant, result.Choices.First().Message.Content);
+            return (message, result.Usage);
+
+        }
+
+        public async Task<ChatMessageContent> GetChatMessageContentsAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
+        {
+            var histroyList = new List<AzureOpenAIContextMessage>();
+            ChatParameters chatParameters  = new ChatParameters()
             {
-                chatParameters = new ChatParameters()
+                TopP = settings != null ? (float)settings.TopP : (float)1.0,
+                MaxTokens = settings != null ? settings.MaxTokens : 512,
+                Temperature = settings != null ? (float)settings.Temperature : (float)1.0,
+                PresencePenalty = settings != null ? (float)settings.PresencePenalty : (float)0.0,
+                FrequencyPenalty = settings != null ? (float)settings.FrequencyPenalty : (float)0.0,
+            };
+            foreach (var item in chatHistory)
+            {
+                var history = new AzureOpenAIContextMessage()
                 {
-                    TopP = settings != null ? (float)settings.TopP : default,
-                    MaxTokens = settings != null ? settings.MaxTokens : default,
-                    Temperature = settings != null ? (float)settings.Temperature : default,
-                    PresencePenalty = settings != null ? (float)settings.PresencePenalty : default,
-                    FrequencyPenalty = settings != null ? (float)settings.FrequencyPenalty : default,
+                    Role = item.Role.Label,
+                    Content = new List<Content>()
+                    {
+                        new Content()
+                        {
+                            Type="text",
+                            Text=item.Content
+                        }
+                    },
                 };
+                histroyList.Add(history);
             }
+
             ModelClient client = new(config.ApiKey, ModelType.AzureOpenAI, config.Endpoint);
             AzureOpenAIResponseWrapper result = await client.AzureOpenAI.GetChatMessageContentsAsync(config.DeploymentName, histroyList, chatParameters, cancellationToken);
             var message = new ChatMessageContent(AuthorRole.Assistant, result.Choices.First().Message.Content);
             return message;
         }
 
-
-
-        public async IAsyncEnumerable<string> GetStreamingChatMessageContentsAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
+        public async IAsyncEnumerable<(string, Usage)> GetStreamingChatMessageContentsByTokenAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
             var histroyList = new List<AzureOpenAIContextMessage>();
-            ChatParameters chatParameters = null;
+            ChatParameters chatParameters = new ChatParameters()
+            {
+                TopP = settings != null ? (float)settings.TopP : (float)1.0,
+                MaxTokens = settings != null ? settings.MaxTokens : 512,
+                Temperature = settings != null ? (float)settings.Temperature : (float)1.0,
+                PresencePenalty = settings != null ? (float)settings.PresencePenalty : (float)0.0,
+                FrequencyPenalty = settings != null ? (float)settings.FrequencyPenalty : (float)0.0,
+                Stream = true
+            };
             foreach (var item in chatHistory)
             {
                 var history = new AzureOpenAIContextMessage()
@@ -88,29 +126,49 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI
                 };
                 histroyList.Add(history);
             }
-            if (settings != null)
-            {
-                chatParameters = new ChatParameters()
-                {
-                    TopP = settings != null ? (float)settings.TopP : default,
-                    MaxTokens = settings != null ? settings.MaxTokens : default,
-                    Temperature = settings != null ? (float)settings.Temperature : default,
-                    PresencePenalty = settings != null ? (float)settings.PresencePenalty : default,
-                    FrequencyPenalty = settings != null ? (float)settings.FrequencyPenalty : default,
-                };
-            }
-            else
-            {
-                chatParameters = new ChatParameters()
-                {
-                    Stream = true
-                };
-            }
+
             ModelClient client = new(config.ApiKey, ModelType.AzureOpenAI, config.Endpoint);
             //返回流式聊天消息内容
             await foreach (var item in client.AzureOpenAI.GetStreamingChatMessageContentsAsync(config.DeploymentName, histroyList, chatParameters, cancellationToken))
             {
-                yield return item;
+                yield return (item.Item1, item.Item2);
+            }
+        }
+
+        public async IAsyncEnumerable<string> GetStreamingChatMessageContentsAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
+        {
+            var histroyList = new List<AzureOpenAIContextMessage>();
+            ChatParameters chatParameters  = new ChatParameters()
+            {
+                TopP = settings != null ? (float)settings.TopP : (float)1.0,
+                MaxTokens = settings != null ? settings.MaxTokens : 512,
+                Temperature = settings != null ? (float)settings.Temperature : (float)1.0,
+                PresencePenalty = settings != null ? (float)settings.PresencePenalty : (float)0.0,
+                FrequencyPenalty = settings != null ? (float)settings.FrequencyPenalty : (float)0.0,
+                Stream = true
+            };
+            foreach (var item in chatHistory)
+            {
+                var history = new AzureOpenAIContextMessage()
+                {
+                    Role = item.Role.Label,
+                    Content = new List<Content>()
+                    {
+                        new Content()
+                        {
+                            Type="text",
+                            Text=item.Content
+                        }
+                    },
+                };
+                histroyList.Add(history);
+            }
+
+            ModelClient client = new(config.ApiKey, ModelType.AzureOpenAI, config.Endpoint);
+            //返回流式聊天消息内容
+            await foreach (var item in client.AzureOpenAI.GetStreamingChatMessageContentsAsync(config.DeploymentName, histroyList, chatParameters, cancellationToken))
+            {
+                yield return item.Item1;
             }
         }
     }

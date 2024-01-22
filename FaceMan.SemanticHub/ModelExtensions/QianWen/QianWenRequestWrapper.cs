@@ -16,27 +16,27 @@ namespace FaceMan.SemanticHub.ModelExtensions.QianWen
 	/// </summary>
 	public record QianWenRequestWrapper
 	{
-		public static QianWenRequestWrapper<TInput, TParameters> Create<TInput, TParameters>(string model, TInput input, TParameters? parameters = default) => new()
+		public static QianWenRequestWrapper<TMessages, TParameters> Create<TMessages, TParameters>(string model, TMessages messages, TParameters? parameters = default) => new()
 		{
 			Model = model ?? throw new ArgumentNullException(nameof(model)),
-			Input = input ?? throw new ArgumentNullException(nameof(input)),
+            Messages = messages ?? throw new ArgumentNullException(nameof(messages)),
 			Parameters = parameters,
 		};
 
-		public static QianWenRequestWrapper<TInput, object> Create<TInput>(string model, TInput inputPrompt) => new()
+		public static QianWenRequestWrapper<TMessages, object> Create<TMessages>(string model, TMessages inputPrompt) => new()
 		{
 			Model = model ?? throw new ArgumentNullException(nameof(model)),
-			Input = inputPrompt ?? throw new ArgumentNullException(nameof(inputPrompt)),
+            Messages = inputPrompt ?? throw new ArgumentNullException(nameof(inputPrompt)),
 		};
 	}
 
-	public record QianWenRequestWrapper<TInput, TParameters> : QianWenRequestWrapper
+	public record QianWenRequestWrapper<TMessages, TParameters> : QianWenRequestWrapper
 	{
 		[JsonPropertyName("model")]
 		public string Model { get; set; }
 
 		[JsonPropertyName("input")]
-		public TInput Input { get; init; }
+		public TMessages Messages { get; init; }
 
 		[JsonPropertyName("parameters")]
 		public TParameters? Parameters { get; init; }

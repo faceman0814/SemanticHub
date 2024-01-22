@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI;
 using FaceMan.SemanticHub.ModelExtensions.TextGeneration;
 using FaceMan.SemanticHub.ModelExtensions.ZhiPu;
 
@@ -31,7 +32,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
         }
         internal ModelClient Parent { get; }
 
-        public async Task<string> GetChatMessageContentsAsync(XunFeiRequest request, XunFeiRequestWrapper xunFeiRequest, CancellationToken cancellationToken = default)
+        public async Task<(string, Usage)> GetChatMessageContentsAsync(XunFeiRequest request, XunFeiRequestWrapper xunFeiRequest, CancellationToken cancellationToken = default)
         {
             string authUrl = GetAuthUrl(xunFeiRequest.Secret, xunFeiRequest.key);
             string url = authUrl.Replace("http://", "ws://").Replace("https://", "wss://");
@@ -47,6 +48,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
                 byte[] receiveBuffer = new byte[1024];
                 WebSocketReceiveResult result = await webSocket0.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), cancellationToken);
                 String resp = "";
+                Usage usage = new Usage();
                 while (!result.CloseStatus.HasValue)
                 {
                     if (result.MessageType == WebSocketMessageType.Text)
@@ -62,6 +64,9 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
                             resp += content;
                             if (status == 2)
                             {
+                                usage.PromptTokens += response.Payload.Usage.Text.prompt_tokens;
+                                usage.TotalTokens += response.Payload.Usage.Text.total_tokens;
+                                usage.CompletionTokens += response.Payload.Usage.Text.completion_tokens;
                                 break;
                             }
                         }
@@ -77,12 +82,12 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
                     }
                     result = await webSocket0.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), cancellationToken);
                 }
-                return resp;
+                return (resp, usage);
 
             }
         }
 
-        public async IAsyncEnumerable<string> GetStreamingChatMessageContentsAsync(XunFeiRequest request, XunFeiRequestWrapper xunFeiRequest,
+        public async IAsyncEnumerable<(string, Usage)> GetStreamingChatMessageContentsAsync(XunFeiRequest request, XunFeiRequestWrapper xunFeiRequest,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             string authUrl = GetAuthUrl(xunFeiRequest.Secret, xunFeiRequest.key);
@@ -98,6 +103,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
                 // 接收流式返回结果进行解析
                 byte[] receiveBuffer = new byte[1024];
                 WebSocketReceiveResult result = await webSocket0.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), cancellationToken);
+                Usage usage = new Usage();
                 while (!result.CloseStatus.HasValue)
                 {
                     if (result.MessageType == WebSocketMessageType.Text)
@@ -110,10 +116,17 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
                         {
                             int status = response.Payload.Choices.Status;
                             string content = response.Payload.Choices.Text[0].Content;
-                            yield return content;
                             if (status == 2)
                             {
+                                usage.PromptTokens += response.Payload.Usage.Text.prompt_tokens;
+                                usage.TotalTokens += response.Payload.Usage.Text.total_tokens;
+                                usage.CompletionTokens += response.Payload.Usage.Text.completion_tokens;
+                                yield return (null, usage);
                                 break;
+                            }
+                            else
+                            {
+                                yield return (content, usage);
                             }
                         }
                         else

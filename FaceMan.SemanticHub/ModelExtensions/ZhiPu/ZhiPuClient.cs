@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI;
 using FaceMan.SemanticHub.ModelExtensions.TextGeneration;
 
 using System.Net.Http.Json;
@@ -36,7 +37,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.ZhiPu
             return await ModelClient.ReadResponse<ZhiPuResponseWrapper>(resp, cancellationToken);
         }
 
-        public async IAsyncEnumerable<string> GetStreamingChatMessageContentsAsync(string model,
+        public async IAsyncEnumerable<(string, Usage)> GetStreamingChatMessageContentsAsync(string model,
         IReadOnlyList<ChatMessage> messages,
         ChatParameters? parameters = null,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
@@ -70,7 +71,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.ZhiPu
                         continue;
                     }
                     var result = JsonSerializer.Deserialize<ZhiPuResponseWrapper>(data)!;
-                    yield return result.Choices[0].Delta.Content;
+                    yield return (result.Choices[0].Delta.Content, result.Usage);
                 }
                 else if (line.StartsWith("{\"error\":"))
                 {

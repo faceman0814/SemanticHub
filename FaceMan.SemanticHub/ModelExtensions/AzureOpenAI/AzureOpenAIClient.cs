@@ -42,7 +42,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI
             return await ModelClient.ReadResponse<AzureOpenAIResponseWrapper>(resp, cancellationToken);
         }
 
-        public async IAsyncEnumerable<string> GetStreamingChatMessageContentsAsync(string model,
+        public async IAsyncEnumerable<(string, Usage)> GetStreamingChatMessageContentsAsync(string model,
         IReadOnlyList<AzureOpenAIContextMessage> messages,
         ChatParameters? parameters = null,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
@@ -68,19 +68,33 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI
                 if (cancellationToken.IsCancellationRequested) throw new TaskCanceledException();
 
                 string? line = await reader.ReadLineAsync();
-                if (line != null && line.StartsWith("data:"))
+                if (line != null)
                 {
-                    string data = line["data:".Length..];
-                    if (data.Equals(" [DONE]"))
+                    string data = line;
+                    if (line.StartsWith("data:"))
+                    {
+                        data = line["data:".Length..];
+                    }
+
+                    if (data.Equals(" [DONE]") || string.IsNullOrEmpty(data))
                     {
                         continue;
                     }
                     var result = System.Text.Json.JsonSerializer.Deserialize<AzureOpenAIResponseWrapper>(data)!;
                     if (result.Choices.Any())
                     {
-                        yield return result.Choices?.First()?.Delta?.Content;
+                        var content = string.Empty;
+                        if (result.Choices?.First()?.Message != null)
+                        {
+                            content = result.Choices?.First()?.Message?.Content;
+                        }
+                        else
+                        {
+                            content = result.Choices?.First()?.Delta?.Content;
+                        }
+                        yield return (content, result.Usage);
                     }
-                    yield return "";
+                    continue;
                 }
                 else if (line.StartsWith("{\"error\":"))
                 {

@@ -45,7 +45,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
         public string domain { get; set; }
         public double temperature { get; set; }
         public int max_tokens { get; set; }
-        public double top_k { get; set; }
+        public double top_k { get; set; } = 1;
     }
 
     public record Payload

@@ -165,8 +165,20 @@ namespace FaceMan.SemanticHub.ModelExtensions.TextGeneration
         /// 文心
         /// 鉴权参数
         /// </summary>
+        [JsonPropertyName("token")]
         public string Token { get; set; }
+
+        [JsonPropertyName("presence_penalty")]
         public float? PresencePenalty { get; set; }
+
+        [JsonPropertyName("frequency_penalty")]
         public float? FrequencyPenalty { get; set; }
+
+        /// <summary>
+        /// 文心
+        /// 单次限制最大token
+        /// </summary>
+        [JsonPropertyName("max_output_tokens")]
+        public int? MaxOutputTokens { get; set; }
     }
 }

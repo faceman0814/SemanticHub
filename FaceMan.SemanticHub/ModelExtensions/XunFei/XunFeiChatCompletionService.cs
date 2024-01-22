@@ -5,6 +5,7 @@
 using DocumentFormat.OpenXml.EMMA;
 using DocumentFormat.OpenXml.Wordprocessing;
 
+using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI;
 using FaceMan.SemanticHub.ModelExtensions.TextGeneration;
 
 using Microsoft.SemanticKernel;
@@ -25,7 +26,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
         private readonly XunFeiRequestWrapper xunFeiRequest;
         private readonly string _model;
         private readonly string _url;
-        public XunFeiChatCompletionService(string key, string secret, string appId, string model, string url = null)
+        public XunFeiChatCompletionService(string key, string secret, string appId, string model = null, string url = null)
         {
             xunFeiRequest = new XunFeiRequestWrapper()
             {
@@ -33,7 +34,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
                 Secret = secret,
                 AppId = appId,
             };
-            _model = model;
+            _model = model ?? "general";
             _url = url;
         }
 
@@ -55,8 +56,8 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
                 chat = new Chat()
                 {
                     domain = _model,//模型领域，默认为星火通用大模型
-                    temperature = settings != null ? settings.Temperature : 0.7, //温度采样阈值，用于控制生成内容的随机性和多样性，值越大多样性越高；范围（0，1）
-                    max_tokens = settings != null && settings.MaxTokens != null ? settings.MaxTokens.Value : 1024,//生成内容的最大长度，范围（0，4096）
+                    temperature = settings != null ? settings.Temperature : 0.75, //温度采样阈值，用于控制生成内容的随机性和多样性，值越大多样性越高；范围（0，1）
+                    max_tokens = settings != null && settings.MaxTokens != null ? settings.MaxTokens.Value : 512,//生成内容的最大长度，范围（0，4096）
                 }
             };
             request.payload = new Payload()
@@ -82,7 +83,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
             var request = Init(chatHistory, settings);
             ModelClient client = new(xunFeiRequest.key, ModelType.XunFei, _url);
             var result = await client.XunFei.GetChatMessageContentsAsync(request, xunFeiRequest, cancellationToken);
-            var message = new ChatMessageContent(AuthorRole.Assistant, result);
+            var message = new ChatMessageContent(AuthorRole.Assistant, result.Item1);
             return message;
         }
 
@@ -90,9 +91,28 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
         {
             var request = Init(chatHistory, settings);
             ModelClient client = new(xunFeiRequest.key, ModelType.XunFei, _url);
-            await foreach (string item in client.XunFei.GetStreamingChatMessageContentsAsync(request, xunFeiRequest, cancellationToken))
+            await foreach (var item in client.XunFei.GetStreamingChatMessageContentsAsync(request, xunFeiRequest, cancellationToken))
             {
-                yield return item;
+                yield return item.Item1;
+            }
+        }
+
+        public async Task<(ChatMessageContent, Usage)> GetChatMessageContentsByTokenAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
+        {
+            var request = Init(chatHistory, settings);
+            ModelClient client = new(xunFeiRequest.key, ModelType.XunFei, _url);
+            var result = await client.XunFei.GetChatMessageContentsAsync(request, xunFeiRequest, cancellationToken);
+            var message = new ChatMessageContent(AuthorRole.Assistant, result.Item1);
+            return (message, result.Item2);
+        }
+
+        public async IAsyncEnumerable<(string, Usage)> GetStreamingChatMessageContentsByTokenAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
+        {
+            var request = Init(chatHistory, settings);
+            ModelClient client = new(xunFeiRequest.key, ModelType.XunFei, _url);
+            await foreach (var item in client.XunFei.GetStreamingChatMessageContentsAsync(request, xunFeiRequest, cancellationToken))
+            {
+                yield return (item.Item1, item.Item2);
             }
         }
     }
