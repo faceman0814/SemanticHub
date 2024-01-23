@@ -2,9 +2,15 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using DocumentFormat.OpenXml.Drawing;
-using FaceMan.SemanticHub.ModelExtensions.QianWen.Chat;
+using DocumentFormat.OpenXml.EMMA;
+using DocumentFormat.OpenXml.Spreadsheet;
+
+using FaceMan.SemanticHub.ModelExtensions.ImageGeneration;
 using FaceMan.SemanticHub.ModelExtensions.TextGeneration;
+using FaceMan.SemanticHub.ModelExtensions.TongYi.Chat;
+using FaceMan.SemanticHub.ModelExtensions.TongYi.Image;
+
+using Microsoft.SemanticKernel;
 
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -15,19 +21,31 @@ using System.Text.Json.Serialization;
 
 namespace FaceMan.SemanticHub.ModelExtensions.QianWen
 {
-    public class QianWenClient
+    public class TongYiClient
     {
         /// <summary>
         /// 基础请求地址
         /// </summary>
         private readonly string baseUrl = "https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation";
-        internal QianWenClient(ModelClient parent, string url = null)
+        private readonly string ImgbaseUrl = "https://dashscope.aliyuncs.com/api/v1/services/aigc/text2image/image-synthesis";
+        private readonly string ImgTaskbaseUrl = "https://dashscope.aliyuncs.com/api/v1/tasks/";
+        internal TongYiClient(ModelClient parent, string url = null)
         {
             Parent = parent;
             baseUrl = url ?? baseUrl;
+            ImgbaseUrl = url ?? ImgbaseUrl;
+            ImgTaskbaseUrl = url ?? ImgTaskbaseUrl;
         }
         internal ModelClient Parent { get; }
 
+        /// <summary>
+        /// 生成对话
+        /// </summary>
+        /// <param name="model">模型</param>
+        /// <param name="messages">上下文</param>
+        /// <param name="parameters">模型参数</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public async Task<QianWenResponseWrapper> GetChatMessageContentsAsync(string model, IReadOnlyList<ChatMessage> messages, ChatParameters? parameters = null, CancellationToken cancellationToken = default)
         {
             HttpRequestMessage httpRequest = new(HttpMethod.Post, baseUrl)
@@ -44,6 +62,16 @@ namespace FaceMan.SemanticHub.ModelExtensions.QianWen
             return await ModelClient.ReadResponse<QianWenResponseWrapper>(resp, cancellationToken);
         }
 
+        /// <summary>
+        /// 流式生成对话
+        /// </summary>
+        /// <param name="model">模型</param>
+        /// <param name="messages">上下文</param>
+        /// <param name="parameters">模型参数</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        /// <exception cref="TaskCanceledException"></exception>
         public async IAsyncEnumerable<(string, QianWenUsage)> GetStreamingChatMessageContentsAsync(string model,
         IReadOnlyList<ChatMessage> messages,
         ChatParameters? parameters = null,
@@ -98,6 +126,39 @@ namespace FaceMan.SemanticHub.ModelExtensions.QianWen
                     yield return (addedText, result.Usage);
                 }
             }
+        }
+
+        /// <summary>
+        /// 生成图像
+        /// </summary>
+        /// <param name="model">模型</param>
+        /// <param name="prompt">提示词</param>
+        /// <param name="parameters">模型参数</param>
+        /// <param name="kernel"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        public async Task<WanXiangResponseWrapper> GetImageMessageContentsAsync(string model, string prompt, ImageParameters parameters, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(parameters.Size))
+            {
+                parameters.ImageSize = SizeEnum.Size1024x1024;
+            }
+            HttpRequestMessage httpRequest = new(HttpMethod.Post, ImgbaseUrl)
+            {
+                Content = JsonContent.Create(WanXiangRequestWrapper.Create(model, new { prompt }, parameters), options: new JsonSerializerOptions
+                {
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+                }),
+            };
+            httpRequest.Headers.TryAddWithoutValidation("X-DashScope-Async", "enable");
+            HttpResponseMessage resp = await Parent.HttpClient.SendAsync(httpRequest, cancellationToken);
+            return await ModelClient.ReadImageResponse<WanXiangResponseWrapper>(resp, cancellationToken);
+        }
+
+        public async Task<ImageTaskStatusResponseWrapper> QueryTaskStatus(string taskId, CancellationToken cancellationToken = default)
+        {
+            HttpResponseMessage resp = await Parent.HttpClient.GetAsync(ImgTaskbaseUrl + taskId);
+            return await ModelClient.ReadImageResponse<ImageTaskStatusResponseWrapper>(resp, cancellationToken);
         }
     }
 }

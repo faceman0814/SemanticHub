@@ -5,19 +5,11 @@
 using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat;
 using FaceMan.SemanticHub.ModelExtensions.TextGeneration;
 
-using Google.Apis.CustomSearchAPI.v1.Data;
-
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-
-namespace FaceMan.SemanticHub.ModelExtensions.QianWen.Chat
+namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Chat
 {
     public class QianWenChatCompletionService : IModelExtensionsChatCompletionService
     {
@@ -59,8 +51,8 @@ namespace FaceMan.SemanticHub.ModelExtensions.QianWen.Chat
                 histroyList.Add(history);
             }
 
-            ModelClient client = new(_apiKey, ModelType.QianWen, _url);
-            QianWenResponseWrapper result = await client.QianWen.GetChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken);
+            ModelClient client = new(_apiKey, ModelType.TongYi, _url);
+            QianWenResponseWrapper result = await client.TongYi.GetChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken);
             var message = new ChatMessageContent(AuthorRole.Assistant, result.Output.Text);
             return message;
         }
@@ -84,8 +76,8 @@ namespace FaceMan.SemanticHub.ModelExtensions.QianWen.Chat
                 histroyList.Add(history);
             }
 
-            ModelClient client = new(_apiKey, ModelType.QianWen, _url);
-            QianWenResponseWrapper result = await client.QianWen.GetChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken);
+            ModelClient client = new(_apiKey, ModelType.TongYi, _url);
+            QianWenResponseWrapper result = await client.TongYi.GetChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken);
             var message = new ChatMessageContent(AuthorRole.Assistant, result.Output.Text);
             var usage = new Usage()
             {
@@ -114,9 +106,9 @@ namespace FaceMan.SemanticHub.ModelExtensions.QianWen.Chat
                 };
                 histroyList.Add(history);
             }
-            ModelClient client = new(_apiKey, ModelType.QianWen, _url);
+            ModelClient client = new(_apiKey, ModelType.TongYi, _url);
 
-            await foreach (var item in client.QianWen.GetStreamingChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken))
+            await foreach (var item in client.TongYi.GetStreamingChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken))
             {
                 var usage = new Usage()
                 {
@@ -156,9 +148,9 @@ namespace FaceMan.SemanticHub.ModelExtensions.QianWen.Chat
                 histroyList.Add(history);
             }
 
-            ModelClient client = new(_apiKey, ModelType.QianWen, _url);
+            ModelClient client = new(_apiKey, ModelType.TongYi, _url);
 
-            await foreach (var item in client.QianWen.GetStreamingChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken))
+            await foreach (var item in client.TongYi.GetStreamingChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken))
             {
                 yield return item.Item1;
             }

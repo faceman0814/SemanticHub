@@ -1,6 +1,8 @@
-﻿using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI;
-using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat;
-using FaceMan.SemanticHub.ModelExtensions.QianWen.Chat;
+﻿using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat;
+using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Image;
+using FaceMan.SemanticHub.ModelExtensions.ImageGeneration;
+using FaceMan.SemanticHub.ModelExtensions.TongYi.Chat;
+using FaceMan.SemanticHub.ModelExtensions.TongYi.Image;
 
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
@@ -9,12 +11,13 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
 {
 
     [TestClass]
-    public class QianWen
+    public class TongYi
     {
         private ChatHistory historys;
         private QianWenChatCompletionService chatgpt;
         private OpenAIPromptExecutionSettings settings;
-        public QianWen()
+        private WanXiangImageCompletionService imageService;
+        public TongYi()
         {
             historys = new ChatHistory();
             //historys.AddSystemMessage("你是一个c#编程高手，你将用代码回答我关于.net编程的技术问题，下面是我的第一个问题：");
@@ -26,6 +29,7 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
                 MaxTokens = 3,
                 //....其他参数
             };
+            imageService = new WanXiangImageCompletionService("sk-51a1f5b5e1e149479aaaff21e2f28d58", "wanx-v1");
         }
 
         [TestMethod]
@@ -80,6 +84,20 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
                 }
             }
             Console.Write($"总消耗token：{sum.TotalTokens} ,入参消耗token：{sum.PromptTokens},出参消耗token：{sum.CompletionTokens}");
+        }
+
+        [TestMethod]
+        public async Task GetImageMessageContentsAsync()
+        {
+            var parameters = new ImageParameters()
+            {
+                ImageStyle = StyleEnum.Auto
+            };
+            var imgUrl = await imageService.GetImageMessageContentsAsync("画一只小清新风格的鲸鱼", parameters);
+            foreach (var item in imgUrl)
+            {
+                Console.WriteLine($"生成的ImgUrl：{item}");
+            }
         }
     }
 }

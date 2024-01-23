@@ -22,6 +22,6 @@ namespace FaceMan.SemanticHub.ModelExtensions.ImageGeneration
         /// <param name="kernel">预留字段</param>
         /// <param name="cancellationToken">取消令牌</param>
         /// <returns></returns>
-        Task<string> GetImageMessageContentsAsync(string description, int width, int height, Kernel? kernel = null, CancellationToken cancellationToken = default);
+        Task<List<string>> GetImageMessageContentsAsync(string prompt, ImageParameters size, Kernel? kernel = null, CancellationToken cancellationToken = default);
     }
 }

@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI;
+using FaceMan.SemanticHub.ModelExtensions.ImageGeneration;
 using FaceMan.SemanticHub.ModelExtensions.QianWen;
 using FaceMan.SemanticHub.ModelExtensions.WenXin;
 using FaceMan.SemanticHub.ModelExtensions.XunFei;
@@ -35,7 +36,7 @@ namespace FaceMan.SemanticHub.ModelExtensions
                     apiKey = GenerateJwtToken(apiKey, expirationInSeconds);
                     HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
                     break;
-                case ModelType.QianWen:
+                case ModelType.TongYi:
                     HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
                     break;
                 case ModelType.XunFei:
@@ -47,7 +48,7 @@ namespace FaceMan.SemanticHub.ModelExtensions
                     HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
                     break;
             }
-            QianWen = new QianWenClient(this, url);
+            TongYi = new TongYiClient(this, url);
             ZhiPu = new ZhiPuClient(this, url);
             XunFei = new XunFeiClient(this, url);
             WenXin = new WenXinClient(this, url);
@@ -55,7 +56,7 @@ namespace FaceMan.SemanticHub.ModelExtensions
             OpenAI = new OpenAIClient(this, url);
         }
 
-        public QianWenClient QianWen { get; set; }
+        public TongYiClient TongYi { get; set; }
         public ZhiPuClient ZhiPu { get; set; }
         public XunFeiClient XunFei { get; set; }
         public WenXinClient WenXin { get; set; }
@@ -89,6 +90,11 @@ namespace FaceMan.SemanticHub.ModelExtensions
             {
                 throw new Exception($"未能将以下json转换为: {typeof(T).Name}: {await response.Content.ReadAsStringAsync()}", e);
             }
+        }
+
+        public static async Task<T> ReadImageResponse<T>(HttpResponseMessage response, CancellationToken cancellationToken)
+        {
+            return (await ReadResponse<ImageResponseWrapper<T, ImageTaskUsage>>(response, cancellationToken)).Output;
         }
         /// <summary>
         /// 讯飞星火 数据流转换器

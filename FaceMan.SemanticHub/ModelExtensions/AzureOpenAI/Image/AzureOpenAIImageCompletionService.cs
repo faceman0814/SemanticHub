@@ -22,7 +22,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Image
             };
         }
 
-        public async Task<string> GetImageMessageContentsAsync(string description, int width, int height, Kernel? kernel = null, CancellationToken cancellationToken = default)
+        public async Task<List<string>> GetImageMessageContentsAsync(string prompt, ImageParameters parameters, Kernel? kernel = null, CancellationToken cancellationToken = default)
         {
             AzureOpenAITextToImageService imageService = new AzureOpenAITextToImageService(
                 config.DeploymentName,
@@ -31,7 +31,23 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Image
                 config.ModelId,
                 apiVersion: config.ApiVersion);
 
-            return await imageService.GenerateImageAsync(description, width, height);
+            int width = 1024;
+            int height = 1024;
+            switch (parameters.ImageSize)
+            {
+                case SizeEnum.Size1280x720:
+                    width = 1280;
+                    height = 720;
+                    break;
+                case SizeEnum.Size720x1280:
+                    height = 1280;
+                    width = 720;
+                    break;
+            }
+            var results = new List<string>();
+            var url = await imageService.GenerateImageAsync(prompt, width, height);
+            results.Add(url);
+            return results;
         }
     }
 }

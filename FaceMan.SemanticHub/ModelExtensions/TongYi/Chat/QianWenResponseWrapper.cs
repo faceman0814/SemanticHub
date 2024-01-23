@@ -9,7 +9,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace FaceMan.SemanticHub.ModelExtensions.QianWen.Chat
+namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Chat
 {
     /// <summary>
     /// 用于映像请求异步任务的通用基本响应类。

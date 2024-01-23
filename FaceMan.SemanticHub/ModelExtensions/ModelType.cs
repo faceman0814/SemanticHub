@@ -15,9 +15,9 @@ namespace FaceMan.SemanticHub.ModelExtensions
 {
     public enum ModelType
     {
-        [Description("通义千问")]
-        [EnumName("通义千问")]
-        QianWen = 1,
+        [Description("通义")]
+        [EnumName("通义")]
+        TongYi = 1,
 
         [Description("智谱AI")]
         [EnumName("智谱AI")]

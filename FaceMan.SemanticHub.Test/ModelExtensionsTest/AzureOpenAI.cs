@@ -1,6 +1,9 @@
-﻿using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI;
+﻿using Azure.AI.OpenAI;
+
+using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI;
 using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat;
 using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Image;
+using FaceMan.SemanticHub.ModelExtensions.ImageGeneration;
 
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
@@ -91,8 +94,15 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
         [TestMethod]
         public async Task GetImageMessageContentsAsync()
         {
-            var imgUrl = await imageService.GetImageMessageContentsAsync("画一只小清新风格的鲸鱼", 1024, 1024);
-            Console.WriteLine($"生成的ImgUrl：{imgUrl}");
+            var parameters = new ImageParameters()
+            {
+                ImageSize = SizeEnum.Size1024x1024
+            };
+            var imgUrl = await imageService.GetImageMessageContentsAsync("画一只小清新风格的鲸鱼", parameters);
+            foreach (var item in imgUrl)
+            {
+                Console.WriteLine($"生成的ImgUrl：{item}");
+            }
         }
     }
 }
