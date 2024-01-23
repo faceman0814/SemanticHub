@@ -13,16 +13,15 @@ namespace FaceMan.SemanticHub.ModelExtensions.ZhiPu.Chat
 {
     public class ZhiPuChatCompletionService : IModelExtensionsChatCompletionService
     {
-        private readonly string _secret;
         private readonly string _model;
-        private readonly string _url;
+        private readonly ModelClient client;
         public ZhiPuChatCompletionService(string secret, string model, string url = null)
         {
-            _secret = secret;
             _model = model;
-            _url = url;
+            client = new(secret, ModelType.ZhiPu, url);
         }
-        public async Task<ChatMessageContent> GetChatMessageContentsAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
+
+        (List<ChatMessage>, ChatParameters) Init(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, bool isStream = false)
         {
             var histroyList = new List<ChatMessage>();
             //因为智谱AI官方调用的有bug，所以这里做一下处理。
@@ -43,60 +42,25 @@ namespace FaceMan.SemanticHub.ModelExtensions.ZhiPu.Chat
                 };
                 histroyList.Add(history);
             }
-            ModelClient client = new(_secret, ModelType.ZhiPu, _url);
+            return (histroyList, chatParameters);
+        }
+        public async Task<ChatMessageContent> GetChatMessageContentsAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
+        {
+            (var histroyList, var chatParameters) = Init(chatHistory, settings);
             var result = await client.ZhiPu.GetChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken);
             return new ChatMessageContent(AuthorRole.Assistant, result.Choices[0].Message.Content);
         }
 
         public async Task<(ChatMessageContent, Usage)> GetChatMessageContentsByTokenAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
-            var histroyList = new List<ChatMessage>();
-            //因为智谱AI官方调用的有bug，所以这里做一下处理。
-            histroyList.Add(ChatMessage.FromSystem("1"));
-            ChatParameters chatParameters = new ChatParameters()
-            {
-                TopP = settings != null && settings.Temperature != 1 ? (float)settings.TopP : (float)0.7,
-                // max_tokens 应该在 [1, 1500]的区间
-                MaxTokens = settings != null ? settings.MaxTokens : default,
-                Temperature = settings != null && settings.Temperature != 1 ? (float)settings.Temperature : (float)0.95
-            };
-            foreach (var item in chatHistory)
-            {
-                var history = new ChatMessage()
-                {
-                    Role = item.Role.Label,
-                    Content = item.Content,
-                };
-                histroyList.Add(history);
-            }
-            ModelClient client = new(_secret, ModelType.ZhiPu, _url);
+            (var histroyList, var chatParameters) = Init(chatHistory, settings);
             var result = await client.ZhiPu.GetChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken);
             return (new ChatMessageContent(AuthorRole.Assistant, result.Choices[0].Message.Content), result.Usage);
         }
 
         public async IAsyncEnumerable<string> GetStreamingChatMessageContentsAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
-            var histroyList = new List<ChatMessage>();
-            //因为智谱AI官方调用有bug，所以这里做一下处理。
-            histroyList.Add(ChatMessage.FromSystem("1"));
-            ChatParameters chatParameters = new ChatParameters()
-            {
-                TopP = settings != null && settings.TopP != 1 ? (float)settings.TopP : (float)0.7,
-                // max_tokens 应该在 [1, 1500]的区间
-                MaxTokens = settings != null ? settings.MaxTokens : default,
-                Temperature = settings != null && settings.Temperature != 1 ? (float)settings.Temperature : (float)0.75,
-                Stream = true
-            };
-            foreach (var item in chatHistory)
-            {
-                var history = new ChatMessage()
-                {
-                    Role = item.Role.Label,
-                    Content = item.Content,
-                };
-                histroyList.Add(history);
-            }
-            ModelClient client = new(_secret, ModelType.ZhiPu);
+            (var histroyList, var chatParameters) = Init(chatHistory, settings, true);
 
             await foreach (var item in client.ZhiPu.GetStreamingChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken))
             {
@@ -106,28 +70,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.ZhiPu.Chat
 
         public async IAsyncEnumerable<(string, Usage)> GetStreamingChatMessageContentsByTokenAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
-            var histroyList = new List<ChatMessage>();
-            //因为智谱AI官方调用有bug，所以这里做一下处理。
-            histroyList.Add(ChatMessage.FromSystem("1"));
-            ChatParameters chatParameters = new ChatParameters()
-            {
-                TopP = settings != null && settings.Temperature != 1 ? (float)settings.TopP : (float)0.7,
-                // max_tokens 应该在 [1, 1500]的区间
-                MaxTokens = settings != null ? settings.MaxTokens : default,
-                Temperature = settings != null && settings.Temperature != 1 ? (float)settings.Temperature : (float)0.95,
-                Stream = true
-            };
-            foreach (var item in chatHistory)
-            {
-                var history = new ChatMessage()
-                {
-                    Role = item.Role.Label,
-                    Content = item.Content,
-                };
-                histroyList.Add(history);
-            }
-            ModelClient client = new(_secret, ModelType.ZhiPu);
-
+            (var histroyList, var chatParameters) = Init(chatHistory, settings, true);
             await foreach (var item in client.ZhiPu.GetStreamingChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken))
             {
                 yield return (item.Item1, item.Item2);

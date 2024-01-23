@@ -1,4 +1,5 @@
 ﻿using DocumentFormat.OpenXml.EMMA;
+using DocumentFormat.OpenXml.Wordprocessing;
 
 using FaceMan.SemanticHub.ModelExtensions.QianWen;
 using FaceMan.SemanticHub.ModelExtensions.TextGeneration;
@@ -18,6 +19,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat
     public class AzureOpenAIChatCompletionService : IModelExtensionsChatCompletionService
     {
         private readonly AzureOpenAIConfig config;
+        private readonly ModelClient client;
         public AzureOpenAIChatCompletionService(string apiKey, string endPoint, string deploymentName, string apiVersion = null)
         {
             config = new AzureOpenAIConfig()
@@ -27,9 +29,9 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat
                 DeploymentName = deploymentName,
                 ApiVersion = apiVersion
             };
+            client = new(config.ApiKey, ModelType.AzureOpenAI, config.Endpoint);
         }
-
-        public async Task<(ChatMessageContent, Usage)> GetChatMessageContentsByTokenAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
+        (List<AzureOpenAIContextMessage>, ChatParameters) Init(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null)
         {
             var histroyList = new List<AzureOpenAIContextMessage>();
             ChatParameters chatParameters = new ChatParameters()
@@ -56,8 +58,12 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat
                 };
                 histroyList.Add(history);
             }
+            return (histroyList, chatParameters);
+        }
 
-            ModelClient client = new(config.ApiKey, ModelType.AzureOpenAI, config.Endpoint);
+        public async Task<(ChatMessageContent, Usage)> GetChatMessageContentsByTokenAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
+        {
+            (var histroyList, var chatParameters) = Init(chatHistory, settings);
             AzureOpenAIResponseWrapper result = await client.AzureOpenAI.GetChatMessageContentsAsync(config.DeploymentName, histroyList, chatParameters, cancellationToken);
             var message = new ChatMessageContent(AuthorRole.Assistant, result.Choices.First().Message.Content);
             return (message, result.Usage);
@@ -66,33 +72,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat
 
         public async Task<ChatMessageContent> GetChatMessageContentsAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
-            var histroyList = new List<AzureOpenAIContextMessage>();
-            ChatParameters chatParameters = new ChatParameters()
-            {
-                TopP = settings != null ? (float)settings.TopP : (float)1.0,
-                MaxTokens = settings != null ? settings.MaxTokens : 512,
-                Temperature = settings != null ? (float)settings.Temperature : (float)1.0,
-                PresencePenalty = settings != null ? (float)settings.PresencePenalty : (float)0.0,
-                FrequencyPenalty = settings != null ? (float)settings.FrequencyPenalty : (float)0.0,
-            };
-            foreach (var item in chatHistory)
-            {
-                var history = new AzureOpenAIContextMessage()
-                {
-                    Role = item.Role.Label,
-                    Content = new List<Content>()
-                    {
-                        new Content()
-                        {
-                            Type="text",
-                            Text=item.Content
-                        }
-                    },
-                };
-                histroyList.Add(history);
-            }
-
-            ModelClient client = new(config.ApiKey, ModelType.AzureOpenAI, config.Endpoint);
+            (var histroyList, var chatParameters) = Init(chatHistory, settings);
             AzureOpenAIResponseWrapper result = await client.AzureOpenAI.GetChatMessageContentsAsync(config.DeploymentName, histroyList, chatParameters, cancellationToken);
             var message = new ChatMessageContent(AuthorRole.Assistant, result.Choices.First().Message.Content);
             return message;
@@ -100,34 +80,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat
 
         public async IAsyncEnumerable<(string, Usage)> GetStreamingChatMessageContentsByTokenAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
-            var histroyList = new List<AzureOpenAIContextMessage>();
-            ChatParameters chatParameters = new ChatParameters()
-            {
-                TopP = settings != null ? (float)settings.TopP : (float)1.0,
-                MaxTokens = settings != null ? settings.MaxTokens : 512,
-                Temperature = settings != null ? (float)settings.Temperature : (float)1.0,
-                PresencePenalty = settings != null ? (float)settings.PresencePenalty : (float)0.0,
-                FrequencyPenalty = settings != null ? (float)settings.FrequencyPenalty : (float)0.0,
-                Stream = true
-            };
-            foreach (var item in chatHistory)
-            {
-                var history = new AzureOpenAIContextMessage()
-                {
-                    Role = item.Role.Label,
-                    Content = new List<Content>()
-                    {
-                        new Content()
-                        {
-                            Type="text",
-                            Text=item.Content
-                        }
-                    },
-                };
-                histroyList.Add(history);
-            }
-
-            ModelClient client = new(config.ApiKey, ModelType.AzureOpenAI, config.Endpoint);
+            (var histroyList, var chatParameters) = Init(chatHistory, settings);
             //返回流式聊天消息内容
             await foreach (var item in client.AzureOpenAI.GetStreamingChatMessageContentsAsync(config.DeploymentName, histroyList, chatParameters, cancellationToken))
             {
@@ -137,34 +90,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat
 
         public async IAsyncEnumerable<string> GetStreamingChatMessageContentsAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
-            var histroyList = new List<AzureOpenAIContextMessage>();
-            ChatParameters chatParameters = new ChatParameters()
-            {
-                TopP = settings != null ? (float)settings.TopP : (float)1.0,
-                MaxTokens = settings != null ? settings.MaxTokens : 512,
-                Temperature = settings != null ? (float)settings.Temperature : (float)1.0,
-                PresencePenalty = settings != null ? (float)settings.PresencePenalty : (float)0.0,
-                FrequencyPenalty = settings != null ? (float)settings.FrequencyPenalty : (float)0.0,
-                Stream = true
-            };
-            foreach (var item in chatHistory)
-            {
-                var history = new AzureOpenAIContextMessage()
-                {
-                    Role = item.Role.Label,
-                    Content = new List<Content>()
-                    {
-                        new Content()
-                        {
-                            Type="text",
-                            Text=item.Content
-                        }
-                    },
-                };
-                histroyList.Add(history);
-            }
-
-            ModelClient client = new(config.ApiKey, ModelType.AzureOpenAI, config.Endpoint);
+            (var histroyList, var chatParameters) = Init(chatHistory, settings);
             //返回流式聊天消息内容
             await foreach (var item in client.AzureOpenAI.GetStreamingChatMessageContentsAsync(config.DeploymentName, histroyList, chatParameters, cancellationToken))
             {

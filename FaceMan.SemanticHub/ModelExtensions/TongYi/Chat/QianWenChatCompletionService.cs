@@ -13,14 +13,34 @@ namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Chat
 {
     public class QianWenChatCompletionService : IModelExtensionsChatCompletionService
     {
-        private readonly string _apiKey;
         private readonly string _model;
-        private readonly string _url;
+        private readonly ModelClient client;
         public QianWenChatCompletionService(string key, string model, string url = null)
         {
-            _apiKey = key;
             _model = model;
-            _url = url;
+            client = new(key, ModelType.TongYi, url);
+        }
+
+        (List<ChatMessage>, ChatParameters) Init(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null)
+        {
+            var histroyList = new List<ChatMessage>();
+            ChatParameters chatParameters = new ChatParameters()
+            {
+                TopP = settings != null && settings.TopP != 1.0 ? (float)settings.TopP : (float)0.75,
+                MaxTokens = settings != null ? settings.MaxTokens : 512,
+                Temperature = settings != null ? (float)settings.Temperature : (float)1.0,
+            };
+
+            foreach (var item in chatHistory)
+            {
+                var history = new ChatMessage()
+                {
+                    Role = item.Role.Label,
+                    Content = item.Content,
+                };
+                histroyList.Add(history);
+            }
+            return (histroyList, chatParameters);
         }
 
         /// <summary>
@@ -33,25 +53,8 @@ namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Chat
         /// <returns></returns>
         public async Task<ChatMessageContent> GetChatMessageContentsAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
-            var histroyList = new List<ChatMessage>();
-            ChatParameters chatParameters = new ChatParameters()
-            {
-                TopP = settings != null && settings.TopP != 1.0 ? (float)settings.TopP : (float)0.75,
-                MaxTokens = settings != null ? settings.MaxTokens : 512,
-                Temperature = settings != null ? (float)settings.Temperature : (float)1.0,
-            };
 
-            foreach (var item in chatHistory)
-            {
-                var history = new ChatMessage()
-                {
-                    Role = item.Role.Label,
-                    Content = item.Content,
-                };
-                histroyList.Add(history);
-            }
-
-            ModelClient client = new(_apiKey, ModelType.TongYi, _url);
+            (var histroyList, var chatParameters) = Init(chatHistory, settings);
             QianWenResponseWrapper result = await client.TongYi.GetChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken);
             var message = new ChatMessageContent(AuthorRole.Assistant, result.Output.Text);
             return message;
@@ -59,24 +62,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Chat
 
         public async Task<(ChatMessageContent, Usage)> GetChatMessageContentsByTokenAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
-            var histroyList = new List<ChatMessage>();
-            ChatParameters chatParameters = new ChatParameters()
-            {
-                TopP = settings != null && settings.TopP != 1.0 ? (float)settings.TopP : (float)0.75,
-                MaxTokens = settings != null ? settings.MaxTokens : 512,
-                Temperature = settings != null ? (float)settings.Temperature : (float)1.0,
-            };
-            foreach (var item in chatHistory)
-            {
-                var history = new ChatMessage()
-                {
-                    Role = item.Role.Label,
-                    Content = item.Content,
-                };
-                histroyList.Add(history);
-            }
-
-            ModelClient client = new(_apiKey, ModelType.TongYi, _url);
+            (var histroyList, var chatParameters) = Init(chatHistory, settings);
             QianWenResponseWrapper result = await client.TongYi.GetChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken);
             var message = new ChatMessageContent(AuthorRole.Assistant, result.Output.Text);
             var usage = new Usage()
@@ -90,23 +76,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Chat
 
         public async IAsyncEnumerable<(string, Usage)> GetStreamingChatMessageContentsByTokenAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
-            var histroyList = new List<ChatMessage>();
-            ChatParameters chatParameters = new ChatParameters()
-            {
-                TopP = settings != null && settings.TopP != 1.0 ? (float)settings.TopP : (float)0.75,
-                MaxTokens = settings != null ? settings.MaxTokens : 512,
-                Temperature = settings != null ? (float)settings.Temperature : (float)1.0,
-            };
-            foreach (var item in chatHistory)
-            {
-                var history = new ChatMessage()
-                {
-                    Role = item.Role.Label,
-                    Content = item.Content,
-                };
-                histroyList.Add(history);
-            }
-            ModelClient client = new(_apiKey, ModelType.TongYi, _url);
+            (var histroyList, var chatParameters) = Init(chatHistory, settings);
 
             await foreach (var item in client.TongYi.GetStreamingChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken))
             {
@@ -130,25 +100,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Chat
         /// <returns></returns>
         public async IAsyncEnumerable<string> GetStreamingChatMessageContentsAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
-            var histroyList = new List<ChatMessage>();
-            ChatParameters chatParameters = new ChatParameters()
-            {
-                TopP = settings != null && settings.TopP != 1.0 ? (float)settings.TopP : (float)0.75,
-                MaxTokens = settings != null ? settings.MaxTokens : 512,
-                Temperature = settings != null ? (float)settings.Temperature : (float)1.0,
-            };
-
-            foreach (var item in chatHistory)
-            {
-                var history = new ChatMessage()
-                {
-                    Role = item.Role.Label,
-                    Content = item.Content,
-                };
-                histroyList.Add(history);
-            }
-
-            ModelClient client = new(_apiKey, ModelType.TongYi, _url);
+            (var histroyList, var chatParameters) = Init(chatHistory, settings);
 
             await foreach (var item in client.TongYi.GetStreamingChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken))
             {

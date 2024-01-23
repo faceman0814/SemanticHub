@@ -4,6 +4,7 @@
 
 using DocumentFormat.OpenXml.EMMA;
 using DocumentFormat.OpenXml.Wordprocessing;
+
 using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat;
 using FaceMan.SemanticHub.ModelExtensions.TextGeneration;
 
@@ -24,7 +25,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
     {
         private readonly XunFeiRequestWrapper xunFeiRequest;
         private readonly string _model;
-        private readonly string _url;
+        private readonly ModelClient client;
         public XunFeiChatCompletionService(string key, string secret, string appId, string model = null, string url = null)
         {
             xunFeiRequest = new XunFeiRequestWrapper()
@@ -34,7 +35,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
                 AppId = appId,
             };
             _model = model ?? "general";
-            _url = url;
+            client = new(key, ModelType.XunFei, url);
         }
 
         /// <summary>
@@ -80,7 +81,6 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
         public async Task<ChatMessageContent> GetChatMessageContentsAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
             var request = Init(chatHistory, settings);
-            ModelClient client = new(xunFeiRequest.key, ModelType.XunFei, _url);
             var result = await client.XunFei.GetChatMessageContentsAsync(request, xunFeiRequest, cancellationToken);
             var message = new ChatMessageContent(AuthorRole.Assistant, result.Item1);
             return message;
@@ -89,7 +89,6 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
         public async IAsyncEnumerable<string> GetStreamingChatMessageContentsAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
             var request = Init(chatHistory, settings);
-            ModelClient client = new(xunFeiRequest.key, ModelType.XunFei, _url);
             await foreach (var item in client.XunFei.GetStreamingChatMessageContentsAsync(request, xunFeiRequest, cancellationToken))
             {
                 yield return item.Item1;
@@ -99,7 +98,6 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
         public async Task<(ChatMessageContent, Usage)> GetChatMessageContentsByTokenAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
             var request = Init(chatHistory, settings);
-            ModelClient client = new(xunFeiRequest.key, ModelType.XunFei, _url);
             var result = await client.XunFei.GetChatMessageContentsAsync(request, xunFeiRequest, cancellationToken);
             var message = new ChatMessageContent(AuthorRole.Assistant, result.Item1);
             return (message, result.Item2);
@@ -108,7 +106,6 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
         public async IAsyncEnumerable<(string, Usage)> GetStreamingChatMessageContentsByTokenAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
             var request = Init(chatHistory, settings);
-            ModelClient client = new(xunFeiRequest.key, ModelType.XunFei, _url);
             await foreach (var item in client.XunFei.GetStreamingChatMessageContentsAsync(request, xunFeiRequest, cancellationToken))
             {
                 yield return (item.Item1, item.Item2);

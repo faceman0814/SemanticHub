@@ -1,4 +1,5 @@
 ﻿using DocumentFormat.OpenXml.EMMA;
+
 using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat;
 using FaceMan.SemanticHub.ModelExtensions.QianWen;
 using FaceMan.SemanticHub.ModelExtensions.TextGeneration;
@@ -12,7 +13,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat
     public class OpenAIChatCompletionService : IModelExtensionsChatCompletionService
     {
         private readonly OpenAIConfig config;
-        private readonly string _url;
+        private readonly ModelClient client;
         public OpenAIChatCompletionService(string apiKey, string modelId, string url = null)
         {
             config = new OpenAIConfig()
@@ -20,10 +21,9 @@ namespace FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat
                 ApiKey = apiKey,
                 ModelId = modelId,
             };
-            _url = url;
+            client = new(config.ApiKey, ModelType.OpenAI, url);
         }
-
-        public async Task<ChatMessageContent> GetChatMessageContentsAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
+        (List<ChatMessage>, ChatParameters) Init(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null)
         {
             var histroyList = new List<ChatMessage>();
             ChatParameters chatParameters = new ChatParameters()
@@ -43,8 +43,11 @@ namespace FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat
                 };
                 histroyList.Add(history);
             }
-
-            ModelClient client = new(config.ApiKey, ModelType.OpenAI, _url);
+            return (histroyList, chatParameters);
+        }
+        public async Task<ChatMessageContent> GetChatMessageContentsAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
+        {
+            (var histroyList, var chatParameters) = Init(chatHistory, settings);
             OpenAIResponseWrapper result = await client.OpenAI.GetChatMessageContentsAsync(config.ModelId, histroyList, chatParameters, cancellationToken);
             var message = new ChatMessageContent(AuthorRole.Assistant, result.Choices.First().Message.Content);
             return message;
@@ -52,25 +55,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat
 
         public async Task<(ChatMessageContent, Usage)> GetChatMessageContentsByTokenAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
-            var histroyList = new List<ChatMessage>();
-            ChatParameters chatParameters = new ChatParameters()
-            {
-                TopP = settings != null ? (float)settings.TopP : (float)1.0,
-                MaxTokens = settings != null ? settings.MaxTokens : 512,
-                Temperature = settings != null ? (float)settings.Temperature : (float)1.0,
-                PresencePenalty = settings != null ? (float)settings.PresencePenalty : (float)0.0,
-                FrequencyPenalty = settings != null ? (float)settings.FrequencyPenalty : (float)0.0,
-            };
-            foreach (var item in chatHistory)
-            {
-                var history = new ChatMessage()
-                {
-                    Role = item.Role.Label,
-                    Content = item.Content,
-                };
-                histroyList.Add(history);
-            }
-            ModelClient client = new(config.ApiKey, ModelType.OpenAI, _url);
+            (var histroyList, var chatParameters) = Init(chatHistory, settings);
             OpenAIResponseWrapper result = await client.OpenAI.GetChatMessageContentsAsync(config.ModelId, histroyList, chatParameters, cancellationToken);
             var message = new ChatMessageContent(AuthorRole.Assistant, result.Choices.First().Message.Content);
             return (message, result.Usage);
@@ -78,27 +63,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat
 
         public async IAsyncEnumerable<string> GetStreamingChatMessageContentsAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
-            var histroyList = new List<ChatMessage>();
-            ChatParameters chatParameters = new ChatParameters()
-            {
-                TopP = settings != null ? (float)settings.TopP : (float)1.0,
-                MaxTokens = settings != null ? settings.MaxTokens : 512,
-                Temperature = settings != null ? (float)settings.Temperature : (float)1.0,
-                PresencePenalty = settings != null ? (float)settings.PresencePenalty : (float)0.0,
-                FrequencyPenalty = settings != null ? (float)settings.FrequencyPenalty : (float)0.0,
-                Stream = true
-            };
-            foreach (var item in chatHistory)
-            {
-                var history = new ChatMessage()
-                {
-                    Role = item.Role.Label,
-                    Content = item.Content,
-                };
-                histroyList.Add(history);
-            }
-
-            ModelClient client = new(config.ApiKey, ModelType.OpenAI, _url);
+            (var histroyList, var chatParameters) = Init(chatHistory, settings);
             //返回流式聊天消息内容
             await foreach (var item in client.OpenAI.GetStreamingChatMessageContentsAsync(config.ModelId, histroyList, chatParameters, cancellationToken))
             {
@@ -108,27 +73,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat
 
         public async IAsyncEnumerable<(string, Usage)> GetStreamingChatMessageContentsByTokenAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
-            var histroyList = new List<ChatMessage>();
-            ChatParameters chatParameters = new ChatParameters()
-            {
-                TopP = settings != null ? (float)settings.TopP : (float)1.0,
-                MaxTokens = settings != null ? settings.MaxTokens : 512,
-                Temperature = settings != null ? (float)settings.Temperature : (float)1.0,
-                PresencePenalty = settings != null ? (float)settings.PresencePenalty : (float)0.0,
-                FrequencyPenalty = settings != null ? (float)settings.FrequencyPenalty : (float)0.0,
-                Stream = true
-            };
-            foreach (var item in chatHistory)
-            {
-                var history = new ChatMessage()
-                {
-                    Role = item.Role.Label,
-                    Content = item.Content,
-                };
-                histroyList.Add(history);
-            }
-
-            ModelClient client = new(config.ApiKey, ModelType.OpenAI, _url);
+            (var histroyList, var chatParameters) = Init(chatHistory, settings);
             //返回流式聊天消息内容
             await foreach (var item in client.OpenAI.GetStreamingChatMessageContentsAsync(config.ModelId, histroyList, chatParameters, cancellationToken))
             {
