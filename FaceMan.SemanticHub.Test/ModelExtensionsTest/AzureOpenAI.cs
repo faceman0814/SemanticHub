@@ -29,7 +29,6 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
             historys.AddUserMessage("你好");
             chatgpt = new("YourKey", "YourEndPoint", "YourDeploymentName", "YourApiVersion:不填默认2023-07-01-preview");
             imageService = new("YourKey", "YourEndPoint", "YourDeploymentName", "YourApiVersion:不填默认2023-07-01-preview");
-            imageService = new("b3d4d46e0e5847e19c690a58fe106fd9", "https://faceman.openai.azure.com", "Dalle3");
             settings = new OpenAIPromptExecutionSettings()
             {
                 MaxTokens = 3,
