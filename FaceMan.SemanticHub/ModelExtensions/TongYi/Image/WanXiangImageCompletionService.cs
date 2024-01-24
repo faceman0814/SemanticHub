@@ -1,7 +1,6 @@
 ﻿using DocumentFormat.OpenXml.Office2021.DocumentTasks;
 using DocumentFormat.OpenXml.Spreadsheet;
-
-using FaceMan.SemanticHub.ModelExtensions.ImageGeneration;
+using FaceMan.SemanticHub.Generation.ImageGeneration;
 using FaceMan.SemanticHub.ModelExtensions.TextGeneration;
 using FaceMan.SemanticHub.ModelExtensions.TongYi.Chat;
 

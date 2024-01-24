@@ -2,7 +2,7 @@
 
 using System.ComponentModel;
 
-namespace FaceMan.SemanticHub.ModelExtensions.ImageGeneration
+namespace FaceMan.SemanticHub.Generation.ImageGeneration
 {
     public enum StyleEnum
     {

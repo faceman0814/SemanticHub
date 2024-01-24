@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using FaceMan.SemanticHub.ModelExtensions.TextGeneration;
+using FaceMan.SemanticHub.Generation.TextGeneration;
 using FaceMan.SemanticHub.ModelExtensions.ZhiPu;
 
 namespace FaceMan.SemanticHub.ModelExtensions.WenXin.Chat

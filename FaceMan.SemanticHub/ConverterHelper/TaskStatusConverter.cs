@@ -1,5 +1,4 @@
-﻿using FaceMan.SemanticHub.ModelExtensions.ImageGeneration;
-
+﻿using FaceMan.SemanticHub.Generation.ImageGeneration;
 using System;
 using System.Collections.Generic;
 using System.Linq;

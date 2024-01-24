@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FaceMan.SemanticHub.ModelExtensions.ImageGeneration
+namespace FaceMan.SemanticHub.Generation.ImageGeneration
 {
     public enum SizeEnum
     {

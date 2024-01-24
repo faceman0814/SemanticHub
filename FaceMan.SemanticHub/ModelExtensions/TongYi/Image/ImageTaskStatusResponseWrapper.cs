@@ -1,5 +1,5 @@
 ﻿using FaceMan.SemanticHub.ConverterHelper;
-using FaceMan.SemanticHub.ModelExtensions.ImageGeneration;
+using FaceMan.SemanticHub.Generation.ImageGeneration;
 
 using System;
 using System.Collections.Generic;

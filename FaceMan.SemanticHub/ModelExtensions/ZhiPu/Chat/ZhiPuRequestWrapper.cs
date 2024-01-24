@@ -3,9 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using DocumentFormat.OpenXml.Drawing.Charts;
-
-using FaceMan.SemanticHub.ModelExtensions.TextGeneration;
-
+using FaceMan.SemanticHub.Generation.TextGeneration;
 using Microsoft.Graph;
 
 using System;

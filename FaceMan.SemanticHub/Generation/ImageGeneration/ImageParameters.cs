@@ -2,7 +2,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace FaceMan.SemanticHub.ModelExtensions.ImageGeneration
+namespace FaceMan.SemanticHub.Generation.ImageGeneration
 {
     public record ImageParameters
     {

@@ -2,8 +2,8 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using FaceMan.SemanticHub.Generation.ImageGeneration;
 using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI;
-using FaceMan.SemanticHub.ModelExtensions.ImageGeneration;
 using FaceMan.SemanticHub.ModelExtensions.QianWen;
 using FaceMan.SemanticHub.ModelExtensions.WenXin;
 using FaceMan.SemanticHub.ModelExtensions.XunFei;

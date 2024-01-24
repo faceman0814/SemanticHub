@@ -1,5 +1,5 @@
-﻿using FaceMan.SemanticHub.ModelExtensions.QianWen;
-using FaceMan.SemanticHub.ModelExtensions.TextGeneration;
+﻿using FaceMan.SemanticHub.Generation.TextGeneration;
+using FaceMan.SemanticHub.ModelExtensions.QianWen;
 
 using System.Text.Json.Serialization;
 

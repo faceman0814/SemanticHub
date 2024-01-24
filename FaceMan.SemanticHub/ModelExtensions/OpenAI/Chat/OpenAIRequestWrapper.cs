@@ -1,7 +1,5 @@
 ﻿using DocumentFormat.OpenXml.EMMA;
-
-using FaceMan.SemanticHub.ModelExtensions.TextGeneration;
-
+using FaceMan.SemanticHub.Generation.TextGeneration;
 using System.Text.Json.Serialization;
 
 namespace FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat

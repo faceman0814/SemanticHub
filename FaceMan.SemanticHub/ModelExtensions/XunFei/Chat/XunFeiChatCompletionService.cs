@@ -4,9 +4,8 @@
 
 using DocumentFormat.OpenXml.EMMA;
 using DocumentFormat.OpenXml.Wordprocessing;
-
+using FaceMan.SemanticHub.Generation.TextGeneration;
 using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat;
-using FaceMan.SemanticHub.ModelExtensions.TextGeneration;
 
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;

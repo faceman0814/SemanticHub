@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FaceMan.SemanticHub.ModelExtensions.ImageGeneration
+namespace FaceMan.SemanticHub.Generation.ImageGeneration
 {
     public interface IModelExtensionsImageCompletionService
     {
@@ -22,6 +22,6 @@ namespace FaceMan.SemanticHub.ModelExtensions.ImageGeneration
         /// <param name="kernel">预留字段</param>
         /// <param name="cancellationToken">取消令牌</param>
         /// <returns></returns>
-        Task<List<string>> GetImageMessageContentsAsync(string prompt, ImageParameters size, Kernel? kernel = null, CancellationToken cancellationToken = default);
+        Task<List<string>> GetImageMessageContentsAsync(string prompt, ImageParameters size, Kernel kernel = null, CancellationToken cancellationToken = default);
     }
 }

@@ -11,7 +11,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace FaceMan.SemanticHub.ModelExtensions.TextGeneration
+namespace FaceMan.SemanticHub.Generation.TextGeneration
 {
     public record ChatParameters
     {
@@ -20,7 +20,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.TextGeneration
         /// ＜para＞对于语言模型，此字段必须是中的“text”，而不是VL模型中使用的字段</para>
         /// </summary>
         [JsonPropertyName("result_format")]
-        public string? ResultFormat { get; set; }
+        public string ResultFormat { get; set; }
 
         /// <summary>
         /// 随机数生成器的种子，用于控制模型生成的随机性。
@@ -90,7 +90,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.TextGeneration
         /// </para>
         /// </summary>
         [JsonPropertyName("stop")]
-        public object? Stop { get; set; }
+        public object Stop { get; set; }
 
         ///<summary>
         ///控制在生成过程中是否考虑搜索结果。

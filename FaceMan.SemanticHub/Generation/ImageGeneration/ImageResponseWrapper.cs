@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace FaceMan.SemanticHub.ModelExtensions.ImageGeneration
+namespace FaceMan.SemanticHub.Generation.ImageGeneration
 {
     public record ImageResponseWrapper<TOutput, TUsage>
     {
