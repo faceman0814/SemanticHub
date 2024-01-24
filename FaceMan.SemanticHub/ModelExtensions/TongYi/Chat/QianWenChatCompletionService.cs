@@ -26,9 +26,9 @@ namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Chat
             var histroyList = new List<ChatMessage>();
             ChatParameters chatParameters = new ChatParameters()
             {
-                TopP = settings != null && settings.TopP != 1.0 ? (float)settings.TopP : (float)0.75,
+                TopP = settings != null ? (float)settings.TopP : (float)0.75,
                 MaxTokens = settings != null ? settings.MaxTokens : 512,
-                Temperature = settings != null ? (float)settings.Temperature : (float)1.0,
+                Temperature = settings != null ? (float)settings.Temperature : (float)0.95,
             };
 
             foreach (var item in chatHistory)

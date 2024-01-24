@@ -35,8 +35,8 @@ namespace FaceMan.SemanticHub.ModelExtensions.WenXin.Chat
             var system = chatHistory.FirstOrDefault(t => t.Role == AuthorRole.System);
             ChatParameters chatParameters = new ChatParameters()
             {
-                TopP = settings != null ? (float)settings.TopP : (float)1.0,
-                Temperature = settings != null ? (float)settings.Temperature : (float)1.0,
+                TopP = settings != null ? (float)settings.TopP : (float)0.75,
+                Temperature = settings != null ? (float)settings.Temperature : (float)0.95,
                 System = system != null ? system.Content : default,
                 MaxOutputTokens = settings != null ? settings.MaxTokens : 512,
                 Token = token,

@@ -56,7 +56,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
                 chat = new Chat()
                 {
                     domain = _model,//模型领域，默认为星火通用大模型
-                    temperature = settings != null ? settings.Temperature : 0.75, //温度采样阈值，用于控制生成内容的随机性和多样性，值越大多样性越高；范围（0，1）
+                    temperature = settings != null ? settings.Temperature : 0.95, //温度采样阈值，用于控制生成内容的随机性和多样性，值越大多样性越高；范围（0，1）
                     max_tokens = settings != null && settings.MaxTokens != null ? settings.MaxTokens.Value : 512,//生成内容的最大长度，范围（0，4096）
                 }
             };

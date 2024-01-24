@@ -28,9 +28,9 @@ namespace FaceMan.SemanticHub.ModelExtensions.ZhiPu.Chat
             histroyList.Add(ChatMessage.FromSystem("1"));
             ChatParameters chatParameters = new ChatParameters()
             {
-                TopP = settings != null && settings.Temperature != 1 ? (float)settings.TopP : (float)0.7,
+                TopP = settings != null && settings.Temperature != 1 ? (float)settings.TopP : (float)0.75,
                 // max_tokens 应该在 [1, 1500]的区间
-                MaxTokens = settings != null ? settings.MaxTokens : default,
+                MaxTokens = settings != null ? settings.MaxTokens : 512,
                 Temperature = settings != null && settings.Temperature != 1 ? (float)settings.Temperature : (float)0.95,
             };
             foreach (var item in chatHistory)

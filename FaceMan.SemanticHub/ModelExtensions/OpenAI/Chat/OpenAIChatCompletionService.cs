@@ -28,9 +28,9 @@ namespace FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat
             var histroyList = new List<ChatMessage>();
             ChatParameters chatParameters = new ChatParameters()
             {
-                TopP = settings != null ? (float)settings.TopP : (float)1.0,
+                TopP = settings != null ? (float)settings.TopP : (float)0.75,
                 MaxTokens = settings != null ? settings.MaxTokens : 512,
-                Temperature = settings != null ? (float)settings.Temperature : (float)1.0,
+                Temperature = settings != null ? (float)settings.Temperature : (float)0.95,
                 PresencePenalty = settings != null ? (float)settings.PresencePenalty : (float)0.0,
                 FrequencyPenalty = settings != null ? (float)settings.FrequencyPenalty : (float)0.0,
             };
