@@ -1,15 +1,11 @@
-﻿using Azure.AI.OpenAI;
-
-using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI;
+﻿using FaceMan.SemanticHub.Generation.ImageGeneration;
 using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat;
 using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Image;
-using FaceMan.SemanticHub.ModelExtensions.ImageGeneration;
 
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 
 using AzureOpenAIChatCompletionService = FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat.AzureOpenAIChatCompletionService;
-using OpenAIChatCompletionService = FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat.OpenAIChatCompletionService;
 
 namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
 {

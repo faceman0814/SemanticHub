@@ -28,7 +28,7 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
                 MaxTokens = 3,
                 //....其他参数
             };
-            imageService = new WanXiangImageCompletionService("sk-51a1f5b5e1e149479aaaff21e2f28d58", "wanx-v1");
+            imageService = new WanXiangImageCompletionService("YourKey", "YourModel");
         }
 
         [TestMethod]
