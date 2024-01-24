@@ -3,6 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using DocumentFormat.OpenXml.EMMA;
+
 using FaceMan.SemanticHub.Generation.TextGeneration;
 using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat;
 
@@ -30,7 +31,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.WenXin.Chat
         async Task<(List<ChatMessage>, ChatParameters)> Init(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, bool IsStream = false)
         {
             var histroyList = new List<ChatMessage>();
-            var token = await GetAccessToken();
+            var token = await client.WenXin.GetAccessToken(_key, _secret);
             var system = chatHistory.FirstOrDefault(t => t.Role == AuthorRole.System);
             ChatParameters chatParameters = new ChatParameters()
             {
@@ -88,23 +89,5 @@ namespace FaceMan.SemanticHub.ModelExtensions.WenXin.Chat
             }
         }
 
-        /**
-	   * 使用 AK，SK 生成鉴权签名（Access Token）
-	   * @return 鉴权签名信息（Access Token）
-	   */
-        private async Task<string> GetAccessToken()
-        {
-            var client = new HttpClient();
-            var request = new HttpRequestMessage(HttpMethod.Post, "https://aip.baidubce.com/oauth/2.0/token");
-            var parameters = new List<KeyValuePair<string, string>>();
-            parameters.Add(new KeyValuePair<string, string>("grant_type", "client_credentials"));
-            parameters.Add(new KeyValuePair<string, string>("client_id", _key));
-            parameters.Add(new KeyValuePair<string, string>("client_secret", _secret));
-            request.Content = new FormUrlEncodedContent(parameters);
-            HttpResponseMessage response = await client.SendAsync(request);
-            string content = await response.Content.ReadAsStringAsync();
-            dynamic result = JsonConvert.DeserializeObject(content);
-            return result.access_token.ToString();
-        }
     }
 }

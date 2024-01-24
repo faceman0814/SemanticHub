@@ -1,18 +1,6 @@
-﻿using DocumentFormat.OpenXml.Office2021.DocumentTasks;
-using DocumentFormat.OpenXml.Spreadsheet;
-using FaceMan.SemanticHub.Generation.ImageGeneration;
-using FaceMan.SemanticHub.ModelExtensions.TextGeneration;
-using FaceMan.SemanticHub.ModelExtensions.TongYi.Chat;
+﻿using FaceMan.SemanticHub.Generation.ImageGeneration;
 
 using Microsoft.SemanticKernel;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using static Microsoft.Graph.Constants;
 
 using Task = System.Threading.Tasks.Task;
 

@@ -1,6 +1,9 @@
-﻿using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI;
+﻿using FaceMan.SemanticHub.Generation.ImageGeneration;
+using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI;
 using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat;
+using FaceMan.SemanticHub.ModelExtensions.TongYi.Image;
 using FaceMan.SemanticHub.ModelExtensions.WenXin.Chat;
+using FaceMan.SemanticHub.ModelExtensions.WenXin.Image;
 
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
@@ -14,6 +17,7 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
         private ChatHistory historys;
         private WenXinChatCompletionService chatgpt;
         private OpenAIPromptExecutionSettings settings;
+        private WenXinImageCompletionService imageService;
         public WenXin()
         {
             historys = new ChatHistory();
@@ -21,6 +25,8 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
             //historys.AddUserMessage("用c#写一个冒泡排序");
             historys.AddUserMessage("你好");
             chatgpt = new("YourKey", "YourSecret", "YourModel", "YourEndPoint:自定义代理地址，可不填");
+            chatgpt = new("oSoGsTeMD1OGVaaInpnj3U9U", "PAkyqMhAq7S6IQKftjcAcUAn1PGOA2yU", "YourModel", "YourEndPoint:自定义代理地址，可不填");
+            imageService = new("oSoGsTeMD1OGVaaInpnj3U9U", "PAkyqMhAq7S6IQKftjcAcUAn1PGOA2yU", "sd_xl");
             settings = new OpenAIPromptExecutionSettings()
             {
                 MaxTokens = 3,
@@ -80,6 +86,20 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
                 }
             }
             Console.Write($"总消耗token：{sum.TotalTokens} ,入参消耗token：{sum.PromptTokens},出参消耗token：{sum.CompletionTokens}");
+        }
+
+        [TestMethod]
+        public async Task GetImageMessageContentsAsync()
+        {
+            var parameters = new ImageParameters()
+            {
+                ImageStyle = StyleEnum.Auto
+            };
+            var imgUrl = await imageService.GetImageMessageContentsAsync("画一只小清新风格的鲸鱼", parameters);
+            foreach (var item in imgUrl)
+            {
+                Console.WriteLine($"生成的ImgUrl：{item}");
+            }
         }
     }
 }

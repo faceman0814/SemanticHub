@@ -2,20 +2,11 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FaceMan.SemanticHub.ModelExtensions.TextGeneration;
-using FaceMan.SemanticHub.ModelExtensions.ZhiPu;
-
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
-using System.Net.Http.Json;
 using System.Net.WebSockets;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-
-using static FaceMan.SemanticHub.ModelExtensions.XunFei.XunFeiChatCompletionService;
 
 using Usage = FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat.Usage;
 

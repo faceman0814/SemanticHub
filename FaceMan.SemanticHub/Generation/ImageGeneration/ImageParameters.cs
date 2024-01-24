@@ -75,5 +75,10 @@ namespace FaceMan.SemanticHub.Generation.ImageGeneration
         /// </summary>
         [JsonPropertyName("seed")]
         public int? seed { get; set; }
+
+        /// <summary>
+        /// 文心：鉴权token
+        /// </summary>
+        public string Token { get; set; }
     }
 }

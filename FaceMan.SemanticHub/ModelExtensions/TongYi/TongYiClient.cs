@@ -4,6 +4,7 @@
 
 using DocumentFormat.OpenXml.EMMA;
 using DocumentFormat.OpenXml.Spreadsheet;
+
 using FaceMan.SemanticHub.Generation.ImageGeneration;
 using FaceMan.SemanticHub.Generation.TextGeneration;
 using FaceMan.SemanticHub.ModelExtensions.TongYi.Chat;
