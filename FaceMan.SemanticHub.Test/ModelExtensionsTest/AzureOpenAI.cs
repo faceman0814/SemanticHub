@@ -1,10 +1,11 @@
-﻿using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI;
+﻿using FaceMan.SemanticHub.Generation.ImageGeneration;
+using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat;
+using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Image;
 
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 
-using AzureOpenAIChatCompletionService = FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureOpenAIChatCompletionService;
-using OpenAIChatCompletionService = FaceMan.SemanticHub.ModelExtensions.OpenAI.OpenAIChatCompletionService;
+using AzureOpenAIChatCompletionService = FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat.AzureOpenAIChatCompletionService;
 
 namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
 {
@@ -13,6 +14,7 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
     {
         private ChatHistory historys;
         private AzureOpenAIChatCompletionService chatgpt;
+        private AzureOpenAIImageCompletionService imageService;
         private OpenAIPromptExecutionSettings settings;
 
         public AzureOpenAI()
@@ -22,6 +24,7 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
             //historys.AddUserMessage("用c#写一个冒泡排序");
             historys.AddUserMessage("你好");
             chatgpt = new("YourKey", "YourEndPoint", "YourDeploymentName", "YourApiVersion:不填默认2023-07-01-preview");
+            imageService = new("YourKey", "YourEndPoint", "YourDeploymentName", "YourApiVersion:不填默认2023-07-01-preview");
             settings = new OpenAIPromptExecutionSettings()
             {
                 MaxTokens = 3,
@@ -81,6 +84,20 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
                 }
             }
             Console.Write($"总消耗token：{sum.TotalTokens} ,入参消耗token：{sum.PromptTokens},出参消耗token：{sum.CompletionTokens}");
+        }
+
+        [TestMethod]
+        public async Task GetImageMessageContentsAsync()
+        {
+            var parameters = new ImageParameters()
+            {
+                ImageSize = SizeEnum.Size1024x1024
+            };
+            var imgUrl = await imageService.GetImageMessageContentsAsync("画一只小清新风格的鲸鱼", parameters);
+            foreach (var item in imgUrl)
+            {
+                Console.WriteLine($"生成的ImgUrl：{item}");
+            }
         }
     }
 }

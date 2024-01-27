@@ -2,9 +2,9 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI;
-using FaceMan.SemanticHub.ModelExtensions.TextGeneration;
-
+using FaceMan.SemanticHub.Generation.ChatGeneration;
+using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat;
+using FaceMan.SemanticHub.ModelExtensions.ZhiPu.Chat;
 using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -23,18 +23,18 @@ namespace FaceMan.SemanticHub.ModelExtensions.ZhiPu
         }
         internal ModelClient Parent { get; }
 
-        public async Task<ZhiPuResponseWrapper> GetChatMessageContentsAsync(string model, IReadOnlyList<ChatMessage> messages, ChatParameters? parameters = null, CancellationToken cancellationToken = default)
+        public async Task<ZhiPuChatResponseWrapper> GetChatMessageContentsAsync(string model, IReadOnlyList<ChatMessage> messages, ChatParameters? parameters = null, CancellationToken cancellationToken = default)
         {
             HttpRequestMessage httpRequest = new(HttpMethod.Post, baseUrl)
             {
-                Content = JsonContent.Create(ZhiPuRequestWrapper.Create(model, messages, parameters),
+                Content = JsonContent.Create(ZhiPuChatRequestWrapper.Create(model, messages, parameters),
                 options: new JsonSerializerOptions
                 {
                     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
                 }),
             };
             HttpResponseMessage resp = await Parent.HttpClient.SendAsync(httpRequest, cancellationToken);
-            return await ModelClient.ReadResponse<ZhiPuResponseWrapper>(resp, cancellationToken);
+            return await ModelClient.ReadResponse<ZhiPuChatResponseWrapper>(resp, cancellationToken);
         }
 
         public async IAsyncEnumerable<(string, Usage)> GetStreamingChatMessageContentsAsync(string model,
@@ -44,7 +44,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.ZhiPu
         {
             HttpRequestMessage httpRequest = new(HttpMethod.Post, baseUrl)
             {
-                Content = JsonContent.Create(ZhiPuRequestWrapper.Create(model, messages, parameters),
+                Content = JsonContent.Create(ZhiPuChatRequestWrapper.Create(model, messages, parameters),
                 options: new JsonSerializerOptions
                 {
                     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
@@ -70,7 +70,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.ZhiPu
                     {
                         continue;
                     }
-                    var result = JsonSerializer.Deserialize<ZhiPuResponseWrapper>(data)!;
+                    var result = JsonSerializer.Deserialize<ZhiPuChatResponseWrapper>(data)!;
                     yield return (result.Choices[0].Delta.Content, result.Usage);
                 }
                 else if (line.StartsWith("{\"error\":"))

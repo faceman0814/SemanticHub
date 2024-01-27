@@ -2,23 +2,13 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI;
-using FaceMan.SemanticHub.ModelExtensions.TextGeneration;
-using FaceMan.SemanticHub.ModelExtensions.ZhiPu;
-
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
-using System.Net.Http.Json;
 using System.Net.WebSockets;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
-using static FaceMan.SemanticHub.ModelExtensions.XunFei.XunFeiChatCompletionService;
-
-using Usage = FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Usage;
+using Usage = FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat.Usage;
 
 namespace FaceMan.SemanticHub.ModelExtensions.XunFei
 {
@@ -34,7 +24,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
         }
         internal ModelClient Parent { get; }
 
-        public async Task<(string, Usage)> GetChatMessageContentsAsync(XunFeiRequest request, XunFeiRequestWrapper xunFeiRequest, CancellationToken cancellationToken = default)
+        public async Task<(string, Usage)> GetChatMessageContentsAsync(XunFeiRequest request, XunFeiChatRequestWrapper xunFeiRequest, CancellationToken cancellationToken = default)
         {
             string authUrl = GetAuthUrl(xunFeiRequest.Secret, xunFeiRequest.key);
             string url = authUrl.Replace("http://", "ws://").Replace("https://", "wss://");
@@ -57,7 +47,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
                     {
                         string receivedMessage = Encoding.UTF8.GetString(receiveBuffer, 0, result.Count);
                         //将结果构造为json
-                        var response = ModelClient.ReadResponse<XunFeiResponseWrapper>(receivedMessage);
+                        var response = ModelClient.ReadResponse<XunFeiChatResponseWrapper>(receivedMessage);
 
                         if (response.Header.Code == 0)
                         {
@@ -89,7 +79,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
             }
         }
 
-        public async IAsyncEnumerable<(string, Usage)> GetStreamingChatMessageContentsAsync(XunFeiRequest request, XunFeiRequestWrapper xunFeiRequest,
+        public async IAsyncEnumerable<(string, Usage)> GetStreamingChatMessageContentsAsync(XunFeiRequest request, XunFeiChatRequestWrapper xunFeiRequest,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             string authUrl = GetAuthUrl(xunFeiRequest.Secret, xunFeiRequest.key);
@@ -112,7 +102,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
                     {
                         string receivedMessage = Encoding.UTF8.GetString(receiveBuffer, 0, result.Count);
                         //将结果构造为json
-                        var response = ModelClient.ReadResponse<XunFeiResponseWrapper>(receivedMessage);
+                        var response = ModelClient.ReadResponse<XunFeiChatResponseWrapper>(receivedMessage);
 
                         if (response.Header.Code == 0)
                         {
