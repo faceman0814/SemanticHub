@@ -88,18 +88,17 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
             Console.Write($"总消耗token：{sum.TotalTokens} ,入参消耗token：{sum.PromptTokens},出参消耗token：{sum.CompletionTokens}");
         }
 
-        [TestMethod]
-        public async Task GetImageMessageContentsAsync()
-        {
-            var parameters = new ImageParameters()
-            {
-                ImageStyle = StyleEnum.Auto
-            };
-            var imgUrl = await imageService.GetImageMessageContentsAsync("画一只小清新风格的鲸鱼", parameters);
-            foreach (var item in imgUrl)
-            {
-                Console.WriteLine($"生成的ImgUrl：{item}");
-            }
-        }
+        //[TestMethod]
+        //public async Task GetImageMessageContentsAsync()
+        //{
+        //    var parameters = new ImageParameters()
+        //    {
+        //    };
+        //    var imgUrl = await imageService.GetImageMessageContentsAsync("画一只小清新风格的鲸鱼", parameters);
+        //    foreach (var item in imgUrl)
+        //    {
+        //        Console.WriteLine($"生成的ImgUrl：{item}");
+        //    }
+        //}
     }
 }

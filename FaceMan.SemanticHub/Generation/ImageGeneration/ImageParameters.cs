@@ -31,7 +31,7 @@ namespace FaceMan.SemanticHub.Generation.ImageGeneration
         /// 模型供应商类型中文描述
         /// </summary>
         [JsonPropertyName("style")]
-        public string Style { get; set; }
+        public string Style { get; set; } = "<auto>";
 
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace FaceMan.SemanticHub.Generation.ImageGeneration
         /// </summary>
         [Required]
         [JsonPropertyName("size")]
-        public string Size { get; set; }
+        public string Size { get; set; } = "1024*1024";
 
         /// <summary>
         /// 本次请求生成的图片数量，目前支持1~4张，默认为1。
