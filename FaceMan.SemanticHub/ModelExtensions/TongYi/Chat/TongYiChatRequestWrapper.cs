@@ -14,7 +14,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Chat
     /// <summary>
     /// 请求包装器
     /// </summary>
-    public record QianWenRequestWrapper
+    public record TongYiChatRequestWrapper
     {
         public static QianWenRequestWrapper<TMessages, TParameters> Create<TMessages, TParameters>(string model, TMessages messages, TParameters? parameters = default) => new()
         {
@@ -30,7 +30,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Chat
         };
     }
 
-    public record QianWenRequestWrapper<TMessages, TParameters> : QianWenRequestWrapper
+    public record QianWenRequestWrapper<TMessages, TParameters> : TongYiChatRequestWrapper
     {
         [JsonPropertyName("model")]
         public string Model { get; set; }

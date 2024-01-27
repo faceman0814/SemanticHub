@@ -2,7 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using FaceMan.SemanticHub.Generation.TextGeneration;
+using FaceMan.SemanticHub.Generation.ChatGeneration;
 using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat;
 
 using Microsoft.SemanticKernel;
@@ -11,11 +11,11 @@ using Microsoft.SemanticKernel.Connectors.OpenAI;
 
 namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Chat
 {
-    public class QianWenChatCompletionService : IModelExtensionsChatCompletionService
+    public class TongYiChatCompletionService : IModelExtensionsChatCompletionService
     {
         private readonly string _model;
         private readonly ModelClient client;
-        public QianWenChatCompletionService(string key, string model, string url = null)
+        public TongYiChatCompletionService(string key, string model, string url = null)
         {
             _model = model;
             client = new(key, ModelType.TongYi, url);
@@ -55,7 +55,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Chat
         {
 
             (var histroyList, var chatParameters) = Init(chatHistory, settings);
-            QianWenResponseWrapper result = await client.TongYi.GetChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken);
+            TongYiChatResponseWrapper result = await client.TongYi.GetChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken);
             var message = new ChatMessageContent(AuthorRole.Assistant, result.Output.Text);
             return message;
         }
@@ -63,7 +63,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Chat
         public async Task<(ChatMessageContent, Usage)> GetChatMessageContentsByTokenAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
             (var histroyList, var chatParameters) = Init(chatHistory, settings);
-            QianWenResponseWrapper result = await client.TongYi.GetChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken);
+            TongYiChatResponseWrapper result = await client.TongYi.GetChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken);
             var message = new ChatMessageContent(AuthorRole.Assistant, result.Output.Text);
             var usage = new Usage()
             {

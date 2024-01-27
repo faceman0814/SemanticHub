@@ -2,7 +2,7 @@
 
 namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat
 {
-    public record AzureOpenAIContextMessage
+    public record AzureOpenAIChatContextMessage
     {
         [JsonPropertyName("role")]
         public string Role { get; set; }

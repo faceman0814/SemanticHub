@@ -2,32 +2,23 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using DocumentFormat.OpenXml.EMMA;
-using DocumentFormat.OpenXml.Wordprocessing;
-using FaceMan.SemanticHub.Generation.TextGeneration;
+using FaceMan.SemanticHub.Generation.ChatGeneration;
 using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat;
 
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-
 namespace FaceMan.SemanticHub.ModelExtensions.XunFei
 {
     public class XunFeiChatCompletionService : IModelExtensionsChatCompletionService
     {
-        private readonly XunFeiRequestWrapper xunFeiRequest;
+        private readonly XunFeiChatRequestWrapper xunFeiRequest;
         private readonly string _model;
         private readonly ModelClient client;
         public XunFeiChatCompletionService(string key, string secret, string appId, string model = null, string url = null)
         {
-            xunFeiRequest = new XunFeiRequestWrapper()
+            xunFeiRequest = new XunFeiChatRequestWrapper()
             {
                 key = key,
                 Secret = secret,
@@ -55,7 +46,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
                 chat = new Chat()
                 {
                     domain = _model,//模型领域，默认为星火通用大模型
-                    temperature = settings != null ? settings.Temperature : 0.95, //温度采样阈值，用于控制生成内容的随机性和多样性，值越大多样性越高；范围（0，1）
+                    temperature = settings != null ? settings.Temperature : 0.75, //温度采样阈值，用于控制生成内容的随机性和多样性，值越大多样性越高；范围（0，1）
                     max_tokens = settings != null && settings.MaxTokens != null ? settings.MaxTokens.Value : 512,//生成内容的最大长度，范围（0，4096）
                 }
             };

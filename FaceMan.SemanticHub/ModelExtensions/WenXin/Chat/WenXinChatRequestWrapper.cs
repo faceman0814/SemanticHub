@@ -8,12 +8,12 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using FaceMan.SemanticHub.Generation.TextGeneration;
+using FaceMan.SemanticHub.Generation.ChatGeneration;
 using FaceMan.SemanticHub.ModelExtensions.ZhiPu;
 
 namespace FaceMan.SemanticHub.ModelExtensions.WenXin.Chat
 {
-    public record WenXinRequestWrapper
+    public record WenXinChatRequestWrapper
     {
         public static WenXinRequestWrapper<TMessages> Create<TMessages>(TMessages messages, ChatParameters parameters = default) => new()
         {
@@ -35,7 +35,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.WenXin.Chat
         };
     }
 
-    public record WenXinRequestWrapper<TMessages> : WenXinRequestWrapper
+    public record WenXinRequestWrapper<TMessages> : WenXinChatRequestWrapper
     {
         /// <summary>
         /// 调用语言模型时，将当前对话信息列表作为提示输入给模型， 按照 {"role": "user", "content": "你好"} 的json 数组形式进行传参； 

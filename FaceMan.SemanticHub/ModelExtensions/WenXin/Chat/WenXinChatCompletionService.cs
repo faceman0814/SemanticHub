@@ -3,8 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using DocumentFormat.OpenXml.EMMA;
-
-using FaceMan.SemanticHub.Generation.TextGeneration;
+using FaceMan.SemanticHub.Generation.ChatGeneration;
 using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat;
 
 using Microsoft.SemanticKernel;

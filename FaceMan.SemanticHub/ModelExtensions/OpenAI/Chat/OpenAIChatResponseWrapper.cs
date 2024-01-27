@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat
 {
-    public record OpenAIResponseWrapper
+    public record OpenAIChatResponseWrapper
     {
         [JsonPropertyName("choices")]
         public List<Choice> Choices { get; set; }

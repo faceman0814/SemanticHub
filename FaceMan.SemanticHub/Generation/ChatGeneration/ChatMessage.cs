@@ -9,7 +9,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace FaceMan.SemanticHub.Generation.TextGeneration
+namespace FaceMan.SemanticHub.Generation.ChatGeneration
 {
     /// <summary>
     /// A single chat message within the conversation.

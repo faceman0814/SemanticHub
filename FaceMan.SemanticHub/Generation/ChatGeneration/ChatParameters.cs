@@ -11,7 +11,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace FaceMan.SemanticHub.Generation.TextGeneration
+namespace FaceMan.SemanticHub.Generation.ChatGeneration
 {
     public record ChatParameters
     {

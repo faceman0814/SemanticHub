@@ -24,7 +24,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
         }
         internal ModelClient Parent { get; }
 
-        public async Task<(string, Usage)> GetChatMessageContentsAsync(XunFeiRequest request, XunFeiRequestWrapper xunFeiRequest, CancellationToken cancellationToken = default)
+        public async Task<(string, Usage)> GetChatMessageContentsAsync(XunFeiRequest request, XunFeiChatRequestWrapper xunFeiRequest, CancellationToken cancellationToken = default)
         {
             string authUrl = GetAuthUrl(xunFeiRequest.Secret, xunFeiRequest.key);
             string url = authUrl.Replace("http://", "ws://").Replace("https://", "wss://");
@@ -47,7 +47,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
                     {
                         string receivedMessage = Encoding.UTF8.GetString(receiveBuffer, 0, result.Count);
                         //将结果构造为json
-                        var response = ModelClient.ReadResponse<XunFeiResponseWrapper>(receivedMessage);
+                        var response = ModelClient.ReadResponse<XunFeiChatResponseWrapper>(receivedMessage);
 
                         if (response.Header.Code == 0)
                         {
@@ -79,7 +79,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
             }
         }
 
-        public async IAsyncEnumerable<(string, Usage)> GetStreamingChatMessageContentsAsync(XunFeiRequest request, XunFeiRequestWrapper xunFeiRequest,
+        public async IAsyncEnumerable<(string, Usage)> GetStreamingChatMessageContentsAsync(XunFeiRequest request, XunFeiChatRequestWrapper xunFeiRequest,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             string authUrl = GetAuthUrl(xunFeiRequest.Secret, xunFeiRequest.key);
@@ -102,7 +102,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
                     {
                         string receivedMessage = Encoding.UTF8.GetString(receiveBuffer, 0, result.Count);
                         //将结果构造为json
-                        var response = ModelClient.ReadResponse<XunFeiResponseWrapper>(receivedMessage);
+                        var response = ModelClient.ReadResponse<XunFeiChatResponseWrapper>(receivedMessage);
 
                         if (response.Header.Code == 0)
                         {

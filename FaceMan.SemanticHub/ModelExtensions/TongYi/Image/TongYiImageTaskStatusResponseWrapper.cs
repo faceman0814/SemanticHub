@@ -14,7 +14,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Image
     /// <summary>
     /// 基本输出类，包含响应文本到图像操作的常用属性。
     /// </summary>
-    public record ImageTaskStatusResponseWrapper
+    public record TongYiImageTaskStatusResponseWrapper
     {
         /// <summary>
         /// 本次请求的异步任务的作业 id，实际作业结果需要通过异步任务查询接口获取。
@@ -93,7 +93,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Image
     /// <summary>
     /// 在文本到图像任务失败时提供详细信息的输出类。
     /// </summary>
-    public record FailedTaskResponseWrapper : ImageTaskStatusResponseWrapper
+    public record FailedTaskResponseWrapper : TongYiImageTaskStatusResponseWrapper
     {
         /// <summary>
         /// 任务结束的时间。
@@ -117,7 +117,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Image
     /// <summary>
     ///  代表成功完成文本到图像任务的输出类。
     /// </summary>
-    public record SuccessTaskResponseWrapper : ImageTaskStatusResponseWrapper
+    public record SuccessTaskResponseWrapper : TongYiImageTaskStatusResponseWrapper
     {
         /// <summary>
         /// 任务生成的图像结果列表.

@@ -5,8 +5,8 @@
 using DocumentFormat.OpenXml.EMMA;
 using DocumentFormat.OpenXml.Spreadsheet;
 
+using FaceMan.SemanticHub.Generation.ChatGeneration;
 using FaceMan.SemanticHub.Generation.ImageGeneration;
-using FaceMan.SemanticHub.Generation.TextGeneration;
 using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat;
 using FaceMan.SemanticHub.ModelExtensions.WenXin.Chat;
 using FaceMan.SemanticHub.ModelExtensions.ZhiPu;
@@ -37,18 +37,18 @@ namespace FaceMan.SemanticHub.ModelExtensions.WenXin
         }
         internal ModelClient Parent { get; }
 
-        public async Task<WenXinResponseWrapper> GetChatMessageContentsAsync(string model, IReadOnlyList<ChatMessage> messages, ChatParameters? parameters = null, CancellationToken cancellationToken = default)
+        public async Task<WenXinChatResponseWrapper> GetChatMessageContentsAsync(string model, IReadOnlyList<ChatMessage> messages, ChatParameters? parameters = null, CancellationToken cancellationToken = default)
         {
             HttpRequestMessage httpRequest = new(HttpMethod.Post, baseUrl + model + $"?access_token={parameters.Token}")
             {
-                Content = JsonContent.Create(WenXinRequestWrapper.Create(messages, parameters),
+                Content = JsonContent.Create(WenXinChatRequestWrapper.Create(messages, parameters),
                 options: new JsonSerializerOptions
                 {
                     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
                 }),
             };
             HttpResponseMessage resp = await Parent.HttpClient.SendAsync(httpRequest, cancellationToken);
-            return await ModelClient.ReadResponse<WenXinResponseWrapper>(resp, cancellationToken);
+            return await ModelClient.ReadResponse<WenXinChatResponseWrapper>(resp, cancellationToken);
         }
 
         public async IAsyncEnumerable<(string, Usage)> GetStreamingChatMessageContentsAsync(string model,
@@ -58,7 +58,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.WenXin
         {
             HttpRequestMessage httpRequest = new(HttpMethod.Post, baseUrl + model + $"?access_token={parameters.Token}")
             {
-                Content = JsonContent.Create(WenXinRequestWrapper.Create(messages, parameters),
+                Content = JsonContent.Create(WenXinChatRequestWrapper.Create(messages, parameters),
                 options: new JsonSerializerOptions
                 {
                     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
@@ -84,7 +84,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.WenXin
                     {
                         continue;
                     }
-                    var result = JsonSerializer.Deserialize<WenXinResponseWrapper>(data)!;
+                    var result = JsonSerializer.Deserialize<WenXinChatResponseWrapper>(data)!;
                     yield return (result.Result, result.Usage);
                 }
                 else if (line.StartsWith("{\"error\":"))
@@ -98,7 +98,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.WenXin
         {
             HttpRequestMessage httpRequest = new(HttpMethod.Post, ImgBaseUrl + model + $"?access_token={parameters.Token}")
             {
-                // Content = JsonContent.Create(WenXinRequestWrapper.Create(messages, parameters),
+                //Content = JsonContent.Create(WenXinChatRequestWrapper.Create(messages, parameters),
                 //options: new JsonSerializerOptions
                 //{
                 //    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull

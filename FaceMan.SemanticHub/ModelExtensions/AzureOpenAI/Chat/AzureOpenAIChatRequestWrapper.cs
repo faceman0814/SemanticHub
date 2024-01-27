@@ -1,11 +1,11 @@
-﻿using FaceMan.SemanticHub.Generation.TextGeneration;
+﻿using FaceMan.SemanticHub.Generation.ChatGeneration;
 using FaceMan.SemanticHub.ModelExtensions.QianWen;
 
 using System.Text.Json.Serialization;
 
 namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat
 {
-    public record AzureOpenAIRequestWrapper
+    public record AzureOpenAIChatRequestWrapper
     {
         public static AzureOpenAIRequestWrapper<TMessages> Create<TMessages>(TMessages messages, ChatParameters parameters = default) => new()
         {
@@ -22,7 +22,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat
         };
     }
 
-    public record AzureOpenAIRequestWrapper<TMessages> : AzureOpenAIRequestWrapper
+    public record AzureOpenAIRequestWrapper<TMessages> : AzureOpenAIChatRequestWrapper
     {
         /// <summary>
         /// 调用语言模型时，将当前对话信息列表作为提示输入给模型， 按照 {"role": "user", "content": "你好"} 的json 数组形式进行传参； 

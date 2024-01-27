@@ -7,7 +7,7 @@ using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 
-namespace FaceMan.SemanticHub.Generation.TextGeneration
+namespace FaceMan.SemanticHub.Generation.ChatGeneration
 {
     public interface IModelExtensionsChatCompletionService
     {

@@ -1,7 +1,5 @@
-﻿using DocumentFormat.OpenXml.EMMA;
-using FaceMan.SemanticHub.Generation.TextGeneration;
+﻿using FaceMan.SemanticHub.Generation.ChatGeneration;
 using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat;
-using FaceMan.SemanticHub.ModelExtensions.QianWen;
 
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
@@ -27,9 +25,9 @@ namespace FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat
             var histroyList = new List<ChatMessage>();
             ChatParameters chatParameters = new ChatParameters()
             {
-                TopP = settings != null ? (float)settings.TopP : (float)0.75,
+                TopP = settings != null ? (float)settings.TopP : (float)1.0,
                 MaxTokens = settings != null ? settings.MaxTokens : 512,
-                Temperature = settings != null ? (float)settings.Temperature : (float)0.95,
+                Temperature = settings != null ? (float)settings.Temperature : (float)1.0,
                 PresencePenalty = settings != null ? (float)settings.PresencePenalty : (float)0.0,
                 FrequencyPenalty = settings != null ? (float)settings.FrequencyPenalty : (float)0.0,
             };
@@ -47,7 +45,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat
         public async Task<ChatMessageContent> GetChatMessageContentsAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
             (var histroyList, var chatParameters) = Init(chatHistory, settings);
-            OpenAIResponseWrapper result = await client.OpenAI.GetChatMessageContentsAsync(config.ModelId, histroyList, chatParameters, cancellationToken);
+            OpenAIChatResponseWrapper result = await client.OpenAI.GetChatMessageContentsAsync(config.ModelId, histroyList, chatParameters, cancellationToken);
             var message = new ChatMessageContent(AuthorRole.Assistant, result.Choices.First().Message.Content);
             return message;
         }
@@ -55,7 +53,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat
         public async Task<(ChatMessageContent, Usage)> GetChatMessageContentsByTokenAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
             (var histroyList, var chatParameters) = Init(chatHistory, settings);
-            OpenAIResponseWrapper result = await client.OpenAI.GetChatMessageContentsAsync(config.ModelId, histroyList, chatParameters, cancellationToken);
+            OpenAIChatResponseWrapper result = await client.OpenAI.GetChatMessageContentsAsync(config.ModelId, histroyList, chatParameters, cancellationToken);
             var message = new ChatMessageContent(AuthorRole.Assistant, result.Choices.First().Message.Content);
             return (message, result.Usage);
         }

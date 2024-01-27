@@ -6,11 +6,11 @@ using Task = System.Threading.Tasks.Task;
 
 namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Image
 {
-    public class WanXiangImageCompletionService : IModelExtensionsImageCompletionService
+    public class TongYiImageCompletionService : IModelExtensionsImageCompletionService
     {
         private readonly string _model;
         private readonly ModelClient client;
-        public WanXiangImageCompletionService(string key, string model, string url = null)
+        public TongYiImageCompletionService(string key, string model, string url = null)
         {
             _model = model;
             client = new(key, ModelType.TongYi, url);
@@ -19,10 +19,10 @@ namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Image
         public async Task<List<string>> GetImageMessageContentsAsync(string prompt, ImageParameters parameters, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
             var results = new List<string>();
-            WanXiangResponseWrapper result = await client.TongYi.GetImageMessageContentsAsync(_model, prompt, parameters, cancellationToken);
+            TongYiImageResponseWrapper result = await client.TongYi.GetImageMessageContentsAsync(_model, prompt, parameters, cancellationToken);
             while (true)
             {
-                ImageTaskStatusResponseWrapper resp = await client.TongYi.QueryTaskStatus(result.TaskId, cancellationToken);
+                TongYiImageTaskStatusResponseWrapper resp = await client.TongYi.QueryTaskStatus(result.TaskId, cancellationToken);
                 if (resp.TaskStatus == ImageTaskStatusEnum.Succeeded)
                 {
                     SuccessTaskResponseWrapper success = resp.AsSuccess();

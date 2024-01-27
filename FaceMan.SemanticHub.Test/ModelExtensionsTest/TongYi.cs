@@ -13,9 +13,9 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
     public class TongYi
     {
         private ChatHistory historys;
-        private QianWenChatCompletionService chatgpt;
+        private TongYiChatCompletionService chatgpt;
         private OpenAIPromptExecutionSettings settings;
-        private WanXiangImageCompletionService imageService;
+        private TongYiImageCompletionService imageService;
         public TongYi()
         {
             historys = new ChatHistory();
@@ -28,7 +28,7 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
                 MaxTokens = 3,
                 //....其他参数
             };
-            imageService = new WanXiangImageCompletionService("YourKey", "YourModel");
+            imageService = new TongYiImageCompletionService("YourKey", "YourModel");
         }
 
         [TestMethod]

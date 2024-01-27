@@ -102,9 +102,9 @@ namespace FaceMan.SemanticHub.ModelExtensions
         /// <typeparam name="T"></typeparam>
         /// <param name="receivedMessage"></param>
         /// <returns></returns>
-        public static XunFeiResponseWrapper ReadResponse<T>(string receivedMessage)
+        public static XunFeiChatResponseWrapper ReadResponse<T>(string receivedMessage)
         {
-            XunFeiResponseWrapper response = JsonConvert.DeserializeObject<XunFeiResponseWrapper>(receivedMessage);
+            XunFeiChatResponseWrapper response = JsonConvert.DeserializeObject<XunFeiChatResponseWrapper>(receivedMessage);
             return response;
         }
 

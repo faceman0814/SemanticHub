@@ -14,7 +14,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Chat
     /// <summary>
     /// 用于映像请求异步任务的通用基本响应类。
     /// </summary>
-    public record QianWenResponseWrapper
+    public record TongYiChatResponseWrapper
     {
         /// <summary>
         /// The identifier corresponds to each individual request.

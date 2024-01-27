@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat
 {
-    public record AzureOpenAIResponseWrapper
+    public record AzureOpenAIChatResponseWrapper
     {
         [JsonPropertyName("choices")]
         public List<Choice> Choices { get; set; }
