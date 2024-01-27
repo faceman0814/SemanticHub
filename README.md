@@ -1,9 +1,6 @@
-
 # SemanticHub
 
-.Net 基于SK接入大语言模型的SDK，帮助使用者快速对接各大模型，目前仅支持对话模型
-
-- 支持流式接口在聊天接口中整合统一的入参和出参，方便调用。
+.Net 基于SK接入大语言模型的SDK，帮助使用者快速对接各大模型。
 
 # Version
 
@@ -12,24 +9,25 @@
 - v1.0.3 返回消耗的token数
 - v1.0.4 集成图像接口，仅支持Azure，通义万象，其他暂不对接，如有需要请提issue。
 
-# 已完成对话模型
-
-- [X] AzureOpenAI
-- [X] OpenAI
-- [X] 通义千问
-- [X] 讯飞星火
-- [X] 文心一言
-- [X] 智谱AI
-
 也可以直接搜索Nuget包FaceMan.SemanticHub引入
 ![image](https://github.com/faceman0814/SemanticHub/assets/74786133/c27744bb-cd4a-4ec2-9c75-9420d12c4c14)
 
 # 计划功能
 
 - [X] 对话模型
+
+  - [X] AzureOpenAI
+  - [X] OpenAI
+  - [X] 通义千问
+  - [X] 讯飞星火
+  - [X] 文心一言
+  - [X] 智谱AI
 - [X] 支持返回Token
 - [X] 支持自定义代理地址
 - [X] 图像接口
+
+  - [X] Azure
+  - [X] 通义万象
 - [ ] 文本处理接口
 - [ ] 语音转文字接口
 - [ ] 增加chatGLM、Gemini 等更多大模型
