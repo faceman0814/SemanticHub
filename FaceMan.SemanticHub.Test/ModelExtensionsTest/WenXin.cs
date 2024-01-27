@@ -25,8 +25,7 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
             //historys.AddUserMessage("用c#写一个冒泡排序");
             historys.AddUserMessage("你好");
             chatgpt = new("YourKey", "YourSecret", "YourModel", "YourEndPoint:自定义代理地址，可不填");
-            chatgpt = new("oSoGsTeMD1OGVaaInpnj3U9U", "PAkyqMhAq7S6IQKftjcAcUAn1PGOA2yU", "YourModel", "YourEndPoint:自定义代理地址，可不填");
-            imageService = new("oSoGsTeMD1OGVaaInpnj3U9U", "PAkyqMhAq7S6IQKftjcAcUAn1PGOA2yU", "sd_xl");
+            imageService = new("YourKey", "YourSecret", "YourModel", "YourEndPoint:自定义代理地址，可不填");
             settings = new OpenAIPromptExecutionSettings()
             {
                 MaxTokens = 3,
