@@ -1,13 +1,9 @@
 ﻿using FaceMan.SemanticHub.Generation.ImageGeneration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
-namespace FaceMan.SemanticHub.ConverterHelper
+namespace FaceMan.SemanticHub.Helper.ConverterHelper
 {
     public class TaskStatusConverter : JsonConverter<ImageTaskStatusEnum>
     {

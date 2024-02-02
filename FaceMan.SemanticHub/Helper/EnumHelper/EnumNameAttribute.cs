@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FaceMan.SemanticHub.EnumHelper
+﻿namespace FaceMan.SemanticHub.Helper.EnumHelper
 {
     [AttributeUsage(AttributeTargets.All)]
     public class EnumNameAttribute : Attribute

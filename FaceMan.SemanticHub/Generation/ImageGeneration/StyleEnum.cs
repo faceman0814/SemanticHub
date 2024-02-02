@@ -1,4 +1,4 @@
-﻿using FaceMan.SemanticHub.EnumHelper;
+﻿using FaceMan.SemanticHub.Helper.EnumHelper;
 
 using System.ComponentModel;
 

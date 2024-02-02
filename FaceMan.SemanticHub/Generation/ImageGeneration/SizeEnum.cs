@@ -1,11 +1,6 @@
-﻿using FaceMan.SemanticHub.EnumHelper;
+﻿using FaceMan.SemanticHub.Helper.EnumHelper;
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FaceMan.SemanticHub.Generation.ImageGeneration
 {
