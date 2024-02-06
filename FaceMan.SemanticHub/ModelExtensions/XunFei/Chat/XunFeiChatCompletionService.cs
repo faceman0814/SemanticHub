@@ -66,6 +66,23 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
                 };
                 request.payload.message.text.Add(Content);
             }
+            var apiType = string.Empty;
+            switch (_model)
+            {
+                case "Spark V3.5":
+                    apiType = "v3.5";
+                    break;
+                case "Spark V3.0":
+                    apiType = "v3.1";
+                    break;
+                case "Spark V2.0":
+                    apiType = "v2.1";
+                    break;
+                case "Spark V1.5":
+                    apiType = "v1.1";
+                    break;
+            }
+            request.ApiType = apiType;
             return request;
         }
         public async Task<ChatMessageContent> GetChatMessageContentsAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)

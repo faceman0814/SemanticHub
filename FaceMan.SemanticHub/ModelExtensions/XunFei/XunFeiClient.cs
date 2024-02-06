@@ -15,7 +15,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
     public class XunFeiClient
     {
         private ClientWebSocket webSocket0;
-        private readonly string baseUrl = "https://spark-api.xf-yun.com/v1.1/chat";
+        private readonly string baseUrl = "https://spark-api.xf-yun.com/";
 
         internal XunFeiClient(ModelClient parent, string url = null)
         {
@@ -26,7 +26,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
 
         public async Task<(string, Usage)> GetChatMessageContentsAsync(XunFeiRequest request, XunFeiChatRequestWrapper xunFeiRequest, CancellationToken cancellationToken = default)
         {
-            string authUrl = GetAuthUrl(xunFeiRequest.Secret, xunFeiRequest.key);
+            string authUrl = GetAuthUrl(xunFeiRequest.Secret, xunFeiRequest.key, request.ApiType);
             string url = authUrl.Replace("http://", "ws://").Replace("https://", "wss://");
             using (webSocket0 = new ClientWebSocket())
             {
@@ -82,7 +82,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
         public async IAsyncEnumerable<(string, Usage)> GetStreamingChatMessageContentsAsync(XunFeiRequest request, XunFeiChatRequestWrapper xunFeiRequest,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            string authUrl = GetAuthUrl(xunFeiRequest.Secret, xunFeiRequest.key);
+            string authUrl = GetAuthUrl(xunFeiRequest.Secret, xunFeiRequest.key, request.ApiType);
             string url = authUrl.Replace("http://", "ws://").Replace("https://", "wss://");
             using (webSocket0 = new ClientWebSocket())
             {
@@ -142,11 +142,11 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
         /// <param name="secret"></param>
         /// <param name="key"></param>
         /// <returns></returns>
-        private string GetAuthUrl(string secret, string key)
+        private string GetAuthUrl(string secret, string key, string apiKey)
         {
             string date = DateTime.UtcNow.ToString("r");
 
-            Uri uri = new Uri(baseUrl);
+            Uri uri = new Uri(baseUrl + apiKey + "/chat");
             StringBuilder builder = new StringBuilder("host: ").Append(uri.Host).Append("\n").//
                                     Append("date: ").Append(date).Append("\n").//
                                     Append("GET ").Append(uri.LocalPath).Append(" HTTP/1.1");
