@@ -7,7 +7,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace FaceMan.SemanticHub.ConverterHelper
+namespace FaceMan.SemanticHub.Helper.ConverterHelper
 {
     public class DateTimeConverter : JsonConverter<DateTime>
     {

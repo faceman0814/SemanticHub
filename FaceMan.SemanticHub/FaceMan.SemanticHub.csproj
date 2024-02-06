@@ -38,8 +38,4 @@
 		<PackageReference Include="Microsoft.SemanticKernel.Plugins.OpenApi" Version="1.0.1-alpha" />
 		<PackageReference Include="Microsoft.SemanticKernel.Plugins.Web" Version="1.0.1-alpha" />
 	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Generation\TextGeneration\" />
-	</ItemGroup>
 </Project>

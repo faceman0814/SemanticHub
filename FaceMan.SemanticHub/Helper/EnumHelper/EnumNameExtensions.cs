@@ -1,8 +1,6 @@
-﻿using FaceMan.SemanticHub.EnumHelper;
+﻿using System.Reflection;
 
-using System.Reflection;
-
-namespace FaceMan.SemanticHub
+namespace FaceMan.SemanticHub.Helper.EnumHelper
 {
     public static class EnumNameExtensions
     {
