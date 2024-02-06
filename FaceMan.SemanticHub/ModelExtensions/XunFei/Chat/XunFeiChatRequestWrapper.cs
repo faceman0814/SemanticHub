@@ -27,7 +27,6 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
         public Header header { get; set; }
         public Parameter parameter { get; set; }
         public Payload payload { get; set; }
-        public string ApiType { get; set; }
     }
 
     public record Header

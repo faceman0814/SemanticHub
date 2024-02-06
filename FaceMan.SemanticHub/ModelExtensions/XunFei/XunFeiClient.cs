@@ -24,9 +24,9 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
         }
         internal ModelClient Parent { get; }
 
-        public async Task<(string, Usage)> GetChatMessageContentsAsync(XunFeiRequest request, XunFeiChatRequestWrapper xunFeiRequest, CancellationToken cancellationToken = default)
+        public async Task<(string, Usage)> GetChatMessageContentsAsync(XunFeiRequest request, XunFeiChatRequestWrapper xunFeiRequest, string apiType, CancellationToken cancellationToken = default)
         {
-            string authUrl = GetAuthUrl(xunFeiRequest.Secret, xunFeiRequest.key, request.ApiType);
+            string authUrl = GetAuthUrl(xunFeiRequest.Secret, xunFeiRequest.key, apiType);
             string url = authUrl.Replace("http://", "ws://").Replace("https://", "wss://");
             using (webSocket0 = new ClientWebSocket())
             {
@@ -79,10 +79,10 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
             }
         }
 
-        public async IAsyncEnumerable<(string, Usage)> GetStreamingChatMessageContentsAsync(XunFeiRequest request, XunFeiChatRequestWrapper xunFeiRequest,
+        public async IAsyncEnumerable<(string, Usage)> GetStreamingChatMessageContentsAsync(XunFeiRequest request, XunFeiChatRequestWrapper xunFeiRequest,string apiType,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            string authUrl = GetAuthUrl(xunFeiRequest.Secret, xunFeiRequest.key, request.ApiType);
+            string authUrl = GetAuthUrl(xunFeiRequest.Secret, xunFeiRequest.key, apiType);
             string url = authUrl.Replace("http://", "ws://").Replace("https://", "wss://");
             using (webSocket0 = new ClientWebSocket())
             {

@@ -26,7 +26,7 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
             //historys.AddSystemMessage("你是一个c#编程高手，你将用代码回答我关于.net编程的技术问题，下面是我的第一个问题：");
             //historys.AddUserMessage("用c#写一个冒泡排序");
             historys.AddUserMessage("你好");
-            chatgpt = new("YourKey", "YourSecret", "YourAppId", "YourModel:可不填，默认general", "YourEndPoint:自定义代理地址，可不填");
+            chatgpt = new("YourKey", "YourSecret", "YourAppId", "YourModel", "YourEndPoint:自定义代理地址，可不填");
             settings = new OpenAIPromptExecutionSettings()
             {
                 MaxTokens = 3,

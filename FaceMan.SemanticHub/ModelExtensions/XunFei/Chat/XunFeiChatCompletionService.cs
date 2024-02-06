@@ -34,20 +34,42 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
         /// <param name="chatHistory">聊天历史</param>
         /// <param name="settings">模型参数</param>
         /// <returns></returns>
-        private XunFeiRequest Init(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null)
+        private (XunFeiRequest, string) Init(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null)
         {
             XunFeiRequest request = new XunFeiRequest();
             request.header = new Header()
             {
                 app_id = xunFeiRequest.AppId
             };
+            var apiType = string.Empty;
+            var modelName = string.Empty;
+            switch (_model)
+            {
+                case "Spark V3.5":
+                    apiType = "v3.5";
+                    modelName = "generalv3.5";
+                    break;
+                case "Spark V3.0":
+                    apiType = "v3.1";
+                    modelName = "generalv3";
+                    break;
+                case "Spark V2.0":
+                    apiType = "v2.1";
+                    modelName = "generalv2";
+                    break;
+                case "Spark V1.5":
+                    apiType = "v1.1";
+                    modelName = "general";
+                    break;
+            }
             request.parameter = new Parameter()
             {
                 chat = new Chat()
                 {
-                    domain = _model,//模型领域，默认为星火通用大模型
-                    temperature = settings != null ? settings.Temperature : 0.75, //温度采样阈值，用于控制生成内容的随机性和多样性，值越大多样性越高；范围（0，1）
+                    domain = modelName,//模型领域，默认为星火通用大模型
+                    temperature = settings != null ? settings.Temperature : 0.5, //温度采样阈值，用于控制生成内容的随机性和多样性，值越大多样性越高；范围（0，1）
                     max_tokens = settings != null && settings.MaxTokens != null ? settings.MaxTokens.Value : 512,//生成内容的最大长度，范围（0，4096）
+                    top_k = 1
                 }
             };
             request.payload = new Payload()
@@ -66,37 +88,21 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
                 };
                 request.payload.message.text.Add(Content);
             }
-            var apiType = string.Empty;
-            switch (_model)
-            {
-                case "Spark V3.5":
-                    apiType = "v3.5";
-                    break;
-                case "Spark V3.0":
-                    apiType = "v3.1";
-                    break;
-                case "Spark V2.0":
-                    apiType = "v2.1";
-                    break;
-                case "Spark V1.5":
-                    apiType = "v1.1";
-                    break;
-            }
-            request.ApiType = apiType;
-            return request;
+
+            return (request, apiType);
         }
         public async Task<ChatMessageContent> GetChatMessageContentsAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
-            var request = Init(chatHistory, settings);
-            var result = await client.XunFei.GetChatMessageContentsAsync(request, xunFeiRequest, cancellationToken);
+            (var request, var apiType) = Init(chatHistory, settings);
+            var result = await client.XunFei.GetChatMessageContentsAsync(request, xunFeiRequest, apiType, cancellationToken);
             var message = new ChatMessageContent(AuthorRole.Assistant, result.Item1);
             return message;
         }
 
         public async IAsyncEnumerable<string> GetStreamingChatMessageContentsAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
-            var request = Init(chatHistory, settings);
-            await foreach (var item in client.XunFei.GetStreamingChatMessageContentsAsync(request, xunFeiRequest, cancellationToken))
+            (var request, var apiType) = Init(chatHistory, settings);
+            await foreach (var item in client.XunFei.GetStreamingChatMessageContentsAsync(request, xunFeiRequest, apiType, cancellationToken))
             {
                 yield return item.Item1;
             }
@@ -104,16 +110,16 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
 
         public async Task<(ChatMessageContent, Usage)> GetChatMessageContentsByTokenAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
-            var request = Init(chatHistory, settings);
-            var result = await client.XunFei.GetChatMessageContentsAsync(request, xunFeiRequest, cancellationToken);
+            (var request, var apiType) = Init(chatHistory, settings);
+            var result = await client.XunFei.GetChatMessageContentsAsync(request, xunFeiRequest, apiType, cancellationToken);
             var message = new ChatMessageContent(AuthorRole.Assistant, result.Item1);
             return (message, result.Item2);
         }
 
         public async IAsyncEnumerable<(string, Usage)> GetStreamingChatMessageContentsByTokenAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
-            var request = Init(chatHistory, settings);
-            await foreach (var item in client.XunFei.GetStreamingChatMessageContentsAsync(request, xunFeiRequest, cancellationToken))
+            (var request, var apiType) = Init(chatHistory, settings);
+            await foreach (var item in client.XunFei.GetStreamingChatMessageContentsAsync(request, xunFeiRequest, apiType,cancellationToken))
             {
                 yield return (item.Item1, item.Item2);
             }
