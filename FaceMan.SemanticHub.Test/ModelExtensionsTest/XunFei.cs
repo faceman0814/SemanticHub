@@ -25,6 +25,7 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
             historys = new ChatHistory();
             //historys.AddSystemMessage("你是一个c#编程高手，你将用代码回答我关于.net编程的技术问题，下面是我的第一个问题：");
             //historys.AddUserMessage("用c#写一个冒泡排序");
+            // modelname：Spark V3.5、Spark V3.0、Spark V2.0、Spark V1.5
             historys.AddUserMessage("你好");
             chatgpt = new("YourKey", "YourSecret", "YourAppId", "YourModel", "YourEndPoint:自定义代理地址，可不填");
             settings = new OpenAIPromptExecutionSettings()
