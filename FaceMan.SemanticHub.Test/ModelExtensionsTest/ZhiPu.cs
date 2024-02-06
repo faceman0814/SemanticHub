@@ -24,10 +24,10 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
         public ZhiPu()
         {
             historys = new ChatHistory();
-            //historys.AddSystemMessage("你是一个c#编程高手，你将用代码回答我关于.net编程的技术问题，下面是我的第一个问题：");
-            //historys.AddUserMessage("用c#写一个冒泡排序");
-            historys.AddUserMessage("你好");
-            chatgpt = new("YourSecret", "YourModel", "YourEndPoint:自定义代理地址，可不填");
+            historys.AddSystemMessage("你是一个c#编程高手，你将用代码回答我关于.net编程的技术问题，下面是我的第一个问题：");
+            historys.AddUserMessage("用c#写一个冒泡排序");
+            //historys.AddUserMessage("你好");
+            chatgpt = new("9f863130cecc942f5b995813376682f9.wu3Lq531c9E6poBe", "chatglm_turbo");
             settings = new OpenAIPromptExecutionSettings()
             {
                 MaxTokens = 3,
