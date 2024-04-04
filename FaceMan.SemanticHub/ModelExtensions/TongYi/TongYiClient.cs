@@ -4,6 +4,7 @@
 
 using DocumentFormat.OpenXml.EMMA;
 using DocumentFormat.OpenXml.Spreadsheet;
+
 using FaceMan.SemanticHub.Generation.ChatGeneration;
 using FaceMan.SemanticHub.Generation.ImageGeneration;
 using FaceMan.SemanticHub.ModelExtensions.TongYi.Chat;
@@ -71,7 +72,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.QianWen
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
         /// <exception cref="TaskCanceledException"></exception>
-        public async IAsyncEnumerable<(string, QianWenUsage)> GetStreamingChatMessageContentsAsync(string model,
+        public async IAsyncEnumerable<TongYiChatResponseWrapper> GetStreamingChatMessageContentsAsync(string model,
         IReadOnlyList<ChatMessage> messages,
         ChatParameters? parameters = null,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
@@ -121,8 +122,8 @@ namespace FaceMan.SemanticHub.ModelExtensions.QianWen
                     string addedText = newText.Substring(lastText.Length);
 
                     lastText = newText;
-
-                    yield return (addedText, result.Usage);
+                    result.Output.Text = addedText;
+                    yield return result;
                 }
             }
         }

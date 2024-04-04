@@ -5,6 +5,7 @@ namespace FaceMan.SemanticHub
     public class AppConfiguration
     {
         public SemanticHubAzureOpenAIConfig AzureOpenAI { get; set; }
+        public SemanticHubTongYiConfig TongYi { get; set; }
         public SemanticHubAzureAISearchConfig AzureAISearch { get; set; }
         public SemanticHubQdrantConfig Qdrant { get; set; }
         public SemanticHubWeaviateConfig Weaviate { get; set; }
@@ -22,18 +23,17 @@ namespace FaceMan.SemanticHub
         public SemanticHubMongoDBConfig MongoDB { get; set; }
     }
 
-    public class SemanticHubModelBasicConfig
+    public class SemanticHubTongYiConfig
     {
-        public string ModelId { get; set; }
-        public string DeploymentName { get; set; }
+        public string ModelName { get; set; }
         public string Endpoint { get; set; }
         public string ApiKey { get; set; }
     }
     public class SemanticHubOpenAIConfig
     {
-        public string ModelId { get; set; }
+        public string ModelName { get; set; }
         public string ApiKey { get; set; }
-        public string BaseUrl { get; set; }
+        public string Endpoint { get; set; }
     }
 
     public class SemanticHubAzureOpenAIConfig

@@ -22,9 +22,9 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
             historys.AddUserMessage("你好");
             var input = new SemanticHubOpenAIConfig()
             {
-                ModelId = "gpt-3.5-turbo",
+                ModelName = "gpt-3.5-turbo",
                 ApiKey = "sk-28QixYCDWly24i15B025Ce5370D7488a8dA22b03953bD0D2",
-                BaseUrl = "https://oneapi.faceman.cn/v1"
+                Endpoint = "https://oneapi.faceman.cn/v1"
             };
             chatgpt = new(input);
             settings = new OpenAIPromptExecutionSettings()

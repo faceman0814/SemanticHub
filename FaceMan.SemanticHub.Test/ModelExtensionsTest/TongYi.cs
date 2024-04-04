@@ -22,10 +22,15 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
             //historys.AddSystemMessage("你是一个c#编程高手，你将用代码回答我关于.net编程的技术问题，下面是我的第一个问题：");
             //historys.AddUserMessage("用c#写一个冒泡排序");
             historys.AddUserMessage("你好");
-            chatgpt = new("YourKey", "YourModel", "YourEndPoint:自定义代理地址，可不填");
+            var input = new SemanticHubTongYiConfig()
+            {
+                ApiKey = "sk-1e2853e50be14bba93f9a612aa71bb15",
+                ModelName = "qwen-turbo"
+            };
+            chatgpt = new(input);
             settings = new OpenAIPromptExecutionSettings()
             {
-                MaxTokens = 3,
+                MaxTokens = 100,
                 //....其他参数
             };
             imageService = new TongYiImageCompletionService("YourKey", "YourModel");
@@ -51,38 +56,6 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
             {
                 Console.Write(item);
             }
-        }
-
-        [TestMethod]
-        public async Task GetChatMessageContentsByTokenAsync()
-        {
-            //对话————返回token
-            //输出
-            //您好，
-            //总消耗token：4 ,入参消耗token：1,出参消耗token：3
-            var resultToken = await chatgpt.GetChatMessageContentsByTokenAsync(historys, settings);
-            Console.WriteLine(resultToken.Item1);
-            Console.Write($"总消耗token：{resultToken.Item2.TotalTokens} ,入参消耗token：{resultToken.Item2.PromptTokens},出参消耗token：{resultToken.Item2.CompletionTokens}");
-        }
-
-        [TestMethod]
-        public async Task GetStreamingChatMessageContentsByTokenAsync()
-        {
-            //流式————返回token
-            //输出
-            //你好！有什么总消耗token：8 ,入参消耗token：2,出参消耗token：6
-            var sum = new Usage();
-            await foreach (var item in chatgpt.GetStreamingChatMessageContentsByTokenAsync(historys, settings))
-            {
-                Console.Write($"{item.Item1}");
-                if (item.Item2 != null)
-                {
-                    sum.CompletionTokens += item.Item2.CompletionTokens;
-                    sum.PromptTokens += item.Item2.PromptTokens;
-                    sum.TotalTokens += item.Item2.TotalTokens;
-                }
-            }
-            Console.Write($"总消耗token：{sum.TotalTokens} ,入参消耗token：{sum.PromptTokens},出参消耗token：{sum.CompletionTokens}");
         }
 
         [TestMethod]

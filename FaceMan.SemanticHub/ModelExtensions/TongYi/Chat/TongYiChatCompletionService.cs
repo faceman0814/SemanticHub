@@ -4,6 +4,8 @@
 
 using FaceMan.SemanticHub.Generation.ChatGeneration;
 using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion;
+using FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat;
+using FaceMan.SemanticHub.Service.ChatCompletion;
 
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
@@ -11,22 +13,24 @@ using Microsoft.SemanticKernel.Connectors.OpenAI;
 
 namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Chat
 {
-    public class TongYiChatCompletionService : IModelExtensionsChatCompletionService
+    public class TongYiChatCompletionService : ISemanticHubChatCompletionService
     {
-        private readonly string _model;
+        private readonly SemanticHubTongYiConfig _config;
         private readonly ModelClient client;
-        public TongYiChatCompletionService(string key, string model, string url = null)
+        public IReadOnlyDictionary<string, object?> Attributes => new Dictionary<string, object?>();
+        public TongYiChatCompletionService(SemanticHubTongYiConfig config)
         {
-            _model = model;
-            client = new(key, ModelType.TongYi, url);
+            _config = config;
+            client = new(config.ApiKey, ModelType.TongYi, config.Endpoint);
         }
 
-        (List<ChatMessage>, ChatParameters) Init(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null)
+        (List<ChatMessage>, ChatParameters) Init(PromptExecutionSettings executionSettings, ChatHistory chatHistory = null)
         {
+            var settings = OpenAIPromptExecutionSettings.FromExecutionSettings(executionSettings);
             var histroyList = new List<ChatMessage>();
             ChatParameters chatParameters = new ChatParameters()
             {
-                TopP = settings != null ? (float)settings.TopP : (float)0.75,
+                TopP = settings != null && settings.TopP != 1 ? (float)settings.TopP : (float)0.75,
                 MaxTokens = settings != null ? settings.MaxTokens : 512,
                 Temperature = settings != null ? (float)settings.Temperature : (float)0.95,
             };
@@ -43,71 +47,64 @@ namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Chat
             return (histroyList, chatParameters);
         }
 
-        /// <summary>
-        /// 对话
-        /// </summary>
-        /// <param name="chatHistory"></param>
-        /// <param name="settings"></param>
-        /// <param name="kernel"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        public async Task<ChatMessageContent> GetChatMessageContentsAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyList<ChatMessageContent>> GetChatMessageContentsAsync(ChatHistory chatHistory, PromptExecutionSettings executionSettings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
-
-            (var histroyList, var chatParameters) = Init(chatHistory, settings);
-            TongYiChatResponseWrapper result = await client.TongYi.GetChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken);
-            var message = new ChatMessageContent(AuthorRole.Assistant, result.Output.Text);
-            return message;
-        }
-
-        public async Task<(ChatMessageContent, Usage)> GetChatMessageContentsByTokenAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
-        {
-            (var histroyList, var chatParameters) = Init(chatHistory, settings);
-            TongYiChatResponseWrapper result = await client.TongYi.GetChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken);
-            var message = new ChatMessageContent(AuthorRole.Assistant, result.Output.Text);
-            var usage = new Usage()
+            (var histroyList, var chatParameters) = Init(executionSettings, chatHistory);
+            TongYiChatResponseWrapper response = await client.TongYi.GetChatMessageContentsAsync(_config.ModelName, histroyList, chatParameters, cancellationToken);
+            IReadOnlyDictionary<string, object?> metadata = GetResponseMetadata(response);
+            var result = new List<ChatMessageContent>()
             {
-                PromptTokens = result.Usage.InputTokens,
-                TotalTokens = result.Usage.TotalTokens,
-                CompletionTokens = result.Usage.OutputTokens
+                new ChatMessageContent(AuthorRole.Assistant, response.Output.Text, metadata: metadata)
             };
-            return (message, usage);
+            return result;
         }
 
-        public async IAsyncEnumerable<(string, Usage)> GetStreamingChatMessageContentsByTokenAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyList<TextContent>> GetTextContentsAsync(string prompt, PromptExecutionSettings executionSettings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
-            (var histroyList, var chatParameters) = Init(chatHistory, settings);
-
-            await foreach (var item in client.TongYi.GetStreamingChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken))
+            (var histroyList, var chatParameters) = Init(executionSettings);
+            TongYiChatResponseWrapper response = await client.TongYi.GetChatMessageContentsAsync(_config.ModelName, histroyList, chatParameters, cancellationToken);
+            IReadOnlyDictionary<string, object?> metadata = GetResponseMetadata(response);
+            var result = new List<TextContent>()
             {
-                var usage = new Usage()
-                {
-                    PromptTokens = item.Item2.InputTokens,
-                    TotalTokens = item.Item2.TotalTokens,
-                    CompletionTokens = item.Item2.OutputTokens
-                };
-                yield return (item.Item1, usage);
+                new TextContent( response.Output.Text, metadata: metadata)
+            };
+            return result;
+        }
+
+        public async IAsyncEnumerable<StreamingTextContent> GetStreamingTextContentsAsync(string prompt, PromptExecutionSettings executionSettings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
+        {
+            (var histroyList, var chatParameters) = Init(executionSettings);
+            //返回流式聊天消息内容
+            await foreach (var item in client.TongYi.GetStreamingChatMessageContentsAsync(_config.ModelName, histroyList, chatParameters, cancellationToken))
+            {
+                IReadOnlyDictionary<string, object?> metadata = GetResponseMetadata(item);
+                var result = new StreamingTextContent(item.Output.Text, metadata: metadata);
+                yield return result;
             }
         }
 
-        /// <summary>
-        /// 流式对话
-        /// </summary>
-        /// <param name="chatHistory"></param>
-        /// <param name="settings"></param>
-        /// <param name="kernel"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
-        public async IAsyncEnumerable<string> GetStreamingChatMessageContentsAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
+        public async IAsyncEnumerable<StreamingChatMessageContent> GetStreamingChatMessageContentsAsync(ChatHistory chatHistory, PromptExecutionSettings executionSettings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
-            (var histroyList, var chatParameters) = Init(chatHistory, settings);
-
-            await foreach (var item in client.TongYi.GetStreamingChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken))
+            (var histroyList, var chatParameters) = Init(executionSettings, chatHistory);
+            //返回流式聊天消息内容
+            await foreach (var item in client.TongYi.GetStreamingChatMessageContentsAsync(_config.ModelName, histroyList, chatParameters, cancellationToken))
             {
-                yield return item.Item1;
+                IReadOnlyDictionary<string, object?> metadata = GetResponseMetadata(item);
+                var result = new StreamingChatMessageContent(AuthorRole.Assistant, item.Output.Text, metadata: metadata);
+                yield return result;
             }
         }
 
+        private Dictionary<string, object?> GetResponseMetadata(TongYiChatResponseWrapper completions)
+        {
+            return new Dictionary<string, object?>(4)
+            {
+                { nameof(completions.Output), completions.Output },
+                { nameof(completions.RequestId), completions.RequestId },
+                { nameof(completions.Usage), completions.Usage },
+                { "Type", "TongYi" }
+            };
+        }
     }
 
 }

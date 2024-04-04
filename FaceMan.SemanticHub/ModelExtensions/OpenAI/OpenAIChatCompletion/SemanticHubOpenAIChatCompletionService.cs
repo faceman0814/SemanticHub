@@ -23,7 +23,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat
         public SemanticHubOpenAIChatCompletionService(SemanticHubOpenAIConfig config)
         {
             _config = config;
-            client = new(config.ApiKey, ModelType.OpenAI, config.BaseUrl);
+            client = new(config.ApiKey, ModelType.OpenAI, config.Endpoint);
         }
         (List<ChatMessage>, ChatParameters) Init(PromptExecutionSettings executionSettings, ChatHistory chatHistory = null)
         {
@@ -52,7 +52,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat
         public async Task<IReadOnlyList<ChatMessageContent>> GetChatMessageContentsAsync(ChatHistory chatHistory, PromptExecutionSettings executionSettings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
             (var histroyList, var chatParameters) = Init(executionSettings, chatHistory);
-            SemanticHubOpenAIChatResponseWrapper response = await client.OpenAI.GetChatMessageContentsAsync(_config.ModelId, histroyList, chatParameters, cancellationToken);
+            SemanticHubOpenAIChatResponseWrapper response = await client.OpenAI.GetChatMessageContentsAsync(_config.ModelName, histroyList, chatParameters, cancellationToken);
             IReadOnlyDictionary<string, object?> metadata = GetResponseMetadata(response);
             var result = new List<ChatMessageContent>();
             foreach (var item in response.Choices)
@@ -66,7 +66,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat
         public async Task<IReadOnlyList<TextContent>> GetTextContentsAsync(string prompt, PromptExecutionSettings executionSettings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
             (var histroyList, var chatParameters) = Init(executionSettings);
-            SemanticHubOpenAIChatResponseWrapper response = await client.OpenAI.GetChatMessageContentsAsync(_config.ModelId, histroyList, chatParameters, cancellationToken);
+            SemanticHubOpenAIChatResponseWrapper response = await client.OpenAI.GetChatMessageContentsAsync(_config.ModelName, histroyList, chatParameters, cancellationToken);
             List<TextContent> result = new List<TextContent>();
             IReadOnlyDictionary<string, object?> metadata = GetResponseMetadata(response);
             foreach (var item in response.Choices)
@@ -81,7 +81,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat
         {
             (var histroyList, var chatParameters) = Init(executionSettings);
             //返回流式聊天消息内容
-            await foreach (var item in client.OpenAI.GetStreamingChatMessageContentsAsync(_config.ModelId, histroyList, chatParameters, cancellationToken))
+            await foreach (var item in client.OpenAI.GetStreamingChatMessageContentsAsync(_config.ModelName, histroyList, chatParameters, cancellationToken))
             {
                 IReadOnlyDictionary<string, object?> metadata = GetResponseMetadata(item);
                 var result = new StreamingTextContent(item.Choices[0].Message.Content, item.Choices[0].Index, item.Model, metadata: metadata);
@@ -93,7 +93,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat
         {
             (var histroyList, var chatParameters) = Init(executionSettings, chatHistory);
             //返回流式聊天消息内容
-            await foreach (var item in client.OpenAI.GetStreamingChatMessageContentsAsync(_config.ModelId, histroyList, chatParameters, cancellationToken))
+            await foreach (var item in client.OpenAI.GetStreamingChatMessageContentsAsync(_config.ModelName, histroyList, chatParameters, cancellationToken))
             {
                 IReadOnlyDictionary<string, object?> metadata = GetResponseMetadata(item);
                 var result = new StreamingChatMessageContent(AuthorRole.Assistant, item.Choices[0].Message.Content, choiceIndex: item.Choices[0].Index, modelId: item.Model, metadata: metadata);
@@ -103,13 +103,14 @@ namespace FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat
 
         private Dictionary<string, object?> GetResponseMetadata(SemanticHubOpenAIChatResponseWrapper completions)
         {
-            return new Dictionary<string, object?>(5)
+            return new Dictionary<string, object?>(6)
             {
                 { nameof(completions.Id), completions.Id },
                 { nameof(completions.Choices), completions.Choices },
                 { nameof(completions.PromptFilterResults), completions.PromptFilterResults },
                 { nameof(completions.Model), completions.Model },
                 { nameof(completions.Usage), completions.Usage },
+                { "Type", "OpenAI" },
             };
         }
     }

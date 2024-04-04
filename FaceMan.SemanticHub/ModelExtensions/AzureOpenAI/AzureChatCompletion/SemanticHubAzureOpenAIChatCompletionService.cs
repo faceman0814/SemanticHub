@@ -1,19 +1,9 @@
-﻿using Azure.AI.OpenAI;
-
-using DocumentFormat.OpenXml.Wordprocessing;
-
-using FaceMan.SemanticHub.Generation.ChatGeneration;
+﻿using FaceMan.SemanticHub.Generation.ChatGeneration;
 using FaceMan.SemanticHub.Service.ChatCompletion;
-
-using Google.Apis.CustomSearchAPI.v1.Data;
 
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
-
-using Org.BouncyCastle.Asn1.Ocsp;
-
-using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion
 {
@@ -113,63 +103,17 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion
             }
         }
 
-        //public async IAsyncEnumerable<(StreamingChatMessageContent, Usage)> GetStreamingChatMessageContentsByTokenAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings executionSettings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
-        //{
-        //    (var histroyList, var chatParameters) = Init(executionSettings, chatHistory);
-        //    //返回流式聊天消息内容
-        //    await foreach (var item in client.AzureOpenAI.GetStreamingChatMessageContentsAsync(_config.DeploymentName, histroyList, chatParameters, cancellationToken))
-        //    {
-        //        var textContent = new StreamingChatMessageContent(AuthorRole.Assistant, item.Item1);
-        //        yield return (textContent, item.Item2);
-        //    }
-        //}
-
-        //public async Task<(IReadOnlyList<ChatMessageContent>, Usage)> GetChatMessageContentsByTokenAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings executionSettings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
-        //{
-        //    (var histroyList, var chatParameters) = Init(executionSettings, chatHistory);
-        //    AzureOpenAIChatResponseWrapper result = await client.AzureOpenAI.GetChatMessageContentsAsync(_config.DeploymentName, histroyList, chatParameters, cancellationToken);
-        //    List<ChatMessageContent> textContents = new List<ChatMessageContent>();
-        //    foreach (var item in result.Choices)
-        //    {
-        //        var message = new ChatMessageContent(AuthorRole.Assistant, item.Message.Content);
-        //        textContents.Add(message);
-        //    }
-        //    return (textContents, result.Usage);
-        //}
-
-        //public async IAsyncEnumerable<(StreamingTextContent, Usage)> GetStreamingTextContentsByTokenAsync(string prompt, OpenAIPromptExecutionSettings executionSettings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
-        //{
-        //    (var histroyList, var chatParameters) = Init(executionSettings);
-        //    //返回流式聊天消息内容
-        //    await foreach (var item in client.AzureOpenAI.GetStreamingChatMessageContentsAsync(_config.DeploymentName, histroyList, chatParameters, cancellationToken))
-        //    {
-        //        var textContent = new StreamingTextContent(item.Item1);
-        //        yield return (textContent, item.Item2);
-        //    }
-        //}
-
-        //public async Task<(IReadOnlyList<TextContent>, Usage)> GetTextContentsByTokenAsync(string prompt, OpenAIPromptExecutionSettings executionSettings, Kernel kernel, CancellationToken cancellationToken)
-        //{
-        //    (var histroyList, var chatParameters) = Init(executionSettings);
-        //    AzureOpenAIChatResponseWrapper result = await client.AzureOpenAI.GetChatMessageContentsAsync(_config.DeploymentName, histroyList, chatParameters, cancellationToken);
-        //    List<TextContent> textContents = new List<TextContent>();
-        //    foreach (var item in result.Choices)
-        //    {
-        //        var message = new TextContent(item.Message.Content);
-        //        textContents.Add(message);
-        //    }
-        //    return (textContents, result.Usage);
-        //}
 
         private Dictionary<string, object?> GetResponseMetadata(SemanticHubAzureOpenAIChatResponseWrapper completions)
         {
-            return new Dictionary<string, object?>(5)
+            return new Dictionary<string, object?>(6)
             {
                 { nameof(completions.Id), completions.Id },
                 { nameof(completions.Choices), completions.Choices },
                 { nameof(completions.PromptFilterResults), completions.PromptFilterResults },
                 { nameof(completions.Model), completions.Model },
                 { nameof(completions.Usage), completions.Usage },
+                { "Type", "AzureOpenAI" },
             };
         }
     }

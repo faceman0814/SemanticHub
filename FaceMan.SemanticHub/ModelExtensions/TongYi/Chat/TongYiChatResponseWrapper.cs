@@ -67,7 +67,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Chat
         /// 模型的输出内容。
         /// </summary>
         [JsonPropertyName("text")]
-        public string Text { get; init; }
+        public string Text { get; set; }
 
         /// <summary>
         /// 有3种情况：
