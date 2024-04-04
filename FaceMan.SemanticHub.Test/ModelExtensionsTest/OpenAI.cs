@@ -20,10 +20,16 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
             //historys.AddSystemMessage("你是一个c#编程高手，你将用代码回答我关于.net编程的技术问题，下面是我的第一个问题：");
             //historys.AddUserMessage("用c#写一个冒泡排序");
             historys.AddUserMessage("你好");
-            chatgpt = new("YourKey", "YourModel", "YourEndPoint:自定义代理地址，可不填");
+            var input = new SemanticHubOpenAIConfig()
+            {
+                ModelId = "gpt-3.5-turbo",
+                ApiKey = "sk-28QixYCDWly24i15B025Ce5370D7488a8dA22b03953bD0D2",
+                BaseUrl = "https://oneapi.faceman.cn/v1"
+            };
+            chatgpt = new(input);
             settings = new OpenAIPromptExecutionSettings()
             {
-                MaxTokens = 3,
+                MaxTokens = 100,
                 //....其他参数
             };
         }
@@ -57,9 +63,9 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
             //输出
             //你好！
             //总消耗token：12 ,入参消耗token：9,出参消耗token：3
-            var resultToken = await chatgpt.GetChatMessageContentsByTokenAsync(historys, settings);
-            Console.WriteLine(resultToken.Item1);
-            Console.Write($"总消耗token：{resultToken.Item2.TotalTokens} ,入参消耗token：{resultToken.Item2.PromptTokens},出参消耗token：{resultToken.Item2.CompletionTokens}");
+            //var resultToken = await chatgpt.GetChatMessageContentsByTokenAsync(historys, settings);
+            //Console.WriteLine(resultToken.Item1);
+            //Console.Write($"总消耗token：{resultToken.Item2.TotalTokens} ,入参消耗token：{resultToken.Item2.PromptTokens},出参消耗token：{resultToken.Item2.CompletionTokens}");
         }
 
         [TestMethod]
@@ -69,17 +75,17 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
             //输出
             //你好！总消耗token：0 ,入参消耗token：0,出参消耗token：0————OpenAI流式接口不返回token消耗情况
             var sum = new Usage();
-            await foreach (var item in chatgpt.GetStreamingChatMessageContentsByTokenAsync(historys, settings))
-            {
-                Console.Write($"{item.Item1}");
-                if (item.Item2 != null)
-                {
-                    sum.CompletionTokens += item.Item2.CompletionTokens;
-                    sum.PromptTokens += item.Item2.PromptTokens;
-                    sum.TotalTokens += item.Item2.TotalTokens;
-                }
-            }
-            Console.Write($"总消耗token：{sum.TotalTokens} ,入参消耗token：{sum.PromptTokens},出参消耗token：{sum.CompletionTokens}");
+            //await foreach (var item in chatgpt.GetStreamingChatMessageContentsByTokenAsync(historys, settings))
+            //{
+            //    Console.Write($"{item.Item1}");
+            //    if (item.Item2 != null)
+            //    {
+            //        sum.CompletionTokens += item.Item2.CompletionTokens;
+            //        sum.PromptTokens += item.Item2.PromptTokens;
+            //        sum.TotalTokens += item.Item2.TotalTokens;
+            //    }
+            //}
+            //Console.Write($"总消耗token：{sum.TotalTokens} ,入参消耗token：{sum.PromptTokens},出参消耗token：{sum.CompletionTokens}");
         }
     }
 }

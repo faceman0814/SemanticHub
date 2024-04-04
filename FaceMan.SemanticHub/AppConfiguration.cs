@@ -32,9 +32,8 @@ namespace FaceMan.SemanticHub
     public class SemanticHubOpenAIConfig
     {
         public string ModelId { get; set; }
-        public string ChatModelId { get; set; }
-        public string EmbeddingModelId { get; set; }
         public string ApiKey { get; set; }
+        public string BaseUrl { get; set; }
     }
 
     public class SemanticHubAzureOpenAIConfig

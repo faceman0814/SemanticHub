@@ -71,7 +71,8 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
 
             KernelFunction myFunction = kernel.CreateFunctionFromPrompt(FunctionDefinition);
 
-            //FunctionResult result = await kernel.InvokeAsync(myFunction, new() { ["input"] = "travel" });
+            FunctionResult result = await kernel.InvokeAsync(myFunction, new() { ["input"] = "travel" });
+
             await foreach (var message in kernel.InvokeStreamingAsync(myFunction, new() { ["input"] = "travel" }))
             {
                 Console.Write(message);

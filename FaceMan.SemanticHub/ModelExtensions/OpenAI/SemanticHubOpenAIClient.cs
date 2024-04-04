@@ -37,7 +37,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.OpenAI
             return await ModelClient.ReadResponse<SemanticHubOpenAIChatResponseWrapper>(resp, cancellationToken);
         }
 
-        public async IAsyncEnumerable<(string, Usage)> GetStreamingChatMessageContentsAsync(string model,
+        public async IAsyncEnumerable<SemanticHubOpenAIChatResponseWrapper> GetStreamingChatMessageContentsAsync(string model,
        IReadOnlyList<ChatMessage> messages,
        ChatParameters? parameters = null,
        [EnumeratorCancellation] CancellationToken cancellationToken = default)
@@ -73,7 +73,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.OpenAI
                     var result = System.Text.Json.JsonSerializer.Deserialize<SemanticHubOpenAIChatResponseWrapper>(data)!;
                     if (result.Choices.Any())
                     {
-                        yield return (result.Choices?.First()?.Delta?.Content, result.Usage);
+                        yield return result;
                     }
                     continue;
                 }

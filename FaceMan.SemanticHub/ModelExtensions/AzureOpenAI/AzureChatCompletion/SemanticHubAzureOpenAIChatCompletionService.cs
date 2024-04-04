@@ -50,8 +50,8 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion
                     {
                         new Content()
                         {
-                            Type="text",
-                            Text=item.Content
+                            Type = "text",
+                            Text = item.Content
                         }
                     },
                 };
@@ -64,14 +64,15 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion
         public async Task<IReadOnlyList<TextContent>> GetTextContentsAsync(string prompt, PromptExecutionSettings executionSettings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
             (var histroyList, var chatParameters) = Init(executionSettings);
-            SemanticHubAzureOpenAIChatResponseWrapper result = await client.AzureOpenAI.GetChatMessageContentsAsync(_config.DeploymentName, histroyList, chatParameters, cancellationToken);
-            List<TextContent> textContents = new List<TextContent>();
-            foreach (var item in result.Choices)
+            SemanticHubAzureOpenAIChatResponseWrapper response = await client.AzureOpenAI.GetChatMessageContentsAsync(_config.DeploymentName, histroyList, chatParameters, cancellationToken);
+            List<TextContent> result = new List<TextContent>();
+            IReadOnlyDictionary<string, object?> metadata = GetResponseMetadata(response);
+            foreach (var item in response.Choices)
             {
-                var message = new TextContent(item.Message.Content);
-                textContents.Add(message);
+                var message = new TextContent(item.Message.Content, response.Model, metadata: metadata);
+                result.Add(message);
             }
-            return textContents;
+            return result;
         }
 
         public async IAsyncEnumerable<StreamingTextContent> GetStreamingTextContentsAsync(string prompt, PromptExecutionSettings executionSettings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
@@ -81,23 +82,23 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion
             await foreach (var item in client.AzureOpenAI.GetStreamingChatMessageContentsAsync(_config.DeploymentName, histroyList, chatParameters, cancellationToken))
             {
                 IReadOnlyDictionary<string, object?> metadata = GetResponseMetadata(item);
-                var textContent = new StreamingTextContent(item.Choices[0].Message.Content, item.Choices[0].Index, item.Model, metadata: metadata);
-                yield return textContent;
+                var result = new StreamingTextContent(item.Choices[0].Message.Content, item.Choices[0].Index, item.Model, metadata: metadata);
+                yield return result;
             }
         }
 
         public async Task<IReadOnlyList<ChatMessageContent>> GetChatMessageContentsAsync(ChatHistory chatHistory, PromptExecutionSettings executionSettings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
             (var histroyList, var chatParameters) = Init(executionSettings, chatHistory);
-            SemanticHubAzureOpenAIChatResponseWrapper result = await client.AzureOpenAI.GetChatMessageContentsAsync(_config.DeploymentName, histroyList, chatParameters, cancellationToken);
-            IReadOnlyDictionary<string, object?> metadata = GetResponseMetadata(result);
-            List<ChatMessageContent> textContents = new List<ChatMessageContent>();
-            foreach (var item in result.Choices)
+            SemanticHubAzureOpenAIChatResponseWrapper response = await client.AzureOpenAI.GetChatMessageContentsAsync(_config.DeploymentName, histroyList, chatParameters, cancellationToken);
+            IReadOnlyDictionary<string, object?> metadata = GetResponseMetadata(response);
+            List<ChatMessageContent> result = new List<ChatMessageContent>();
+            foreach (var item in response.Choices)
             {
                 var message = new ChatMessageContent(AuthorRole.Assistant, item.Message.Content, metadata: metadata);
-                textContents.Add(message);
+                result.Add(message);
             }
-            return textContents;
+            return result;
         }
 
         public async IAsyncEnumerable<StreamingChatMessageContent> GetStreamingChatMessageContentsAsync(ChatHistory chatHistory, PromptExecutionSettings executionSettings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
@@ -107,8 +108,8 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion
             await foreach (var item in client.AzureOpenAI.GetStreamingChatMessageContentsAsync(_config.DeploymentName, histroyList, chatParameters, cancellationToken))
             {
                 IReadOnlyDictionary<string, object?> metadata = GetResponseMetadata(item);
-                var textContent = new StreamingChatMessageContent(AuthorRole.Assistant, item.Choices[0].Message.Content, choiceIndex: item.Choices[0].Index, modelId: item.Model, metadata: metadata);
-                yield return textContent;
+                var result = new StreamingChatMessageContent(AuthorRole.Assistant, item.Choices[0].Message.Content, choiceIndex: item.Choices[0].Index, modelId: item.Model, metadata: metadata);
+                yield return result;
             }
         }
 
@@ -160,16 +161,16 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion
         //    return (textContents, result.Usage);
         //}
 
-        private static Dictionary<string, object?> GetResponseMetadata(SemanticHubAzureOpenAIChatResponseWrapper completions)
+        private Dictionary<string, object?> GetResponseMetadata(SemanticHubAzureOpenAIChatResponseWrapper completions)
         {
             return new Dictionary<string, object?>(5)
-        {
-            { nameof(completions.Id), completions.Id },
-            { nameof(completions.Choices), completions.Choices },
-            { nameof(completions.PromptFilterResults), completions.PromptFilterResults },
-            { nameof(completions.Model), completions.Model },
-            { nameof(completions.Usage), completions.Usage },
-        };
+            {
+                { nameof(completions.Id), completions.Id },
+                { nameof(completions.Choices), completions.Choices },
+                { nameof(completions.PromptFilterResults), completions.PromptFilterResults },
+                { nameof(completions.Model), completions.Model },
+                { nameof(completions.Usage), completions.Usage },
+            };
         }
     }
 }
