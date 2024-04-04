@@ -46,11 +46,11 @@ namespace FaceMan.SemanticHub.ModelExtensions.QianWen
         /// <param name="parameters">模型参数</param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<TongYiChatResponseWrapper> GetChatMessageContentsAsync(string model, IReadOnlyList<ChatMessage> messages, ChatParameters? parameters = null, CancellationToken cancellationToken = default)
+        public async Task<SemanticHubTongYiChatResponseWrapper> GetChatMessageContentsAsync(string model, IReadOnlyList<ChatMessage> messages, ChatParameters? parameters = null, CancellationToken cancellationToken = default)
         {
             HttpRequestMessage httpRequest = new(HttpMethod.Post, baseUrl)
             {
-                Content = JsonContent.Create(TongYiChatRequestWrapper.Create(model, new
+                Content = JsonContent.Create(SemanticHubTongYiChatRequestWrapper.Create(model, new
                 {
                     messages,
                 }, parameters), options: new JsonSerializerOptions
@@ -59,7 +59,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.QianWen
                 }),
             };
             HttpResponseMessage resp = await Parent.HttpClient.SendAsync(httpRequest, cancellationToken);
-            return await ModelClient.ReadResponse<TongYiChatResponseWrapper>(resp, cancellationToken);
+            return await ModelClient.ReadResponse<SemanticHubTongYiChatResponseWrapper>(resp, cancellationToken);
         }
 
         /// <summary>
@@ -72,14 +72,14 @@ namespace FaceMan.SemanticHub.ModelExtensions.QianWen
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
         /// <exception cref="TaskCanceledException"></exception>
-        public async IAsyncEnumerable<TongYiChatResponseWrapper> GetStreamingChatMessageContentsAsync(string model,
+        public async IAsyncEnumerable<SemanticHubTongYiChatResponseWrapper> GetStreamingChatMessageContentsAsync(string model,
         IReadOnlyList<ChatMessage> messages,
         ChatParameters? parameters = null,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             HttpRequestMessage httpRequest = new(HttpMethod.Post, baseUrl)
             {
-                Content = JsonContent.Create(TongYiChatRequestWrapper.Create(model, new
+                Content = JsonContent.Create(SemanticHubTongYiChatRequestWrapper.Create(model, new
                 {
                     messages,
                 }, parameters), options: new JsonSerializerOptions
@@ -110,7 +110,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.QianWen
                     {
                         throw new Exception(data);
                     }
-                    var result = JsonSerializer.Deserialize<TongYiChatResponseWrapper>(data)!;
+                    var result = JsonSerializer.Deserialize<SemanticHubTongYiChatResponseWrapper>(data)!;
                     // 获取新增加的部分数据并返回
                     int commonPrefixLength = 0;
                     while (commonPrefixLength < lastText.Length && commonPrefixLength < result.Output.Text.Length && lastText[commonPrefixLength] == data[commonPrefixLength])
@@ -137,28 +137,32 @@ namespace FaceMan.SemanticHub.ModelExtensions.QianWen
         /// <param name="kernel"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public async Task<TongYiImageResponseWrapper> GetImageMessageContentsAsync(string model, string prompt, ImageParameters parameters, CancellationToken cancellationToken = default)
+        public async Task<SemanticHubTongYiImageResponseWrapper> GetImageMessageContentsAsync(string model, string prompt, ImageParameters parameters, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(parameters.Size))
             {
                 parameters.ImageSize = SizeEnum.Size1024x1024;
             }
+            if (string.IsNullOrEmpty(parameters.Style))
+            {
+                parameters.ImageStyle = StyleEnum.Auto;
+            }
             HttpRequestMessage httpRequest = new(HttpMethod.Post, ImgbaseUrl)
             {
-                Content = JsonContent.Create(TongYiImageRequestWrapper.Create(model, new { prompt }, parameters), options: new JsonSerializerOptions
+                Content = JsonContent.Create(SemanticHubTongYiImageRequestWrapper.Create(model, new { prompt }, parameters), options: new JsonSerializerOptions
                 {
                     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
                 }),
             };
             httpRequest.Headers.TryAddWithoutValidation("X-DashScope-Async", "enable");
             HttpResponseMessage resp = await Parent.HttpClient.SendAsync(httpRequest, cancellationToken);
-            return await ModelClient.ReadImageResponse<TongYiImageResponseWrapper>(resp, cancellationToken);
+            return await ModelClient.ReadImageResponse<SemanticHubTongYiImageResponseWrapper>(resp, cancellationToken);
         }
 
-        public async Task<TongYiImageTaskStatusResponseWrapper> QueryTaskStatus(string taskId, CancellationToken cancellationToken = default)
+        public async Task<SemanticHubTongYiImageTaskStatusResponseWrapper> QueryTaskStatus(string taskId, CancellationToken cancellationToken = default)
         {
             HttpResponseMessage resp = await Parent.HttpClient.GetAsync(ImgTaskbaseUrl + taskId);
-            return await ModelClient.ReadImageResponse<TongYiImageTaskStatusResponseWrapper>(resp, cancellationToken);
+            return await ModelClient.ReadImageResponse<SemanticHubTongYiImageTaskStatusResponseWrapper>(resp, cancellationToken);
         }
     }
 }

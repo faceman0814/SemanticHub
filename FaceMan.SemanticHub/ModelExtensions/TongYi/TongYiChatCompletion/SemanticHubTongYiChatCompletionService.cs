@@ -13,12 +13,12 @@ using Microsoft.SemanticKernel.Connectors.OpenAI;
 
 namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Chat
 {
-    public class TongYiChatCompletionService : ISemanticHubChatCompletionService
+    public class SemanticHubTongYiChatCompletionService : ISemanticHubChatCompletionService
     {
         private readonly SemanticHubTongYiConfig _config;
         private readonly ModelClient client;
         public IReadOnlyDictionary<string, object?> Attributes => new Dictionary<string, object?>();
-        public TongYiChatCompletionService(SemanticHubTongYiConfig config)
+        public SemanticHubTongYiChatCompletionService(SemanticHubTongYiConfig config)
         {
             _config = config;
             client = new(config.ApiKey, ModelType.TongYi, config.Endpoint);
@@ -50,7 +50,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Chat
         public async Task<IReadOnlyList<ChatMessageContent>> GetChatMessageContentsAsync(ChatHistory chatHistory, PromptExecutionSettings executionSettings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
             (var histroyList, var chatParameters) = Init(executionSettings, chatHistory);
-            TongYiChatResponseWrapper response = await client.TongYi.GetChatMessageContentsAsync(_config.ModelName, histroyList, chatParameters, cancellationToken);
+            SemanticHubTongYiChatResponseWrapper response = await client.TongYi.GetChatMessageContentsAsync(_config.ModelName, histroyList, chatParameters, cancellationToken);
             IReadOnlyDictionary<string, object?> metadata = GetResponseMetadata(response);
             var result = new List<ChatMessageContent>()
             {
@@ -62,7 +62,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Chat
         public async Task<IReadOnlyList<TextContent>> GetTextContentsAsync(string prompt, PromptExecutionSettings executionSettings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
             (var histroyList, var chatParameters) = Init(executionSettings);
-            TongYiChatResponseWrapper response = await client.TongYi.GetChatMessageContentsAsync(_config.ModelName, histroyList, chatParameters, cancellationToken);
+            SemanticHubTongYiChatResponseWrapper response = await client.TongYi.GetChatMessageContentsAsync(_config.ModelName, histroyList, chatParameters, cancellationToken);
             IReadOnlyDictionary<string, object?> metadata = GetResponseMetadata(response);
             var result = new List<TextContent>()
             {
@@ -95,7 +95,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Chat
             }
         }
 
-        private Dictionary<string, object?> GetResponseMetadata(TongYiChatResponseWrapper completions)
+        private Dictionary<string, object?> GetResponseMetadata(SemanticHubTongYiChatResponseWrapper completions)
         {
             return new Dictionary<string, object?>(4)
             {

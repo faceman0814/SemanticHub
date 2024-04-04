@@ -1,4 +1,6 @@
-﻿using FaceMan.SemanticHub.Generation.ImageGeneration;
+﻿using Azure.AI.OpenAI;
+
+using FaceMan.SemanticHub.Generation.ImageGeneration;
 using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion;
 using FaceMan.SemanticHub.ModelExtensions.TongYi.Chat;
 using FaceMan.SemanticHub.ModelExtensions.TongYi.Image;
@@ -13,9 +15,9 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
     public class TongYi
     {
         private ChatHistory historys;
-        private TongYiChatCompletionService chatgpt;
+        private SemanticHubTongYiChatCompletionService chatgpt;
         private OpenAIPromptExecutionSettings settings;
-        private TongYiImageCompletionService imageService;
+        private SemanticHubTongYiImageCompletionService imageService;
         public TongYi()
         {
             historys = new ChatHistory();
@@ -25,7 +27,7 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
             var input = new SemanticHubTongYiConfig()
             {
                 ApiKey = "sk-1e2853e50be14bba93f9a612aa71bb15",
-                ModelName = "qwen-turbo"
+                ModelName = "wanx-v1"
             };
             chatgpt = new(input);
             settings = new OpenAIPromptExecutionSettings()
@@ -33,7 +35,7 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
                 MaxTokens = 100,
                 //....其他参数
             };
-            imageService = new TongYiImageCompletionService("YourKey", "YourModel");
+            imageService = new SemanticHubTongYiImageCompletionService(input);
         }
 
         [TestMethod]
@@ -61,11 +63,8 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
         [TestMethod]
         public async Task GetImageMessageContentsAsync()
         {
-            var parameters = new ImageParameters()
-            {
-                ImageStyle = StyleEnum.Auto
-            };
-            var imgUrl = await imageService.GetImageMessageContentsAsync("画一只小清新风格的鲸鱼", parameters);
+            var parameters = new ImageGenerationOptions();
+            var imgUrl = await imageService.GenerateImageAsync("画一只小清新风格的鲸鱼", parameters);
             foreach (var item in imgUrl)
             {
                 Console.WriteLine($"生成的ImgUrl：{item}");

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Image
 {
-    public record TongYiImageRequestWrapper
+    public record SemanticHubTongYiImageRequestWrapper
     {
         public static WanXiangRequestWrapper<TInput, TParameters> Create<TInput, TParameters>(string model, TInput input, TParameters? parameters = default) => new()
         {
@@ -25,7 +25,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Image
         };
     }
 
-    public record WanXiangRequestWrapper<TInput, TParameters> : TongYiImageRequestWrapper
+    public record WanXiangRequestWrapper<TInput, TParameters> : SemanticHubTongYiImageRequestWrapper
     {
         [JsonPropertyName("model")]
         public string Model { get; set; }

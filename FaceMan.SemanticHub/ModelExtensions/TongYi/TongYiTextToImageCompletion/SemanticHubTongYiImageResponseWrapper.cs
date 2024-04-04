@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Image
 {
-    public record TongYiImageResponseWrapper
+    public record SemanticHubTongYiImageResponseWrapper
     {
         /// <summary>
         /// 本次请求的异步任务的作业 id，实际作业结果需要通过异步任务查询接口获取。

@@ -52,30 +52,55 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureTextToImageComple
                 var imageUri = item.Url.ToString();
                 var revisedPrompt = item.RevisedPrompt;
                 var base64Data = item.Base64Data;
-                var res = new ImageContext(imageUri, revisedPrompt, base64Data);
+                byte[] file = default;
+                if (string.IsNullOrEmpty(base64Data))
+                {
+                    file = await DownloadImageAsync(imageUri);
+
+                }
+                else
+                {
+                    file = Convert.FromBase64String(base64Data);
+                }
+                var res = new ImageContext(imageUri, revisedPrompt, base64Data, file);
                 result.Add(res);
             }
 
             return result;
         }
+
+        public async Task<byte[]> DownloadImageAsync(string imageUrl)
+        {
+            using (var client = new HttpClient())
+            {
+                var response = await client.GetAsync(imageUrl);
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadAsByteArrayAsync();
+                }
+                else
+                {
+                    throw new Exception("无法下载图片: " + response.ReasonPhrase);
+                }
+            }
+        }
     }
 
     public class ImageContext
     {
-        public ImageContext(string url, string revisedPrompt, string base64Data)
+        public ImageContext(string url, string revisedPrompt = null, string base64Data = null, byte[] file = null)
         {
             this.ImageUrL = url;
             this.RevisedPrompt = revisedPrompt;
             this.Base64Data = base64Data;
-            if (!base64Data.IsNullOrEmpty())
-            {
-                this.File = Convert.FromBase64String(base64Data);
-            }
+            this.File = file;
         }
 
         public string ImageUrL { get; set; }
         public string RevisedPrompt { get; set; }
         public string Base64Data { get; set; }
         public byte[] File { get; set; }
+
+
     }
 }
