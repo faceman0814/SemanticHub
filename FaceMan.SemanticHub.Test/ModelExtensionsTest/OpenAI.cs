@@ -1,10 +1,9 @@
-﻿using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI;
-using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat;
+﻿using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion;
 
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 
-using OpenAIChatCompletionService = FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat.OpenAIChatCompletionService;
+using SemanticHubOpenAIChatCompletionService = FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat.SemanticHubOpenAIChatCompletionService;
 
 namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
 {
@@ -12,7 +11,7 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
     public class OpenAI
     {
         private ChatHistory historys;
-        private OpenAIChatCompletionService chatgpt;
+        private SemanticHubOpenAIChatCompletionService chatgpt;
         private OpenAIPromptExecutionSettings settings;
 
         public OpenAI()

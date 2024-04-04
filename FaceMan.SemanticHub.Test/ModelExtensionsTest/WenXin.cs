@@ -1,7 +1,4 @@
-﻿using FaceMan.SemanticHub.Generation.ImageGeneration;
-using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI;
-using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat;
-using FaceMan.SemanticHub.ModelExtensions.TongYi.Image;
+﻿using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion;
 using FaceMan.SemanticHub.ModelExtensions.WenXin.Chat;
 using FaceMan.SemanticHub.ModelExtensions.WenXin.Image;
 

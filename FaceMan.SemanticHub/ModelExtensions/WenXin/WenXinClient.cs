@@ -7,7 +7,7 @@ using DocumentFormat.OpenXml.Spreadsheet;
 
 using FaceMan.SemanticHub.Generation.ChatGeneration;
 using FaceMan.SemanticHub.Generation.ImageGeneration;
-using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat;
+using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion;
 using FaceMan.SemanticHub.ModelExtensions.WenXin.Chat;
 using FaceMan.SemanticHub.ModelExtensions.ZhiPu;
 

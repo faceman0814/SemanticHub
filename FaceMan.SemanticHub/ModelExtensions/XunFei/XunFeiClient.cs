@@ -8,7 +8,7 @@ using System.Net.WebSockets;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-using Usage = FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat.Usage;
+using Usage = FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion.Usage;
 
 namespace FaceMan.SemanticHub.ModelExtensions.XunFei
 {

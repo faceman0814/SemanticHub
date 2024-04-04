@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat
+namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion
 {
-    public record AzureOpenAIChatContextMessage
+    public record SemanticHubAzureOpenAIChatContextMessage
     {
         [JsonPropertyName("role")]
         public string Role { get; set; }

@@ -1,5 +1,5 @@
 ﻿using FaceMan.SemanticHub.Generation.ChatGeneration;
-using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat;
+using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion;
 using FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat;
 
 using System.Net.Http.Json;
@@ -10,31 +10,31 @@ using System.Text.Json.Serialization;
 
 namespace FaceMan.SemanticHub.ModelExtensions.OpenAI
 {
-    public class OpenAIClient
+    public class SemanticHubOpenAIClient
     {
         /// <summary>
         /// 基础请求地址
         /// </summary>
         private readonly string baseUrl = "https://api.openai.com/v1";
-        internal OpenAIClient(ModelClient parent, string url = null)
+        internal SemanticHubOpenAIClient(ModelClient parent, string url = null)
         {
             Parent = parent;
             baseUrl = url ?? baseUrl;
         }
         internal ModelClient Parent { get; }
 
-        public async Task<OpenAIChatResponseWrapper> GetChatMessageContentsAsync(string model, IReadOnlyList<ChatMessage> messages, ChatParameters? parameters = null, CancellationToken cancellationToken = default)
+        public async Task<SemanticHubOpenAIChatResponseWrapper> GetChatMessageContentsAsync(string model, IReadOnlyList<ChatMessage> messages, ChatParameters? parameters = null, CancellationToken cancellationToken = default)
         {
             HttpRequestMessage httpRequest = new(HttpMethod.Post, baseUrl + "/chat/completions")
             {
-                Content = JsonContent.Create(OpenAIChatRequestWrapper.Create(model, messages, parameters)
+                Content = JsonContent.Create(SemanticHubOpenAIChatRequestWrapper.Create(model, messages, parameters)
                 , options: new JsonSerializerOptions
                 {
                     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
                 })
             };
             HttpResponseMessage resp = await Parent.HttpClient.SendAsync(httpRequest, cancellationToken);
-            return await ModelClient.ReadResponse<OpenAIChatResponseWrapper>(resp, cancellationToken);
+            return await ModelClient.ReadResponse<SemanticHubOpenAIChatResponseWrapper>(resp, cancellationToken);
         }
 
         public async IAsyncEnumerable<(string, Usage)> GetStreamingChatMessageContentsAsync(string model,
@@ -44,7 +44,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.OpenAI
         {
             HttpRequestMessage httpRequest = new(HttpMethod.Post, baseUrl + "/chat/completions")
             {
-                Content = JsonContent.Create(OpenAIChatRequestWrapper.Create(model, messages, parameters),
+                Content = JsonContent.Create(SemanticHubOpenAIChatRequestWrapper.Create(model, messages, parameters),
                 options: new JsonSerializerOptions
                 {
                     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
@@ -70,7 +70,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.OpenAI
                     {
                         continue;
                     }
-                    var result = System.Text.Json.JsonSerializer.Deserialize<OpenAIChatResponseWrapper>(data)!;
+                    var result = System.Text.Json.JsonSerializer.Deserialize<SemanticHubOpenAIChatResponseWrapper>(data)!;
                     if (result.Choices.Any())
                     {
                         yield return (result.Choices?.First()?.Delta?.Content, result.Usage);

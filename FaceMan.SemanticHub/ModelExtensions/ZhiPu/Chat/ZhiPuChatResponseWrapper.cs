@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using Azure.AI.OpenAI;
-using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat;
+using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion;
 using System;
 using System.Collections.Generic;
 using System.Linq;

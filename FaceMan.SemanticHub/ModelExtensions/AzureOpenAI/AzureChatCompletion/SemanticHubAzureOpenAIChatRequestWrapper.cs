@@ -3,33 +3,30 @@ using FaceMan.SemanticHub.ModelExtensions.QianWen;
 
 using System.Text.Json.Serialization;
 
-namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat
+namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion
 {
-    public record AzureOpenAIChatRequestWrapper
+    public record SemanticHubAzureOpenAIChatRequestWrapper
     {
-        public static AzureOpenAIRequestWrapper<TMessages> Create<TMessages>(TMessages messages, ChatParameters parameters = default) => new()
+        public static AzureOpenAIRequestWrapper Create(List<SemanticHubAzureOpenAIChatContextMessage> messages = null, ChatParameters parameters = default) => new()
         {
-            Messages = messages ?? throw new ArgumentNullException(nameof(messages)),
+            Messages = messages,
             MaxTokens = parameters != null ? parameters.MaxTokens : 1024,
             Stream = parameters != null ? parameters.Stream : false,
             Temperature = parameters != null ? parameters.Temperature : (float)0.7,
             TopP = parameters != null ? parameters.TopP : (float)0.95,
         };
 
-        public static AzureOpenAIRequestWrapper<TMessages> Create<TMessages>(TMessages messages) => new()
-        {
-            Messages = messages ?? throw new ArgumentNullException(nameof(messages))
-        };
+
     }
 
-    public record AzureOpenAIRequestWrapper<TMessages> : AzureOpenAIChatRequestWrapper
+    public record AzureOpenAIRequestWrapper : SemanticHubAzureOpenAIChatRequestWrapper
     {
         /// <summary>
         /// 调用语言模型时，将当前对话信息列表作为提示输入给模型， 按照 {"role": "user", "content": "你好"} 的json 数组形式进行传参； 
         /// 可能的消息类型包括 System message、User message、Assistant message 和 Tool message。
         /// </summary>
         [JsonPropertyName("messages")]
-        public TMessages Messages { get; init; }
+        public List<SemanticHubAzureOpenAIChatContextMessage> Messages { get; init; }
 
         /// <summary>
         /// 模型输出最大 tokens

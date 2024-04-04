@@ -3,7 +3,7 @@
 // See the LICENSE file in the project root for more information.
 
 using FaceMan.SemanticHub.Generation.ChatGeneration;
-using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat;
+using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion;
 using FaceMan.SemanticHub.ModelExtensions.ZhiPu.Chat;
 using System.Net.Http.Json;
 using System.Runtime.CompilerServices;

@@ -61,5 +61,19 @@ namespace FaceMan.SemanticHub.Generation.ImageGeneration
         [Description("扁平插画")]
         [EnumName("<flat illustration>")]
         FlatIllustration,
+
+        /// <summary>
+		/// 生动
+		/// </summary>
+		[Description("生动")]
+        [EnumName("vivid")]
+        Vivid = 0,
+
+        /// <summary>
+        /// 自然
+        /// </summary>
+        [Description("自然")]
+        [EnumName("natural")]
+        Natural,
     }
 }

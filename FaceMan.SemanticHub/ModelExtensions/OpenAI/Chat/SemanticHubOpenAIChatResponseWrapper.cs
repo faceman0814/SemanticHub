@@ -1,9 +1,9 @@
-﻿using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat;
+﻿using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion;
 using System.Text.Json.Serialization;
 
 namespace FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat
 {
-    public record OpenAIChatResponseWrapper
+    public record SemanticHubOpenAIChatResponseWrapper
     {
         [JsonPropertyName("choices")]
         public List<Choice> Choices { get; set; }

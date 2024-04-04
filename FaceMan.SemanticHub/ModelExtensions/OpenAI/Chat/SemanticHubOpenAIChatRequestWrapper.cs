@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat
 {
-    public record OpenAIChatRequestWrapper
+    public record SemanticHubOpenAIChatRequestWrapper
     {
         public static OpenAIRequestWrapper<TMessages> Create<TMessages>(string model, TMessages messages, ChatParameters parameters = default) => new()
         {
@@ -22,7 +22,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat
         };
     }
 
-    public record OpenAIRequestWrapper<TMessages> : OpenAIChatRequestWrapper
+    public record OpenAIRequestWrapper<TMessages> : SemanticHubOpenAIChatRequestWrapper
     {
         /// <summary>
         /// 调用语言模型时，将当前对话信息列表作为提示输入给模型， 按照 {"role": "user", "content": "你好"} 的json 数组形式进行传参； 
