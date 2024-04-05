@@ -15,8 +15,6 @@
 - [X] 支持返回Token
 - [X] 支持自定义代理地址
 - [X] 图像接口
-
-  - [X] Azure
   - [X] 通义万象
 - [ ] 文本处理接口
 - [ ] 语音转文字接口
@@ -34,6 +32,7 @@
 - v1.0.3
   - 返回消耗的token数
 - v1.0.4
-  - 集成图像接口，仅支持Azure，通义万象，其他暂不对接，如有需要请提issue
-  - 开发中。。。。
+  - 集成图像接口，仅支持通义万象，其他暂不对接，如有需要请提issue
+  - 重构对话接口，采用Kernel的写法实现ITextGenerationService、IChatCompletionService、ITextToImageService，使其更灵活。
+  - 更新单元测试
     # 使用方法
