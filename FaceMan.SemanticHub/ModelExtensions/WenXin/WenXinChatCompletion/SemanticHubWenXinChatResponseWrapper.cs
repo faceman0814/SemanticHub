@@ -3,12 +3,8 @@
 // See the LICENSE file in the project root for more information.
 
 using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace FaceMan.SemanticHub.ModelExtensions.WenXin.Chat
 {

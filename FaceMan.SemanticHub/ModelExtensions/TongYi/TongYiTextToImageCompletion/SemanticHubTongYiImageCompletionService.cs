@@ -26,17 +26,11 @@ namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Image
             _config = config;
             client = new(config.ApiKey, ModelType.TongYi, config.Endpoint);
         }
-        private ImageParameters Init(ImageGenerationOptions imageParameters)
-        {
-            var result = new ImageParameters();
 
-            return result;
-        }
         public async Task<List<ImageContext>> GenerateImageAsync(string prompt, ImageGenerationOptions imageParameters, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
             var results = new List<ImageContext>();
-            var parameters = Init(imageParameters);
-            SemanticHubTongYiImageResponseWrapper response = await client.TongYi.GetImageMessageContentsAsync(_config.ModelName, prompt, parameters, cancellationToken);
+            SemanticHubTongYiImageResponseWrapper response = await client.TongYi.GetImageMessageContentsAsync(_config.ModelName, prompt, _config.ImageParameters, cancellationToken);
             while (true)
             {
                 SemanticHubTongYiImageTaskStatusResponseWrapper resp = await client.TongYi.QueryTaskStatus(response.TaskId, cancellationToken);
@@ -68,11 +62,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Image
 
         public async Task<string> GenerateImageAsync(string description, int width, int height, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
-            var parameters = new ImageParameters()
-            {
-                Size = $"{width}* {height}"
-            };
-            SemanticHubTongYiImageResponseWrapper response = await client.TongYi.GetImageMessageContentsAsync(_config.ModelName, description, parameters, cancellationToken);
+            SemanticHubTongYiImageResponseWrapper response = await client.TongYi.GetImageMessageContentsAsync(_config.ModelName, description, _config.ImageParameters, cancellationToken);
             while (true)
             {
                 SemanticHubTongYiImageTaskStatusResponseWrapper resp = await client.TongYi.QueryTaskStatus(response.TaskId, cancellationToken);

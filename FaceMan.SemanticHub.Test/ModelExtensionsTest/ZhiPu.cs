@@ -10,7 +10,7 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
     public class ZhiPu
     {
         private ChatHistory historys;
-        private ZhiPuChatCompletionService chatgpt;
+        private SemanticHubZhiPuChatCompletionService chatgpt;
         private OpenAIPromptExecutionSettings settings;
 
         public ZhiPu()
@@ -18,11 +18,15 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
             historys = new ChatHistory();
             historys.AddSystemMessage("你是一个c#编程高手，你将用代码回答我关于.net编程的技术问题，下面是我的第一个问题：");
             historys.AddUserMessage("用c#写一个冒泡排序");
-            //historys.AddUserMessage("你好");
-            chatgpt = new("9f863130cecc942f5b995813376682f9.wu3Lq531c9E6poBe", "chatglm_turbo");
+            var input = new SemanticHubZhiPuConfig()
+            {
+                Secret = "",
+                ModelName = "chatglm_turbo"
+            };
+            chatgpt = new(input);
             settings = new OpenAIPromptExecutionSettings()
             {
-                MaxTokens = 3,
+                MaxTokens = 100,
                 //....其他参数
             };
         }
@@ -34,7 +38,7 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
             //输出
             //你好
             var result = await chatgpt.GetChatMessageContentsAsync(historys, settings);
-            Console.WriteLine(result);
+            Console.WriteLine(result[0].Content);
         }
 
         [TestMethod]
@@ -45,40 +49,8 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
             //你好
             await foreach (var item in chatgpt.GetStreamingChatMessageContentsAsync(historys, settings))
             {
-                Console.Write(item);
+                Console.Write(item.Content);
             }
-        }
-
-        [TestMethod]
-        public async Task GetChatMessageContentsByTokenAsync()
-        {
-            //对话————返回token
-            //输出
-            //你好
-            //总消耗token：12 ,入参消耗token：9,出参消耗token：3
-            var resultToken = await chatgpt.GetChatMessageContentsByTokenAsync(historys, settings);
-            Console.WriteLine(resultToken.Item1);
-            Console.Write($"总消耗token：{resultToken.Item2.TotalTokens} ,入参消耗token：{resultToken.Item2.PromptTokens},出参消耗token：{resultToken.Item2.CompletionTokens}");
-        }
-
-        [TestMethod]
-        public async Task GetStreamingChatMessageContentsByTokenAsync()
-        {
-            //流式————返回token
-            //输出
-            //你好总消耗token：12 ,入参消耗token：9,出参消耗token：3
-            var sum = new Usage();
-            await foreach (var item in chatgpt.GetStreamingChatMessageContentsByTokenAsync(historys, settings))
-            {
-                Console.Write($"{item.Item1}");
-                if (item.Item2 != null)
-                {
-                    sum.CompletionTokens += item.Item2.CompletionTokens;
-                    sum.PromptTokens += item.Item2.PromptTokens;
-                    sum.TotalTokens += item.Item2.TotalTokens;
-                }
-            }
-            Console.Write($"总消耗token：{sum.TotalTokens} ,入参消耗token：{sum.PromptTokens},出参消耗token：{sum.CompletionTokens}");
         }
     }
 }

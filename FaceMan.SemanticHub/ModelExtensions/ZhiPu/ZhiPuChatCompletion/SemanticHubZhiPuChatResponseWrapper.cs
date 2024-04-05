@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace FaceMan.SemanticHub.ModelExtensions.ZhiPu.Chat
 {
-    public record ZhiPuChatResponseWrapper
+    public record SemanticHubZhiPuChatResponseWrapper
     {
         [JsonPropertyName("choices")]
         public List<Choice> Choices { get; set; }

@@ -61,7 +61,11 @@ namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Chat
 
         public async Task<IReadOnlyList<TextContent>> GetTextContentsAsync(string prompt, PromptExecutionSettings executionSettings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
-            (var histroyList, var chatParameters) = Init(executionSettings);
+            var chatHistroy = new ChatHistory()
+            {
+                new ChatMessageContent(AuthorRole.User, prompt)
+            };
+            (var histroyList, var chatParameters) = Init(executionSettings, chatHistroy);
             SemanticHubTongYiChatResponseWrapper response = await client.TongYi.GetChatMessageContentsAsync(_config.ModelName, histroyList, chatParameters, cancellationToken);
             IReadOnlyDictionary<string, object?> metadata = GetResponseMetadata(response);
             var result = new List<TextContent>()
@@ -73,7 +77,11 @@ namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Chat
 
         public async IAsyncEnumerable<StreamingTextContent> GetStreamingTextContentsAsync(string prompt, PromptExecutionSettings executionSettings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
-            (var histroyList, var chatParameters) = Init(executionSettings);
+            var chatHistroy = new ChatHistory()
+            {
+                new ChatMessageContent(AuthorRole.User, prompt)
+            };
+            (var histroyList, var chatParameters) = Init(executionSettings, chatHistroy);
             //返回流式聊天消息内容
             await foreach (var item in client.TongYi.GetStreamingChatMessageContentsAsync(_config.ModelName, histroyList, chatParameters, cancellationToken))
             {

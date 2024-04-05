@@ -53,7 +53,11 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion
 
         public async Task<IReadOnlyList<TextContent>> GetTextContentsAsync(string prompt, PromptExecutionSettings executionSettings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
-            (var histroyList, var chatParameters) = Init(executionSettings);
+            var chatHistroy = new ChatHistory()
+            {
+                new ChatMessageContent(AuthorRole.User, prompt)
+            };
+            (var histroyList, var chatParameters) = Init(executionSettings, chatHistroy);
             SemanticHubAzureOpenAIChatResponseWrapper response = await client.AzureOpenAI.GetChatMessageContentsAsync(_config.DeploymentName, histroyList, chatParameters, cancellationToken);
             List<TextContent> result = new List<TextContent>();
             IReadOnlyDictionary<string, object?> metadata = GetResponseMetadata(response);
@@ -67,7 +71,11 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion
 
         public async IAsyncEnumerable<StreamingTextContent> GetStreamingTextContentsAsync(string prompt, PromptExecutionSettings executionSettings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
-            (var histroyList, var chatParameters) = Init(executionSettings);
+            var chatHistroy = new ChatHistory()
+            {
+                new ChatMessageContent(AuthorRole.User, prompt)
+            };
+            (var histroyList, var chatParameters) = Init(executionSettings, chatHistroy);
             //返回流式聊天消息内容
             await foreach (var item in client.AzureOpenAI.GetStreamingChatMessageContentsAsync(_config.DeploymentName, histroyList, chatParameters, cancellationToken))
             {

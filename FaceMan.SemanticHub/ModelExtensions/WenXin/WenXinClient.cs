@@ -51,7 +51,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.WenXin
             return await ModelClient.ReadResponse<SemanticHubWenXinChatResponseWrapper>(resp, cancellationToken);
         }
 
-        public async IAsyncEnumerable<(string, Usage)> GetStreamingChatMessageContentsAsync(string model,
+        public async IAsyncEnumerable<SemanticHubWenXinChatResponseWrapper> GetStreamingChatMessageContentsAsync(string model,
         IReadOnlyList<ChatMessage> messages,
         ChatParameters? parameters = null,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
@@ -85,7 +85,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.WenXin
                         continue;
                     }
                     var result = JsonSerializer.Deserialize<SemanticHubWenXinChatResponseWrapper>(data)!;
-                    yield return (result.Result, result.Usage);
+                    yield return result;
                 }
                 else if (line.StartsWith("{\"error\":"))
                 {

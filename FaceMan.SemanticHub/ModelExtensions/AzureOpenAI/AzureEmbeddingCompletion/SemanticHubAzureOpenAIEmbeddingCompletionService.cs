@@ -1,7 +1,5 @@
 ﻿using Microsoft.SemanticKernel;
 
-using static Org.BouncyCastle.Math.EC.ECCurve;
-
 namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureEmbeddingCompletion
 {
     public class SemanticHubAzureOpenAIEmbeddingCompletionService : ISemanticHubTextEmbeddingGenerationService

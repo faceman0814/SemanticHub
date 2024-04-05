@@ -3,8 +3,13 @@
 // See the LICENSE file in the project root for more information.
 
 using DocumentFormat.OpenXml.EMMA;
+
 using FaceMan.SemanticHub.Generation.ChatGeneration;
 using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion;
+using FaceMan.SemanticHub.ModelExtensions.TongYi.Chat;
+using FaceMan.SemanticHub.Service.ChatCompletion;
+
+using iTextSharp.text.pdf.qrcode;
 
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
@@ -14,23 +19,21 @@ using Newtonsoft.Json;
 
 namespace FaceMan.SemanticHub.ModelExtensions.WenXin.Chat
 {
-    public class SemanticHubWenXinChatCompletionService : IModelExtensionsChatCompletionService
+    public class SemanticHubWenXinChatCompletionService : ISemanticHubChatCompletionService
     {
-        private readonly string _secret;
-        private readonly string _key;
-        private readonly string _model;
+        private readonly SemanticHubWenXinConfig _config;
         private readonly ModelClient client;
-        public SemanticHubWenXinChatCompletionService(string key, string secret, string model, string url = null)
+        public IReadOnlyDictionary<string, object?> Attributes => new Dictionary<string, object?>();
+        public SemanticHubWenXinChatCompletionService(SemanticHubWenXinConfig config)
         {
-            _secret = secret;
-            _model = model;
-            _key = key;
-            client = new(secret, ModelType.WenXin, url);
+            _config = config;
+            client = new(config.Secret, ModelType.WenXin, config.Endpoint);
         }
-        async Task<(List<ChatMessage>, ChatParameters)> Init(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, bool IsStream = false)
+        public async Task<(List<ChatMessage>, ChatParameters)> Init(PromptExecutionSettings executionSettings, ChatHistory chatHistory = null, bool IsStream = false)
         {
+            var settings = OpenAIPromptExecutionSettings.FromExecutionSettings(executionSettings);
             var histroyList = new List<ChatMessage>();
-            var token = await client.WenXin.GetAccessToken(_key, _secret);
+            var token = await client.WenXin.GetAccessToken(_config.ApiKey, _config.Secret);
             var system = chatHistory.FirstOrDefault(t => t.Role == AuthorRole.System);
             ChatParameters chatParameters = new ChatParameters()
             {
@@ -56,37 +59,74 @@ namespace FaceMan.SemanticHub.ModelExtensions.WenXin.Chat
             }
             return (histroyList, chatParameters);
         }
-        public async Task<ChatMessageContent> GetChatMessageContentsAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
-        {
-            (var histroyList, var chatParameters) = await Init(chatHistory, settings);
-            var result = await client.WenXin.GetChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken);
-            return new ChatMessageContent(AuthorRole.Assistant, result.Result);
-        }
 
-        public async Task<(ChatMessageContent, Usage)> GetChatMessageContentsByTokenAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyList<ChatMessageContent>> GetChatMessageContentsAsync(ChatHistory chatHistory, PromptExecutionSettings executionSettings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
-            (var histroyList, var chatParameters) = await Init(chatHistory, settings);
-            var result = await client.WenXin.GetChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken);
-            return (new ChatMessageContent(AuthorRole.Assistant, result.Result), result.Usage);
-        }
-
-        public async IAsyncEnumerable<string> GetStreamingChatMessageContentsAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
-        {
-            (var histroyList, var chatParameters) = await Init(chatHistory, settings, true);
-            await foreach (var item in client.WenXin.GetStreamingChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken))
+            (var histroyList, var chatParameters) = await Init(executionSettings, chatHistory);
+            SemanticHubWenXinChatResponseWrapper response = await client.WenXin.GetChatMessageContentsAsync(_config.ModelName, histroyList, chatParameters, cancellationToken);
+            IReadOnlyDictionary<string, object?> metadata = GetResponseMetadata(response);
+            var result = new List<ChatMessageContent>()
             {
-                yield return item.Item1;
+                new ChatMessageContent(AuthorRole.Assistant, response.Result, metadata: metadata)
+            };
+            return result;
+        }
+
+        public async Task<IReadOnlyList<TextContent>> GetTextContentsAsync(string prompt, PromptExecutionSettings executionSettings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
+        {
+            var chatHistroy = new ChatHistory()
+            {
+                new ChatMessageContent(AuthorRole.User, prompt)
+            };
+            (var histroyList, var chatParameters) = await Init(executionSettings, chatHistroy);
+            SemanticHubWenXinChatResponseWrapper response = await client.WenXin.GetChatMessageContentsAsync(_config.ModelName, histroyList, chatParameters, cancellationToken);
+            IReadOnlyDictionary<string, object?> metadata = GetResponseMetadata(response);
+            var result = new List<TextContent>()
+            {
+                new TextContent( response.Result, metadata: metadata)
+            };
+            return result;
+        }
+
+        public async IAsyncEnumerable<StreamingTextContent> GetStreamingTextContentsAsync(string prompt, PromptExecutionSettings executionSettings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
+        {
+            var chatHistroy = new ChatHistory()
+            {
+                new ChatMessageContent(AuthorRole.User, prompt)
+            };
+            (var histroyList, var chatParameters) = await Init(executionSettings, chatHistroy, true);
+            //返回流式聊天消息内容
+            await foreach (var item in client.WenXin.GetStreamingChatMessageContentsAsync(_config.ModelName, histroyList, chatParameters, cancellationToken))
+            {
+                IReadOnlyDictionary<string, object?> metadata = GetResponseMetadata(item);
+                var result = new StreamingTextContent(item.Result, metadata: metadata);
+                yield return result;
             }
         }
 
-        public async IAsyncEnumerable<(string, Usage)> GetStreamingChatMessageContentsByTokenAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
+        public async IAsyncEnumerable<StreamingChatMessageContent> GetStreamingChatMessageContentsAsync(ChatHistory chatHistory, PromptExecutionSettings executionSettings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
-            (var histroyList, var chatParameters) = await Init(chatHistory, settings, true);
-            await foreach (var item in client.WenXin.GetStreamingChatMessageContentsAsync(_model, histroyList, chatParameters, cancellationToken))
+            (var histroyList, var chatParameters) = await Init(executionSettings, chatHistory, IsStream: true);
+            //返回流式聊天消息内容
+            await foreach (var item in client.WenXin.GetStreamingChatMessageContentsAsync(_config.ModelName, histroyList, chatParameters, cancellationToken))
             {
-                yield return (item.Item1, item.Item2);
+                IReadOnlyDictionary<string, object?> metadata = GetResponseMetadata(item);
+                var result = new StreamingChatMessageContent(AuthorRole.Assistant, item.Result, metadata: metadata);
+                yield return result;
             }
         }
 
+        private Dictionary<string, object?> GetResponseMetadata(SemanticHubWenXinChatResponseWrapper completions)
+        {
+            return new Dictionary<string, object?>(6)
+            {
+                { nameof(completions.Id), completions.Id },
+                { nameof(completions.Result), completions.Result },
+                { nameof(completions.IsTruncated), completions.IsTruncated },
+                { nameof(completions.NeedClearHistory), completions.NeedClearHistory },
+                { nameof(completions.Usage), completions.Usage },
+                { "Type", "WenXin" }
+            };
+        }
     }
 }

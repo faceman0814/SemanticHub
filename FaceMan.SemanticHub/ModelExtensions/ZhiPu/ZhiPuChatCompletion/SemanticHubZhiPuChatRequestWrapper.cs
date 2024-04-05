@@ -20,7 +20,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.ZhiPu.Chat
 {
     /// 请求包装器
     /// </summary>
-    public record ZhiPuChatRequestWrapper
+    public record SemanticHubZhiPuChatRequestWrapper
     {
         public static ZhiPuRequestWrapper<TMessages> Create<TMessages>(string model, TMessages messages, ChatParameters parameters = default) => new()
         {
@@ -39,7 +39,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.ZhiPu.Chat
         };
     }
 
-    public record ZhiPuRequestWrapper<TMessages> : ZhiPuChatRequestWrapper
+    public record ZhiPuRequestWrapper<TMessages> : SemanticHubZhiPuChatRequestWrapper
     {
         /// <summary>
         /// 所要调用的模型编码

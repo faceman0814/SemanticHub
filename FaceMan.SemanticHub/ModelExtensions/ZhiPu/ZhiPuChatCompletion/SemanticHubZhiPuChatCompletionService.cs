@@ -1,41 +1,42 @@
-﻿using DocumentFormat.OpenXml.Wordprocessing;
+﻿// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+// See the LICENSE file in the project root for more information.
 
 using FaceMan.SemanticHub.Generation.ChatGeneration;
 using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion;
+using FaceMan.SemanticHub.ModelExtensions.TongYi.Chat;
 using FaceMan.SemanticHub.Service.ChatCompletion;
 
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 
-using System.Collections.Generic;
-
-using static Org.BouncyCastle.Math.EC.ECCurve;
-
-namespace FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat
+namespace FaceMan.SemanticHub.ModelExtensions.ZhiPu.Chat
 {
-    public class SemanticHubOpenAIChatCompletionService : ISemanticHubChatCompletionService
+    public class SemanticHubZhiPuChatCompletionService : ISemanticHubChatCompletionService
     {
-        private readonly SemanticHubOpenAIConfig _config;
+
+        private readonly SemanticHubZhiPuConfig _config;
         private readonly ModelClient client;
         public IReadOnlyDictionary<string, object?> Attributes => new Dictionary<string, object?>();
-
-        public SemanticHubOpenAIChatCompletionService(SemanticHubOpenAIConfig config)
+        public SemanticHubZhiPuChatCompletionService(SemanticHubZhiPuConfig config)
         {
             _config = config;
-            client = new(config.ApiKey, ModelType.OpenAI, config.Endpoint);
+            client = new(_config.Secret, ModelType.ZhiPu, _config.Endpoint);
         }
-        (List<ChatMessage>, ChatParameters) Init(PromptExecutionSettings executionSettings, ChatHistory chatHistory = null)
+
+        (List<ChatMessage>, ChatParameters) Init(PromptExecutionSettings executionSettings, ChatHistory chatHistory = null, bool isStream = false)
         {
             var settings = OpenAIPromptExecutionSettings.FromExecutionSettings(executionSettings);
             var histroyList = new List<ChatMessage>();
+            //因为智谱AI官方调用的有bug，所以这里做一下处理。
+            histroyList.Add(ChatMessage.FromSystem("1"));
             ChatParameters chatParameters = new ChatParameters()
             {
-                TopP = settings != null ? (float)settings.TopP : (float)1.0,
+                TopP = settings != null && settings.Temperature != 1 ? (float)settings.TopP : (float)0.75,
+                // max_tokens 应该在 [1, 1500]的区间
                 MaxTokens = settings != null ? settings.MaxTokens : 512,
-                Temperature = settings != null ? (float)settings.Temperature : (float)1.0,
-                PresencePenalty = settings != null ? (float)settings.PresencePenalty : (float)0.0,
-                FrequencyPenalty = settings != null ? (float)settings.FrequencyPenalty : (float)0.0,
+                Temperature = settings != null && settings.Temperature != 1 ? (float)settings.Temperature : (float)0.95,
             };
             foreach (var item in chatHistory)
             {
@@ -52,13 +53,13 @@ namespace FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat
         public async Task<IReadOnlyList<ChatMessageContent>> GetChatMessageContentsAsync(ChatHistory chatHistory, PromptExecutionSettings executionSettings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
             (var histroyList, var chatParameters) = Init(executionSettings, chatHistory);
-            SemanticHubOpenAIChatResponseWrapper response = await client.OpenAI.GetChatMessageContentsAsync(_config.ModelName, histroyList, chatParameters, cancellationToken);
+            SemanticHubZhiPuChatResponseWrapper response = await client.ZhiPu.GetChatMessageContentsAsync(_config.ModelName, histroyList, chatParameters, cancellationToken);
             IReadOnlyDictionary<string, object?> metadata = GetResponseMetadata(response);
             var result = new List<ChatMessageContent>();
             foreach (var item in response.Choices)
             {
-                var message = new ChatMessageContent(AuthorRole.Assistant, item.Message.Content, response.Model, metadata: metadata);
-                result.Add(message);
+                var res = new ChatMessageContent(AuthorRole.Assistant, item.Message.Content, metadata: metadata);
+                result.Add(res);
             }
             return result;
         }
@@ -70,13 +71,13 @@ namespace FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat
                 new ChatMessageContent(AuthorRole.User, prompt)
             };
             (var histroyList, var chatParameters) = Init(executionSettings, chatHistroy);
-            SemanticHubOpenAIChatResponseWrapper response = await client.OpenAI.GetChatMessageContentsAsync(_config.ModelName, histroyList, chatParameters, cancellationToken);
-            List<TextContent> result = new List<TextContent>();
+            SemanticHubZhiPuChatResponseWrapper response = await client.ZhiPu.GetChatMessageContentsAsync(_config.ModelName, histroyList, chatParameters, cancellationToken);
             IReadOnlyDictionary<string, object?> metadata = GetResponseMetadata(response);
+            var result = new List<TextContent>();
             foreach (var item in response.Choices)
             {
-                var message = new TextContent(item.Message.Content, response.Model, metadata: metadata);
-                result.Add(message);
+                var res = new TextContent(item.Message.Content, metadata: metadata);
+                result.Add(res);
             }
             return result;
         }
@@ -87,38 +88,39 @@ namespace FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat
             {
                 new ChatMessageContent(AuthorRole.User, prompt)
             };
-            (var histroyList, var chatParameters) = Init(executionSettings, chatHistroy);
+            (var histroyList, var chatParameters) = Init(executionSettings, chatHistroy, true);
             //返回流式聊天消息内容
-            await foreach (var item in client.OpenAI.GetStreamingChatMessageContentsAsync(_config.ModelName, histroyList, chatParameters, cancellationToken))
+            await foreach (var item in client.ZhiPu.GetStreamingChatMessageContentsAsync(_config.ModelName, histroyList, chatParameters, cancellationToken))
             {
                 IReadOnlyDictionary<string, object?> metadata = GetResponseMetadata(item);
-                var result = new StreamingTextContent(item.Choices[0].Message.Content, item.Choices[0].Index, item.Model, metadata: metadata);
+                var result = new StreamingTextContent(item.Choices[0].Message.Content, metadata: metadata);
                 yield return result;
             }
         }
 
         public async IAsyncEnumerable<StreamingChatMessageContent> GetStreamingChatMessageContentsAsync(ChatHistory chatHistory, PromptExecutionSettings executionSettings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
-            (var histroyList, var chatParameters) = Init(executionSettings, chatHistory);
+            (var histroyList, var chatParameters) = Init(executionSettings, chatHistory, true);
             //返回流式聊天消息内容
-            await foreach (var item in client.OpenAI.GetStreamingChatMessageContentsAsync(_config.ModelName, histroyList, chatParameters, cancellationToken))
+            await foreach (var item in client.ZhiPu.GetStreamingChatMessageContentsAsync(_config.ModelName, histroyList, chatParameters, cancellationToken))
             {
                 IReadOnlyDictionary<string, object?> metadata = GetResponseMetadata(item);
-                var result = new StreamingChatMessageContent(AuthorRole.Assistant, item.Choices[0].Message.Content, choiceIndex: item.Choices[0].Index, modelId: item.Model, metadata: metadata);
+                var result = new StreamingChatMessageContent(AuthorRole.Assistant, item.Choices[0].Message.Content, metadata: metadata);
                 yield return result;
             }
         }
 
-        private Dictionary<string, object?> GetResponseMetadata(SemanticHubOpenAIChatResponseWrapper completions)
+        private Dictionary<string, object?> GetResponseMetadata(SemanticHubZhiPuChatResponseWrapper completions)
         {
-            return new Dictionary<string, object?>(6)
+            return new Dictionary<string, object?>(7)
             {
                 { nameof(completions.Id), completions.Id },
-                { nameof(completions.Choices), completions.Choices },
-                { nameof(completions.PromptFilterResults), completions.PromptFilterResults },
                 { nameof(completions.Model), completions.Model },
+                { nameof(completions.Created), completions.Created },
+                { nameof(completions.Choices), completions.Choices },
+                { nameof(completions.RequestId), completions.RequestId },
                 { nameof(completions.Usage), completions.Usage },
-                { "Type", "OpenAI" },
+                { "Type", "ZhiPu" }
             };
         }
     }

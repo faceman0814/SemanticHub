@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace FaceMan.SemanticHub.ModelExtensions.XunFei
 {
-    public record XunFeiChatRequestWrapper
+    public record SemanticHubXunFeiChatRequestWrapper
     {
         public string AppId { get; set; }
         public string Secret { get; set; }

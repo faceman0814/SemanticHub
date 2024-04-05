@@ -8,7 +8,7 @@ using System.Text.Json.Serialization;
 
 namespace FaceMan.SemanticHub.ModelExtensions.XunFei
 {
-    public record XunFeiChatResponseWrapper
+    public record SemanticHubXunFeiChatResponseWrapper
     {
         /// <summary>
         /// 请求头，包含请求结果，可以用来看是否请求成功

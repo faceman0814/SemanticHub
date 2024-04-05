@@ -1,4 +1,6 @@
-﻿using Microsoft.SemanticKernel.ChatCompletion;
+﻿using FaceMan.SemanticHub.Generation.ImageGeneration;
+
+using Microsoft.SemanticKernel.ChatCompletion;
 
 namespace FaceMan.SemanticHub
 {
@@ -6,6 +8,9 @@ namespace FaceMan.SemanticHub
     {
         public SemanticHubAzureOpenAIConfig AzureOpenAI { get; set; }
         public SemanticHubTongYiConfig TongYi { get; set; }
+        public SemanticHubZhiPuConfig ZhiPu { get; set; }
+        public SemanticHubWenXinConfig WenXin { get; set; }
+        public SemanticHubXunFeiConfig XunFei { get; set; }
         public SemanticHubAzureAISearchConfig AzureAISearch { get; set; }
         public SemanticHubQdrantConfig Qdrant { get; set; }
         public SemanticHubWeaviateConfig Weaviate { get; set; }
@@ -22,9 +27,32 @@ namespace FaceMan.SemanticHub
         public SemanticHubKustoConfig Kusto { get; set; }
         public SemanticHubMongoDBConfig MongoDB { get; set; }
     }
+    public class SemanticHubZhiPuConfig
+    {
+        public string ModelName { get; set; }
+        public string Secret { get; set; }
+        public string Endpoint { get; set; }
+    }
+    public class SemanticHubXunFeiConfig
+    {
+        public string ModelName { get; set; } = "Spark V3.5";
+        public string Endpoint { get; set; }
+        public string ApiKey { get; set; }
+        public string Secret { get; set; }
+        public string AppId { get; set; }
+    }
+
+    public class SemanticHubWenXinConfig
+    {
+        public string ModelName { get; set; }
+        public string Endpoint { get; set; }
+        public string ApiKey { get; set; }
+        public string Secret { get; set; }
+    }
 
     public class SemanticHubTongYiConfig
     {
+        public ImageParameters ImageParameters { get; set; }
         public string ModelName { get; set; }
         public string Endpoint { get; set; }
         public string ApiKey { get; set; }

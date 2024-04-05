@@ -5,6 +5,7 @@
 using FaceMan.SemanticHub.Generation.ChatGeneration;
 using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion;
 using FaceMan.SemanticHub.ModelExtensions.ZhiPu.Chat;
+
 using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -23,28 +24,28 @@ namespace FaceMan.SemanticHub.ModelExtensions.ZhiPu
         }
         internal ModelClient Parent { get; }
 
-        public async Task<ZhiPuChatResponseWrapper> GetChatMessageContentsAsync(string model, IReadOnlyList<ChatMessage> messages, ChatParameters? parameters = null, CancellationToken cancellationToken = default)
+        public async Task<SemanticHubZhiPuChatResponseWrapper> GetChatMessageContentsAsync(string model, IReadOnlyList<ChatMessage> messages, ChatParameters? parameters = null, CancellationToken cancellationToken = default)
         {
             HttpRequestMessage httpRequest = new(HttpMethod.Post, baseUrl)
             {
-                Content = JsonContent.Create(ZhiPuChatRequestWrapper.Create(model, messages, parameters),
+                Content = JsonContent.Create(SemanticHubZhiPuChatRequestWrapper.Create(model, messages, parameters),
                 options: new JsonSerializerOptions
                 {
                     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
                 }),
             };
             HttpResponseMessage resp = await Parent.HttpClient.SendAsync(httpRequest, cancellationToken);
-            return await ModelClient.ReadResponse<ZhiPuChatResponseWrapper>(resp, cancellationToken);
+            return await ModelClient.ReadResponse<SemanticHubZhiPuChatResponseWrapper>(resp, cancellationToken);
         }
 
-        public async IAsyncEnumerable<(string, Usage)> GetStreamingChatMessageContentsAsync(string model,
+        public async IAsyncEnumerable<SemanticHubZhiPuChatResponseWrapper> GetStreamingChatMessageContentsAsync(string model,
         IReadOnlyList<ChatMessage> messages,
         ChatParameters? parameters = null,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             HttpRequestMessage httpRequest = new(HttpMethod.Post, baseUrl)
             {
-                Content = JsonContent.Create(ZhiPuChatRequestWrapper.Create(model, messages, parameters),
+                Content = JsonContent.Create(SemanticHubZhiPuChatRequestWrapper.Create(model, messages, parameters),
                 options: new JsonSerializerOptions
                 {
                     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
@@ -70,8 +71,8 @@ namespace FaceMan.SemanticHub.ModelExtensions.ZhiPu
                     {
                         continue;
                     }
-                    var result = JsonSerializer.Deserialize<ZhiPuChatResponseWrapper>(data)!;
-                    yield return (result.Choices[0].Delta.Content, result.Usage);
+                    var result = JsonSerializer.Deserialize<SemanticHubZhiPuChatResponseWrapper>(data)!;
+                    yield return result;
                 }
                 else if (line.StartsWith("{\"error\":"))
                 {
