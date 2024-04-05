@@ -30,6 +30,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Aspose.PDF" Version="24.1.0" />
+		<PackageReference Include="Aspose.Words" Version="24.1.0" />
+		<PackageReference Include="iTextSharp" Version="5.5.13.3" />
+		<PackageReference Include="itextsharp.xmlworker" Version="5.5.13.3" />
 		<PackageReference Include="Microsoft.SemanticKernel" Version="1.0.1" />
 		<PackageReference Include="Microsoft.SemanticKernel.Connectors.Qdrant" Version="1.0.1-alpha" />
 		<PackageReference Include="Microsoft.SemanticKernel.Connectors.Sqlite" Version="1.0.1-alpha" />
@@ -40,6 +44,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Generation\TextGeneration\" />
+	  <Folder Include="Generation\EmbeddingGeneration\" />
 	</ItemGroup>
 </Project>

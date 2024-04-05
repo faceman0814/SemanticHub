@@ -1,10 +1,6 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-// See the LICENSE file in the project root for more information.
-
-using FaceMan.SemanticHub.Generation.ChatGeneration;
+﻿using FaceMan.SemanticHub.Generation.ChatGeneration;
 using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion;
-using FaceMan.SemanticHub.ModelExtensions.ZhiPu.Chat;
+using FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat;
 
 using System.Net.Http.Json;
 using System.Runtime.CompilerServices;
@@ -12,40 +8,43 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace FaceMan.SemanticHub.ModelExtensions.ZhiPu
+namespace FaceMan.SemanticHub.ModelExtensions.OpenAI
 {
-    public class ZhiPuClient
+    public class SemanticHubOpenAIClient
     {
-        private readonly string baseUrl = "https://open.bigmodel.cn/api/paas/v4/chat/completions";
-        internal ZhiPuClient(ModelClient parent, string url = null)
+        /// <summary>
+        /// 基础请求地址
+        /// </summary>
+        private readonly string baseUrl = "https://api.openai.com/v1";
+        internal SemanticHubOpenAIClient(ModelClient parent, string url = null)
         {
             Parent = parent;
             baseUrl = url ?? baseUrl;
         }
         internal ModelClient Parent { get; }
 
-        public async Task<SemanticHubZhiPuChatResponseWrapper> GetChatMessageContentsAsync(string model, IReadOnlyList<ChatMessage> messages, ChatParameters? parameters = null, CancellationToken cancellationToken = default)
+        public async Task<SemanticHubOpenAIChatResponseWrapper> GetChatMessageContentsAsync(string model, IReadOnlyList<ChatMessage> messages, ChatParameters? parameters = null, CancellationToken cancellationToken = default)
         {
-            HttpRequestMessage httpRequest = new(HttpMethod.Post, baseUrl)
+            HttpRequestMessage httpRequest = new(HttpMethod.Post, baseUrl + "/chat/completions")
             {
-                Content = JsonContent.Create(SemanticHubZhiPuChatRequestWrapper.Create(model, messages, parameters),
-                options: new JsonSerializerOptions
+                Content = JsonContent.Create(SemanticHubOpenAIChatRequestWrapper.Create(model, messages, parameters)
+                , options: new JsonSerializerOptions
                 {
                     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-                }),
+                })
             };
             HttpResponseMessage resp = await Parent.HttpClient.SendAsync(httpRequest, cancellationToken);
-            return await ModelClient.ReadResponse<SemanticHubZhiPuChatResponseWrapper>(resp, cancellationToken);
+            return await ModelClient.ReadResponse<SemanticHubOpenAIChatResponseWrapper>(resp, cancellationToken);
         }
 
-        public async IAsyncEnumerable<SemanticHubZhiPuChatResponseWrapper> GetStreamingChatMessageContentsAsync(string model,
-        IReadOnlyList<ChatMessage> messages,
-        ChatParameters? parameters = null,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public async IAsyncEnumerable<SemanticHubOpenAIChatResponseWrapper> GetStreamingChatMessageContentsAsync(string model,
+       IReadOnlyList<ChatMessage> messages,
+       ChatParameters? parameters = null,
+       [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
-            HttpRequestMessage httpRequest = new(HttpMethod.Post, baseUrl)
+            HttpRequestMessage httpRequest = new(HttpMethod.Post, baseUrl + "/chat/completions")
             {
-                Content = JsonContent.Create(SemanticHubZhiPuChatRequestWrapper.Create(model, messages, parameters),
+                Content = JsonContent.Create(SemanticHubOpenAIChatRequestWrapper.Create(model, messages, parameters),
                 options: new JsonSerializerOptions
                 {
                     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
@@ -71,8 +70,12 @@ namespace FaceMan.SemanticHub.ModelExtensions.ZhiPu
                     {
                         continue;
                     }
-                    var result = JsonSerializer.Deserialize<SemanticHubZhiPuChatResponseWrapper>(data)!;
-                    yield return result;
+                    var result = System.Text.Json.JsonSerializer.Deserialize<SemanticHubOpenAIChatResponseWrapper>(data)!;
+                    if (result.Choices.Any())
+                    {
+                        yield return result;
+                    }
+                    continue;
                 }
                 else if (line.StartsWith("{\"error\":"))
                 {
