@@ -29,8 +29,8 @@ namespace FaceMan.SemanticHub.Test
         private readonly SemanticHubOpenAIConfig inputOpenAI = new SemanticHubOpenAIConfig();
         private readonly SemanticHubAzureOpenAIConfig inputAzureOpenAI = new SemanticHubAzureOpenAIConfig()
         {
-            Endpoint = "https://yoyochatx.openai.azure.com/",
-            ApiKey = "28df2a037e7c432a85f7892d280b99c9",
+            Endpoint = "",
+            ApiKey = "",
             DeploymentName = "text-embedding-ada-002"
         };
         private readonly SemanticHubXunFeiConfig inputXunFei = new SemanticHubXunFeiConfig();
@@ -38,7 +38,7 @@ namespace FaceMan.SemanticHub.Test
         private readonly SemanticHubWenXinConfig inputWenXin = new SemanticHubWenXinConfig();
         private readonly SemanticHubTongYiConfig inputTongYi = new SemanticHubTongYiConfig()
         {
-            ApiKey = "sk-1e2853e50be14bba93f9a612aa71bb15",
+            ApiKey = "",
             ModelName = "wanx-v1",
             ImageParameters = new ImageParameters()
         };
