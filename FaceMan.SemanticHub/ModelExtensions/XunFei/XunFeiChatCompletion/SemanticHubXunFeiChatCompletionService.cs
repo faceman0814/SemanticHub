@@ -8,6 +8,7 @@ using FaceMan.SemanticHub.Generation.ChatGeneration;
 using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion;
 using FaceMan.SemanticHub.Service.ChatCompletion;
 
+using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
@@ -20,8 +21,9 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
         private readonly SemanticHubXunFeiChatRequestWrapper xunFeiRequest;
         private readonly SemanticHubXunFeiConfig _config;
         private readonly ModelClient client;
+        private readonly ILogger _log;
         public IReadOnlyDictionary<string, object?> Attributes => new Dictionary<string, object?>();
-        public SemanticHubXunFeiChatCompletionService(SemanticHubXunFeiConfig config)
+        public SemanticHubXunFeiChatCompletionService(SemanticHubXunFeiConfig config, ILoggerFactory? loggerFactory = null)
         {
             xunFeiRequest = new SemanticHubXunFeiChatRequestWrapper()
             {
@@ -31,6 +33,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
             };
             _config = config;
             client = new(config.ApiKey, ModelType.XunFei, config.Endpoint);
+            _log = loggerFactory?.CreateLogger(typeof(SemanticHubAzureOpenAIChatCompletionService));
         }
 
         /// <summary>

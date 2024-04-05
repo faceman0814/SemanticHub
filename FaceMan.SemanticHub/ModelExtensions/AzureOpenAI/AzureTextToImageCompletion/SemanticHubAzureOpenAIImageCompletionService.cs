@@ -34,7 +34,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureTextToImageComple
                    _config.DeploymentName,
                    _config.Endpoint,
                    _config.ApiKey,
-                   _config.ModelId,
+                   null,
              apiVersion: _config.ApiVersion);
             return await imageService.GenerateImageAsync(description, width, height);
         }

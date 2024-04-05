@@ -2,20 +2,14 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
-using DocumentFormat.OpenXml.EMMA;
-
 using FaceMan.SemanticHub.Generation.ChatGeneration;
 using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion;
-using FaceMan.SemanticHub.ModelExtensions.TongYi.Chat;
 using FaceMan.SemanticHub.Service.ChatCompletion;
 
-using iTextSharp.text.pdf.qrcode;
-
+using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
-
-using Newtonsoft.Json;
 
 namespace FaceMan.SemanticHub.ModelExtensions.WenXin.Chat
 {
@@ -23,11 +17,13 @@ namespace FaceMan.SemanticHub.ModelExtensions.WenXin.Chat
     {
         private readonly SemanticHubWenXinConfig _config;
         private readonly ModelClient client;
+        private readonly ILogger _log;
         public IReadOnlyDictionary<string, object?> Attributes => new Dictionary<string, object?>();
-        public SemanticHubWenXinChatCompletionService(SemanticHubWenXinConfig config)
+        public SemanticHubWenXinChatCompletionService(SemanticHubWenXinConfig config, ILoggerFactory? loggerFactory = null)
         {
             _config = config;
             client = new(config.Secret, ModelType.WenXin, config.Endpoint);
+            _log = loggerFactory?.CreateLogger(typeof(SemanticHubAzureOpenAIChatCompletionService));
         }
         public async Task<(List<ChatMessage>, ChatParameters)> Init(PromptExecutionSettings executionSettings, ChatHistory chatHistory = null, bool IsStream = false)
         {

@@ -66,17 +66,9 @@ namespace FaceMan.SemanticHub
 
     public class SemanticHubAzureOpenAIConfig
     {
-        public string ServiceId { get; set; }
         public string DeploymentName { get; set; }
-        public string ModelId { get; set; }
-        public string ChatDeploymentName { get; set; }
-        public string ChatModelId { get; set; }
-        public string ImageDeploymentName { get; set; }
-        public string ImageModelId { get; set; }
-        public string ImageEndpoint { get; set; }
         public string Endpoint { get; set; }
         public string ApiKey { get; set; }
-        public string ImageApiKey { get; set; }
         public string ApiVersion { get; set; }
     }
 

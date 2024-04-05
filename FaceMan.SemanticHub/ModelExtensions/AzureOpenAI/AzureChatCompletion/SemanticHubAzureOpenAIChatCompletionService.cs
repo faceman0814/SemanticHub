@@ -1,6 +1,8 @@
 ﻿using FaceMan.SemanticHub.Generation.ChatGeneration;
+using FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat;
 using FaceMan.SemanticHub.Service.ChatCompletion;
 
+using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
@@ -11,12 +13,14 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion
     {
         private readonly SemanticHubAzureOpenAIConfig _config;
         private readonly ModelClient client;
+        private readonly ILogger _log;
         public IReadOnlyDictionary<string, object?> Attributes => new Dictionary<string, object?>();
 
-        public SemanticHubAzureOpenAIChatCompletionService(SemanticHubAzureOpenAIConfig config)
+        public SemanticHubAzureOpenAIChatCompletionService(SemanticHubAzureOpenAIConfig config, ILoggerFactory? loggerFactory = null)
         {
             _config = config;
             client = new(config.ApiKey, ModelType.AzureOpenAI, config.Endpoint, apiVersion: config.ApiVersion);
+            _log = loggerFactory?.CreateLogger(typeof(SemanticHubAzureOpenAIChatCompletionService));
         }
         (List<SemanticHubAzureOpenAIChatContextMessage>, ChatParameters) Init(PromptExecutionSettings executionSettings, ChatHistory chatHistory = null)
         {

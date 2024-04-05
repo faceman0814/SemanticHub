@@ -3,10 +3,9 @@
 // See the LICENSE file in the project root for more information.
 
 using FaceMan.SemanticHub.Generation.ChatGeneration;
-using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion;
-using FaceMan.SemanticHub.ModelExtensions.TongYi.Chat;
 using FaceMan.SemanticHub.Service.ChatCompletion;
 
+using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
@@ -18,11 +17,13 @@ namespace FaceMan.SemanticHub.ModelExtensions.ZhiPu.Chat
 
         private readonly SemanticHubZhiPuConfig _config;
         private readonly ModelClient client;
+        private readonly ILogger _log;
         public IReadOnlyDictionary<string, object?> Attributes => new Dictionary<string, object?>();
-        public SemanticHubZhiPuChatCompletionService(SemanticHubZhiPuConfig config)
+        public SemanticHubZhiPuChatCompletionService(SemanticHubZhiPuConfig config, ILoggerFactory? loggerFactory = null)
         {
             _config = config;
             client = new(_config.Secret, ModelType.ZhiPu, _config.Endpoint);
+            _log = loggerFactory?.CreateLogger(typeof(SemanticHubZhiPuChatCompletionService));
         }
 
         (List<ChatMessage>, ChatParameters) Init(PromptExecutionSettings executionSettings, ChatHistory chatHistory = null, bool isStream = false)

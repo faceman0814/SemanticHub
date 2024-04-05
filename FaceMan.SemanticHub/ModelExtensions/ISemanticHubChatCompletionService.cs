@@ -15,9 +15,6 @@ namespace FaceMan.SemanticHub.Service.ChatCompletion
 {
     public interface ISemanticHubChatCompletionService : IChatCompletionService, ITextGenerationService
     {
-        //Task<(IReadOnlyList<TextContent>, Usage)> GetTextContentsByTokenAsync(string prompt, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default);
-        //IAsyncEnumerable<(StreamingTextContent, Usage)> GetStreamingTextContentsByTokenAsync(string prompt, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default);
-        //Task<(IReadOnlyList<ChatMessageContent>, Usage)> GetChatMessageContentsByTokenAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default);
-        //IAsyncEnumerable<(StreamingChatMessageContent, Usage)> GetStreamingChatMessageContentsByTokenAsync(ChatHistory chatHistory, OpenAIPromptExecutionSettings settings = null, Kernel kernel = null, CancellationToken cancellationToken = default);
+
     }
 }

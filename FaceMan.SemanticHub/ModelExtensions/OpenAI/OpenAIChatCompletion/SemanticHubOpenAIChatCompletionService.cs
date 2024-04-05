@@ -1,16 +1,15 @@
-﻿using DocumentFormat.OpenXml.Wordprocessing;
-
-using FaceMan.SemanticHub.Generation.ChatGeneration;
-using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion;
+﻿using FaceMan.SemanticHub.Generation.ChatGeneration;
 using FaceMan.SemanticHub.Service.ChatCompletion;
 
+using Microsoft.Extensions.Logging;
+using Microsoft.Graph;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 
-using System.Collections.Generic;
+using System.Net.Http;
 
-using static Org.BouncyCastle.Math.EC.ECCurve;
+using ChatMessage = FaceMan.SemanticHub.Generation.ChatGeneration.ChatMessage;
 
 namespace FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat
 {
@@ -18,13 +17,16 @@ namespace FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat
     {
         private readonly SemanticHubOpenAIConfig _config;
         private readonly ModelClient client;
+        private readonly ILogger _log;
         public IReadOnlyDictionary<string, object?> Attributes => new Dictionary<string, object?>();
 
-        public SemanticHubOpenAIChatCompletionService(SemanticHubOpenAIConfig config)
+        public SemanticHubOpenAIChatCompletionService(SemanticHubOpenAIConfig config, ILoggerFactory? loggerFactory = null)
         {
             _config = config;
             client = new(config.ApiKey, ModelType.OpenAI, config.Endpoint);
+            _log = loggerFactory?.CreateLogger(typeof(SemanticHubOpenAIChatCompletionService));
         }
+
         (List<ChatMessage>, ChatParameters) Init(PromptExecutionSettings executionSettings, ChatHistory chatHistory = null)
         {
             var settings = OpenAIPromptExecutionSettings.FromExecutionSettings(executionSettings);

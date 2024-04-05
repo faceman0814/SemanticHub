@@ -7,6 +7,7 @@ using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion;
 using FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat;
 using FaceMan.SemanticHub.Service.ChatCompletion;
 
+using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
@@ -18,10 +19,12 @@ namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Chat
         private readonly SemanticHubTongYiConfig _config;
         private readonly ModelClient client;
         public IReadOnlyDictionary<string, object?> Attributes => new Dictionary<string, object?>();
-        public SemanticHubTongYiChatCompletionService(SemanticHubTongYiConfig config)
+        private readonly ILogger _log;
+        public SemanticHubTongYiChatCompletionService(SemanticHubTongYiConfig config, ILoggerFactory? loggerFactory = null)
         {
             _config = config;
             client = new(config.ApiKey, ModelType.TongYi, config.Endpoint);
+            _log = loggerFactory?.CreateLogger(typeof(SemanticHubTongYiChatCompletionService));
         }
 
         (List<ChatMessage>, ChatParameters) Init(PromptExecutionSettings executionSettings, ChatHistory chatHistory = null)
