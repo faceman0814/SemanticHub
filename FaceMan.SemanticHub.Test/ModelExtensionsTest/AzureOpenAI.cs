@@ -28,17 +28,15 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
             historys = new ChatHistory();
             //historys.AddSystemMessage("你是一个c#编程高手，你将用代码回答我关于.net编程的技术问题，下面是我的第一个问题：");
             //historys.AddUserMessage("用c#写一个冒泡排序");
-            var key = "b3d4d46e0e5847e19c690a58fe106fd9";
-            var endPoint = "https://faceman.openai.azure.com/";
-            var deploymentName = "gpt-35-turbo";
+
             string apiVersion = null;
 
             historys.AddUserMessage("你好");
             var input = new SemanticHubAzureOpenAIConfig()
             {
-                ApiKey = key,
-                Endpoint = endPoint,
-                DeploymentName = deploymentName,
+                ApiKey = "",
+                Endpoint = "",
+                DeploymentName = "",
                 ApiVersion = apiVersion,
             };
             chatgpt = new(input);

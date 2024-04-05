@@ -12,7 +12,7 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
     public class WenXin
     {
         private ChatHistory historys;
-        private WenXinChatCompletionService chatgpt;
+        private SemanticHubWenXinChatCompletionService chatgpt;
         private OpenAIPromptExecutionSettings settings;
         private WenXinImageCompletionService imageService;
         public WenXin()

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace FaceMan.SemanticHub.ModelExtensions.WenXin.Chat
 {
-    public record WenXinChatResponseWrapper
+    public record SemanticHubWenXinChatResponseWrapper
     {
         [JsonPropertyName("id")]
         public string Id { get; set; }

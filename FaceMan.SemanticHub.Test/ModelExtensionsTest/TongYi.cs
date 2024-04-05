@@ -26,7 +26,7 @@ namespace FaceMan.SemanticHub.Test.ModelExtensionsTest
             historys.AddUserMessage("你好");
             var input = new SemanticHubTongYiConfig()
             {
-                ApiKey = "sk-1e2853e50be14bba93f9a612aa71bb15",
+                ApiKey = "",
                 ModelName = "wanx-v1"
             };
             chatgpt = new(input);

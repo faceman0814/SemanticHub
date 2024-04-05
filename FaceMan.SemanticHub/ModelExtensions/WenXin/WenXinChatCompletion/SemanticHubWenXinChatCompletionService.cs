@@ -14,13 +14,13 @@ using Newtonsoft.Json;
 
 namespace FaceMan.SemanticHub.ModelExtensions.WenXin.Chat
 {
-    public class WenXinChatCompletionService : IModelExtensionsChatCompletionService
+    public class SemanticHubWenXinChatCompletionService : IModelExtensionsChatCompletionService
     {
         private readonly string _secret;
         private readonly string _key;
         private readonly string _model;
         private readonly ModelClient client;
-        public WenXinChatCompletionService(string key, string secret, string model, string url = null)
+        public SemanticHubWenXinChatCompletionService(string key, string secret, string model, string url = null)
         {
             _secret = secret;
             _model = model;

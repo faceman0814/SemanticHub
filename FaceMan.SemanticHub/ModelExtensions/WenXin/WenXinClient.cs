@@ -37,18 +37,18 @@ namespace FaceMan.SemanticHub.ModelExtensions.WenXin
         }
         internal ModelClient Parent { get; }
 
-        public async Task<WenXinChatResponseWrapper> GetChatMessageContentsAsync(string model, IReadOnlyList<ChatMessage> messages, ChatParameters? parameters = null, CancellationToken cancellationToken = default)
+        public async Task<SemanticHubWenXinChatResponseWrapper> GetChatMessageContentsAsync(string model, IReadOnlyList<ChatMessage> messages, ChatParameters? parameters = null, CancellationToken cancellationToken = default)
         {
             HttpRequestMessage httpRequest = new(HttpMethod.Post, baseUrl + model + $"?access_token={parameters.Token}")
             {
-                Content = JsonContent.Create(WenXinChatRequestWrapper.Create(messages, parameters),
+                Content = JsonContent.Create(SemanticHubWenXinChatRequestWrapper.Create(messages, parameters),
                 options: new JsonSerializerOptions
                 {
                     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
                 }),
             };
             HttpResponseMessage resp = await Parent.HttpClient.SendAsync(httpRequest, cancellationToken);
-            return await ModelClient.ReadResponse<WenXinChatResponseWrapper>(resp, cancellationToken);
+            return await ModelClient.ReadResponse<SemanticHubWenXinChatResponseWrapper>(resp, cancellationToken);
         }
 
         public async IAsyncEnumerable<(string, Usage)> GetStreamingChatMessageContentsAsync(string model,
@@ -58,7 +58,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.WenXin
         {
             HttpRequestMessage httpRequest = new(HttpMethod.Post, baseUrl + model + $"?access_token={parameters.Token}")
             {
-                Content = JsonContent.Create(WenXinChatRequestWrapper.Create(messages, parameters),
+                Content = JsonContent.Create(SemanticHubWenXinChatRequestWrapper.Create(messages, parameters),
                 options: new JsonSerializerOptions
                 {
                     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
@@ -84,7 +84,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.WenXin
                     {
                         continue;
                     }
-                    var result = JsonSerializer.Deserialize<WenXinChatResponseWrapper>(data)!;
+                    var result = JsonSerializer.Deserialize<SemanticHubWenXinChatResponseWrapper>(data)!;
                     yield return (result.Result, result.Usage);
                 }
                 else if (line.StartsWith("{\"error\":"))

@@ -13,7 +13,7 @@ using FaceMan.SemanticHub.ModelExtensions.ZhiPu;
 
 namespace FaceMan.SemanticHub.ModelExtensions.WenXin.Chat
 {
-    public record WenXinChatRequestWrapper
+    public record SemanticHubWenXinChatRequestWrapper
     {
         public static WenXinRequestWrapper<TMessages> Create<TMessages>(TMessages messages, ChatParameters parameters = default) => new()
         {
@@ -35,7 +35,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.WenXin.Chat
         };
     }
 
-    public record WenXinRequestWrapper<TMessages> : WenXinChatRequestWrapper
+    public record WenXinRequestWrapper<TMessages> : SemanticHubWenXinChatRequestWrapper
     {
         /// <summary>
         /// 调用语言模型时，将当前对话信息列表作为提示输入给模型， 按照 {"role": "user", "content": "你好"} 的json 数组形式进行传参； 
