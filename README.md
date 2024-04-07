@@ -34,8 +34,9 @@
 - v1.0.3
   - 返回消耗的token数
 - v1.0.4
-  - 集成图像接口，仅支持Azure，通义万象，其他暂不对接，如有需要请提issue
-  - 开发中。。。。
+  - 集成图像接口，仅支持通义万象，其他暂不对接，如有需要请提issue
+  - 重构对话接口，采用Kernel的写法实现ITextGenerationService、IChatCompletionService、ITextToImageService，使其更灵活。
+  - 更新单元测试
 
 也可以直接搜索Nuget包FaceMan.SemanticHub引入
 ![image](https://github.com/faceman0814/SemanticHub/assets/74786133/c27744bb-cd4a-4ec2-9c75-9420d12c4c14)

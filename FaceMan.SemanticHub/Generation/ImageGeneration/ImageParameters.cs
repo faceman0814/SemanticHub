@@ -1,4 +1,5 @@
 ﻿using FaceMan.SemanticHub.Helper.EnumHelper;
+
 using Json.Schema.Generation;
 
 using System.Text.Json.Serialization;

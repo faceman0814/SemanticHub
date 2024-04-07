@@ -8,7 +8,7 @@ using System.Net.WebSockets;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-using Usage = FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.Chat.Usage;
+using Usage = FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion.Usage;
 
 namespace FaceMan.SemanticHub.ModelExtensions.XunFei
 {
@@ -24,7 +24,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
         }
         internal ModelClient Parent { get; }
 
-        public async Task<(string, Usage)> GetChatMessageContentsAsync(XunFeiRequest request, XunFeiChatRequestWrapper xunFeiRequest, string apiType, CancellationToken cancellationToken = default)
+        public async Task<SemanticHubXunFeiChatResponseWrapper> GetChatMessageContentsAsync(XunFeiRequest request, SemanticHubXunFeiChatRequestWrapper xunFeiRequest, string apiType, CancellationToken cancellationToken = default)
         {
             string authUrl = GetAuthUrl(xunFeiRequest.Secret, xunFeiRequest.key, apiType);
             string url = authUrl.Replace("http://", "ws://").Replace("https://", "wss://");
@@ -41,13 +41,14 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
                 WebSocketReceiveResult result = await webSocket0.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), cancellationToken);
                 String resp = "";
                 Usage usage = new Usage();
+
                 while (!result.CloseStatus.HasValue)
                 {
                     if (result.MessageType == WebSocketMessageType.Text)
                     {
                         string receivedMessage = Encoding.UTF8.GetString(receiveBuffer, 0, result.Count);
                         //将结果构造为json
-                        var response = ModelClient.ReadResponse<XunFeiChatResponseWrapper>(receivedMessage);
+                        var response = ModelClient.ReadResponse<SemanticHubXunFeiChatResponseWrapper>(receivedMessage);
 
                         if (response.Header.Code == 0)
                         {
@@ -56,10 +57,8 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
                             resp += content;
                             if (status == 2)
                             {
-                                usage.PromptTokens += response.Payload.Usage.Text.prompt_tokens;
-                                usage.TotalTokens += response.Payload.Usage.Text.total_tokens;
-                                usage.CompletionTokens += response.Payload.Usage.Text.completion_tokens;
-                                break;
+                                response.Payload.Choices.Text[0].Content = resp;
+                                return response;
                             }
                         }
                         else
@@ -74,12 +73,11 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
                     }
                     result = await webSocket0.ReceiveAsync(new ArraySegment<byte>(receiveBuffer), cancellationToken);
                 }
-                return (resp, usage);
-
+                return null;
             }
         }
 
-        public async IAsyncEnumerable<(string, Usage)> GetStreamingChatMessageContentsAsync(XunFeiRequest request, XunFeiChatRequestWrapper xunFeiRequest,string apiType,
+        public async IAsyncEnumerable<SemanticHubXunFeiChatResponseWrapper> GetStreamingChatMessageContentsAsync(XunFeiRequest request, SemanticHubXunFeiChatRequestWrapper xunFeiRequest, string apiType,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             string authUrl = GetAuthUrl(xunFeiRequest.Secret, xunFeiRequest.key, apiType);
@@ -102,23 +100,19 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
                     {
                         string receivedMessage = Encoding.UTF8.GetString(receiveBuffer, 0, result.Count);
                         //将结果构造为json
-                        var response = ModelClient.ReadResponse<XunFeiChatResponseWrapper>(receivedMessage);
+                        var response = ModelClient.ReadResponse<SemanticHubXunFeiChatResponseWrapper>(receivedMessage);
 
                         if (response.Header.Code == 0)
                         {
                             int status = response.Payload.Choices.Status;
-                            string content = response.Payload.Choices.Text[0].Content;
                             if (status == 2)
                             {
-                                usage.PromptTokens += response.Payload.Usage.Text.prompt_tokens;
-                                usage.TotalTokens += response.Payload.Usage.Text.total_tokens;
-                                usage.CompletionTokens += response.Payload.Usage.Text.completion_tokens;
-                                yield return (null, usage);
+                                yield return response;
                                 break;
                             }
                             else
                             {
-                                yield return (content, usage);
+                                yield return response;
                             }
                         }
                         else

@@ -18,7 +18,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 
-using OpenAIClient = FaceMan.SemanticHub.ModelExtensions.OpenAI.OpenAIClient;
+using SemanticHubOpenAIClient = FaceMan.SemanticHub.ModelExtensions.OpenAI.SemanticHubOpenAIClient;
 
 namespace FaceMan.SemanticHub.ModelExtensions
 {
@@ -26,7 +26,7 @@ namespace FaceMan.SemanticHub.ModelExtensions
     {
         internal readonly HttpClient HttpClient = null!;
 
-        public ModelClient(string apiKey, ModelType modelType, string url = null, HttpClient? httpClient = null, string apiVersion = null)
+        public ModelClient(string apiKey, ModelType modelType, string url, HttpClient? httpClient = null, string apiVersion = null)
         {
             HttpClient = httpClient ?? new HttpClient();
             switch (modelType)
@@ -52,16 +52,16 @@ namespace FaceMan.SemanticHub.ModelExtensions
             ZhiPu = new ZhiPuClient(this, url);
             XunFei = new XunFeiClient(this, url);
             WenXin = new WenXinClient(this, url);
-            AzureOpenAI = new AzureOpenAIClient(this, url, apiVersion);
-            OpenAI = new OpenAIClient(this, url);
+            AzureOpenAI = new SemanticHubAzureOpenAIClient(this, url, apiVersion);
+            OpenAI = new SemanticHubOpenAIClient(this, url);
         }
 
         public TongYiClient TongYi { get; set; }
         public ZhiPuClient ZhiPu { get; set; }
         public XunFeiClient XunFei { get; set; }
         public WenXinClient WenXin { get; set; }
-        public AzureOpenAIClient AzureOpenAI { get; set; }
-        public OpenAIClient OpenAI { get; set; }
+        public SemanticHubAzureOpenAIClient AzureOpenAI { get; set; }
+        public SemanticHubOpenAIClient OpenAI { get; set; }
         /// <summary>
         /// 处理基础HTTP客户端。
         /// </summary>
@@ -102,9 +102,9 @@ namespace FaceMan.SemanticHub.ModelExtensions
         /// <typeparam name="T"></typeparam>
         /// <param name="receivedMessage"></param>
         /// <returns></returns>
-        public static XunFeiChatResponseWrapper ReadResponse<T>(string receivedMessage)
+        public static SemanticHubXunFeiChatResponseWrapper ReadResponse<T>(string receivedMessage)
         {
-            XunFeiChatResponseWrapper response = JsonConvert.DeserializeObject<XunFeiChatResponseWrapper>(receivedMessage);
+            SemanticHubXunFeiChatResponseWrapper response = JsonConvert.DeserializeObject<SemanticHubXunFeiChatResponseWrapper>(receivedMessage);
             return response;
         }
 
