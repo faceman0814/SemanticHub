@@ -18,8 +18,8 @@ namespace FaceMan.SemanticHub.KernelMemory
             {
 
                 //http代理
-                var chatHttpClient = OpenAIHttpClientHandlerUtil.GetHttpClient("https://yoyochatx.openai.azure.com/");
-                var embeddingHttpClient = OpenAIHttpClientHandlerUtil.GetHttpClient("https://yoyochatx.openai.azure.com/");
+                var chatHttpClient = OpenAIHttpClientHandlerUtil.GetHttpClient("YourEndpoint");
+                var embeddingHttpClient = OpenAIHttpClientHandlerUtil.GetHttpClient("YourEndpoint");
 
                 //搜索配置
                 if (searchClientConfig == null)
