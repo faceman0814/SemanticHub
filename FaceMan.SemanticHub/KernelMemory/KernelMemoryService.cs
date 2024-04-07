@@ -37,17 +37,17 @@ namespace FaceMan.SemanticHub.KernelMemory
                 .WithCustomTextPartitioningOptions(new TextPartitioningOptions())
                 .WithAzureOpenAITextGeneration(new AzureOpenAIConfig()
                 {
-                    APIKey = "28df2a037e7c432a85f7892d280b99c9",
+                    APIKey = "",
                     Deployment = "text-embedding-ada-002",
-                    Endpoint = "https://yoyochatx.openai.azure.com/",
+                    Endpoint = "",
                     Auth = AzureOpenAIConfig.AuthTypes.APIKey,
                     APIType =AzureOpenAIConfig.APITypes.TextCompletion,
                 })
                 .WithAzureOpenAITextEmbeddingGeneration(new AzureOpenAIConfig()
                 {
-                    APIKey = "28df2a037e7c432a85f7892d280b99c9",
+                    APIKey = "",
                     Deployment = "text-embedding-ada-002",
-                    Endpoint = "https://yoyochatx.openai.azure.com/",
+                    Endpoint = "",
                     Auth = AzureOpenAIConfig.AuthTypes.APIKey,
                     APIType = AzureOpenAIConfig.APITypes.EmbeddingGeneration,
                 }).WithSimpleFileStorage(new SimpleFileStorageConfig()
