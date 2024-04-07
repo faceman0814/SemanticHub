@@ -34,13 +34,15 @@
 		<PackageReference Include="Aspose.Words" Version="24.1.0" />
 		<PackageReference Include="iTextSharp" Version="5.5.13.3" />
 		<PackageReference Include="itextsharp.xmlworker" Version="5.5.13.3" />
-		<PackageReference Include="Microsoft.SemanticKernel" Version="1.0.1" />
-		<PackageReference Include="Microsoft.SemanticKernel.Connectors.Qdrant" Version="1.0.1-alpha" />
-		<PackageReference Include="Microsoft.SemanticKernel.Connectors.Sqlite" Version="1.0.1-alpha" />
-		<PackageReference Include="Microsoft.SemanticKernel.Plugins.Document" Version="1.0.1-alpha" />
-		<PackageReference Include="Microsoft.SemanticKernel.Plugins.MsGraph" Version="1.0.1-alpha" />
-		<PackageReference Include="Microsoft.SemanticKernel.Plugins.OpenApi" Version="1.0.1-alpha" />
-		<PackageReference Include="Microsoft.SemanticKernel.Plugins.Web" Version="1.0.1-alpha" />
+		<PackageReference Include="Microsoft.SemanticKernel" Version="1.6.3" />
+		<PackageReference Include="Microsoft.SemanticKernel.Core" Version="1.6.3" />
+		<PackageReference Include="Microsoft.KernelMemory.Core" Version="0.34.240313.1" />
+		<PackageReference Include="Microsoft.SemanticKernel.Connectors.Qdrant" Version="1.6.3-alpha" />
+		<PackageReference Include="Microsoft.SemanticKernel.Connectors.Sqlite" Version="1.6.3-alpha" />
+		<PackageReference Include="Microsoft.SemanticKernel.Plugins.Document" Version="1.6.3-alpha" />
+		<PackageReference Include="Microsoft.SemanticKernel.Plugins.MsGraph" Version="1.6.3-alpha" />
+		<PackageReference Include="Microsoft.SemanticKernel.Plugins.OpenApi" Version="1.6.3-alpha" />
+		<PackageReference Include="Microsoft.SemanticKernel.Plugins.Web" Version="1.6.3-alpha" />
 	</ItemGroup>
 
 	<ItemGroup>

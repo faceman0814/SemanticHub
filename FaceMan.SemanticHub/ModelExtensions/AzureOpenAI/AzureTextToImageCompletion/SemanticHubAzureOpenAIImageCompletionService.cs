@@ -30,7 +30,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureTextToImageComple
 
         public async Task<string> GenerateImageAsync(string description, int width, int height, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
-            AzureOpenAITextToImageService imageService = new AzureOpenAITextToImageService(
+            AzureOpenAITextToImageService imageService = new(
                    _config.DeploymentName,
                    _config.Endpoint,
                    _config.ApiKey,
