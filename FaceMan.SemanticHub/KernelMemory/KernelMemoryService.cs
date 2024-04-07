@@ -18,8 +18,8 @@ namespace FaceMan.SemanticHub.KernelMemory
             {
 
                 //http代理
-                var chatHttpClient = OpenAIHttpClientHandlerUtil.GetHttpClient("https://yoyochatx.openai.azure.com/");
-                var embeddingHttpClient = OpenAIHttpClientHandlerUtil.GetHttpClient("https://yoyochatx.openai.azure.com/");
+                var chatHttpClient = OpenAIHttpClientHandlerUtil.GetHttpClient("YourEndpoint");
+                var embeddingHttpClient = OpenAIHttpClientHandlerUtil.GetHttpClient("YourEndpoint");
 
                 //搜索配置
                 if (searchClientConfig == null)
@@ -37,17 +37,17 @@ namespace FaceMan.SemanticHub.KernelMemory
                 .WithCustomTextPartitioningOptions(new TextPartitioningOptions())
                 .WithAzureOpenAITextGeneration(new AzureOpenAIConfig()
                 {
-                    APIKey = "28df2a037e7c432a85f7892d280b99c9",
+                    APIKey = "",
                     Deployment = "text-embedding-ada-002",
-                    Endpoint = "https://yoyochatx.openai.azure.com/",
+                    Endpoint = "",
                     Auth = AzureOpenAIConfig.AuthTypes.APIKey,
                     APIType =AzureOpenAIConfig.APITypes.TextCompletion,
                 })
                 .WithAzureOpenAITextEmbeddingGeneration(new AzureOpenAIConfig()
                 {
-                    APIKey = "28df2a037e7c432a85f7892d280b99c9",
+                    APIKey = "",
                     Deployment = "text-embedding-ada-002",
-                    Endpoint = "https://yoyochatx.openai.azure.com/",
+                    Endpoint = "",
                     Auth = AzureOpenAIConfig.AuthTypes.APIKey,
                     APIType = AzureOpenAIConfig.APITypes.EmbeddingGeneration,
                 }).WithSimpleFileStorage(new SimpleFileStorageConfig()
