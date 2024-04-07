@@ -1,13 +1,4 @@
-﻿using DocumentFormat.OpenXml.ExtendedProperties;
-using DocumentFormat.OpenXml.Wordprocessing;
-
-using FaceMan.SemanticHub.KernelMemory;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FaceMan.SemanticHub.KernelMemory;
 
 namespace FaceMan.SemanticHub.Test.DataSet
 {

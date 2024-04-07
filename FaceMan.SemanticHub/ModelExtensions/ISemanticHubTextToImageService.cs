@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 
 namespace FaceMan.SemanticHub.ModelExtensions
 {
+#pragma warning disable SKEXP0001 // 类型仅用于评估，在将来的更新中可能会被更改或删除。取消此诊断以继续。
     public interface ISemanticHubTextToImageService : ITextToImageService
     {
         Task<List<ImageContext>> GenerateImageAsync(string prompt,
