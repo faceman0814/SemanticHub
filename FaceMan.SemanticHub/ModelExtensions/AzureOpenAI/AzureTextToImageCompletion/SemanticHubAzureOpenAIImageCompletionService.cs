@@ -39,7 +39,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureTextToImageComple
             return await imageService.GenerateImageAsync(description, width, height);
         }
 
-        public async Task<List<ImageContext>> GenerateImageAsync(string prompt,
+        public async Task<List<ImageContext>> GenerateImageAsync(
         ImageGenerationOptions imageParameters,
         Kernel kernel = null,
         CancellationToken cancellationToken = default)

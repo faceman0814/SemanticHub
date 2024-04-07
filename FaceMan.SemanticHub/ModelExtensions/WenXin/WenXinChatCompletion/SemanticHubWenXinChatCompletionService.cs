@@ -40,19 +40,23 @@ namespace FaceMan.SemanticHub.ModelExtensions.WenXin.Chat
                 Token = token,
                 Stream = IsStream
             };
+
+            var isOnlyOne = chatHistory.Count == 1;
             foreach (var item in chatHistory)
             {
-                if (item.Role == AuthorRole.System)
+                if (item.Role == AuthorRole.System && !isOnlyOne)
                 {
-                    continue;
+                    chatParameters.System = item.Content;
                 }
                 var history = new ChatMessage()
                 {
-                    Role = item.Role.Label,
+                    Role = isOnlyOne ? "user" : item.Role.Label,
                     Content = item.Content,
                 };
                 histroyList.Add(history);
             }
+
+
             return (histroyList, chatParameters);
         }
 

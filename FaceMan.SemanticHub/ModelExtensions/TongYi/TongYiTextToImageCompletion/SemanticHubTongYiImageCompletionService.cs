@@ -27,10 +27,10 @@ namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Image
             client = new(config.ApiKey, ModelType.TongYi, config.Endpoint);
         }
 
-        public async Task<List<ImageContext>> GenerateImageAsync(string prompt, ImageGenerationOptions imageParameters, Kernel kernel = null, CancellationToken cancellationToken = default)
+        public async Task<List<ImageContext>> GenerateImageAsync(ImageGenerationOptions imageParameters, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
             var results = new List<ImageContext>();
-            SemanticHubTongYiImageResponseWrapper response = await client.TongYi.GetImageMessageContentsAsync(_config.ModelName, prompt, _config.ImageParameters, cancellationToken);
+            SemanticHubTongYiImageResponseWrapper response = await client.TongYi.GetImageMessageContentsAsync(imageParameters.DeploymentName, imageParameters.Prompt, _config.ImageParameters, cancellationToken);
             while (true)
             {
                 SemanticHubTongYiImageTaskStatusResponseWrapper resp = await client.TongYi.QueryTaskStatus(response.TaskId, cancellationToken);

@@ -16,7 +16,7 @@ namespace FaceMan.SemanticHub.ModelExtensions
 {
     public interface ISemanticHubTextToImageService : ITextToImageService
     {
-        Task<List<ImageContext>> GenerateImageAsync(string prompt,
+        Task<List<ImageContext>> GenerateImageAsync(
         ImageGenerationOptions imageParameters,
         Kernel kernel = null,
         CancellationToken cancellationToken = default);

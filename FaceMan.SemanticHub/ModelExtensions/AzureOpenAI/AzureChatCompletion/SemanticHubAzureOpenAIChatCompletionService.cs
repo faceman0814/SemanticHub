@@ -22,7 +22,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion
             client = new(config.ApiKey, ModelType.AzureOpenAI, config.Endpoint, apiVersion: config.ApiVersion);
             _log = loggerFactory?.CreateLogger(typeof(SemanticHubAzureOpenAIChatCompletionService));
         }
-        (List<SemanticHubAzureOpenAIChatContextMessage>, ChatParameters) Init(PromptExecutionSettings executionSettings, ChatHistory chatHistory = null)
+        (List<SemanticHubAzureOpenAIChatContextMessage>, ChatParameters) Init(PromptExecutionSettings executionSettings, ChatHistory chatHistory = null, bool isStream = false)
         {
             var settings = OpenAIPromptExecutionSettings.FromExecutionSettings(executionSettings);
 
@@ -34,12 +34,14 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion
                 Temperature = settings != null ? (float)settings.Temperature : (float)1.0,
                 PresencePenalty = settings != null ? (float)settings.PresencePenalty : (float)0.0,
                 FrequencyPenalty = settings != null ? (float)settings.FrequencyPenalty : (float)0.0,
+                Stream = isStream
             };
+            var isOnlyOne = chatHistory.Count == 1;
             foreach (var item in chatHistory)
             {
                 var history = new SemanticHubAzureOpenAIChatContextMessage()
                 {
-                    Role = item.Role.Label,
+                    Role = isOnlyOne ? "user" : item.Role.Label,
                     Content = new List<Content>()
                     {
                         new Content()
@@ -79,13 +81,16 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion
             {
                 new ChatMessageContent(AuthorRole.User, prompt)
             };
-            (var histroyList, var chatParameters) = Init(executionSettings, chatHistroy);
+            (var histroyList, var chatParameters) = Init(executionSettings, chatHistroy, true);
             //返回流式聊天消息内容
             await foreach (var item in client.AzureOpenAI.GetStreamingChatMessageContentsAsync(_config.DeploymentName, histroyList, chatParameters, cancellationToken))
             {
                 IReadOnlyDictionary<string, object?> metadata = GetResponseMetadata(item);
-                var result = new StreamingTextContent(item.Choices[0].Message.Content, item.Choices[0].Index, item.Model, metadata: metadata);
-                yield return result;
+                foreach (var choice in item.Choices)
+                {
+                    var result = new StreamingTextContent(choice.Delta.Content, choice.Index, item.Model, metadata: metadata);
+                    yield return result;
+                }
             }
         }
 
@@ -105,13 +110,16 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion
 
         public async IAsyncEnumerable<StreamingChatMessageContent> GetStreamingChatMessageContentsAsync(ChatHistory chatHistory, PromptExecutionSettings executionSettings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
-            (var histroyList, var chatParameters) = Init(executionSettings, chatHistory);
+            (var histroyList, var chatParameters) = Init(executionSettings, chatHistory, true);
             //返回流式聊天消息内容
             await foreach (var item in client.AzureOpenAI.GetStreamingChatMessageContentsAsync(_config.DeploymentName, histroyList, chatParameters, cancellationToken))
             {
                 IReadOnlyDictionary<string, object?> metadata = GetResponseMetadata(item);
-                var result = new StreamingChatMessageContent(AuthorRole.Assistant, item.Choices[0].Message.Content, choiceIndex: item.Choices[0].Index, modelId: item.Model, metadata: metadata);
-                yield return result;
+                foreach (var choice in item.Choices)
+                {
+                    var result = new StreamingChatMessageContent(AuthorRole.Assistant, choice.Delta.Content, choice.Index, modelId: item.Model, metadata: metadata);
+                    yield return result;
+                }
             }
         }
 

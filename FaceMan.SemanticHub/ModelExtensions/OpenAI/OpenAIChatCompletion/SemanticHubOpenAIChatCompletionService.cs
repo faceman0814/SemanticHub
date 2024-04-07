@@ -27,7 +27,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat
             _log = loggerFactory?.CreateLogger(typeof(SemanticHubOpenAIChatCompletionService));
         }
 
-        (List<ChatMessage>, ChatParameters) Init(PromptExecutionSettings executionSettings, ChatHistory chatHistory = null)
+        (List<ChatMessage>, ChatParameters) Init(PromptExecutionSettings executionSettings, ChatHistory chatHistory = null, bool isStream = false)
         {
             var settings = OpenAIPromptExecutionSettings.FromExecutionSettings(executionSettings);
             var histroyList = new List<ChatMessage>();
@@ -38,12 +38,14 @@ namespace FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat
                 Temperature = settings != null ? (float)settings.Temperature : (float)1.0,
                 PresencePenalty = settings != null ? (float)settings.PresencePenalty : (float)0.0,
                 FrequencyPenalty = settings != null ? (float)settings.FrequencyPenalty : (float)0.0,
+                Stream = isStream
             };
+            var isOnlyOne = chatHistory.Count == 1;
             foreach (var item in chatHistory)
             {
                 var history = new ChatMessage()
                 {
-                    Role = item.Role.Label,
+                    Role = isOnlyOne ? "user" : item.Role.Label,
                     Content = item.Content,
                 };
                 histroyList.Add(history);
@@ -89,25 +91,31 @@ namespace FaceMan.SemanticHub.ModelExtensions.OpenAI.Chat
             {
                 new ChatMessageContent(AuthorRole.User, prompt)
             };
-            (var histroyList, var chatParameters) = Init(executionSettings, chatHistroy);
+            (var histroyList, var chatParameters) = Init(executionSettings, chatHistroy, true);
             //返回流式聊天消息内容
             await foreach (var item in client.OpenAI.GetStreamingChatMessageContentsAsync(_config.ModelName, histroyList, chatParameters, cancellationToken))
             {
                 IReadOnlyDictionary<string, object?> metadata = GetResponseMetadata(item);
-                var result = new StreamingTextContent(item.Choices[0].Message.Content, item.Choices[0].Index, item.Model, metadata: metadata);
-                yield return result;
+                foreach (var choice in item.Choices)
+                {
+                    var result = new StreamingTextContent(choice.Delta.Content, choice.Index, item.Model, metadata: metadata);
+                    yield return result;
+                }
             }
         }
 
         public async IAsyncEnumerable<StreamingChatMessageContent> GetStreamingChatMessageContentsAsync(ChatHistory chatHistory, PromptExecutionSettings executionSettings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
-            (var histroyList, var chatParameters) = Init(executionSettings, chatHistory);
+            (var histroyList, var chatParameters) = Init(executionSettings, chatHistory, true);
             //返回流式聊天消息内容
             await foreach (var item in client.OpenAI.GetStreamingChatMessageContentsAsync(_config.ModelName, histroyList, chatParameters, cancellationToken))
             {
                 IReadOnlyDictionary<string, object?> metadata = GetResponseMetadata(item);
-                var result = new StreamingChatMessageContent(AuthorRole.Assistant, item.Choices[0].Message.Content, choiceIndex: item.Choices[0].Index, modelId: item.Model, metadata: metadata);
-                yield return result;
+                foreach (var choice in item.Choices)
+                {
+                    var result = new StreamingChatMessageContent(AuthorRole.Assistant, choice.Delta.Content, choice.Index, modelId: item.Model, metadata: metadata);
+                    yield return result;
+                }
             }
         }
 

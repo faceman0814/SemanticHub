@@ -90,15 +90,17 @@ namespace FaceMan.SemanticHub.ModelExtensions.XunFei
             };
             if (chatHistory != null)
             {
+                var isOnlyOne = chatHistory.Count == 1;
                 foreach (var item in chatHistory)
                 {
                     var Content = new Content()
                     {
                         content = item.Content,
-                        role = item.Role.Label
+                        role = isOnlyOne ? "user" : item.Role.Label,
                     };
                     request.payload.message.text.Add(Content);
                 }
+
             }
             return (request, apiType);
         }

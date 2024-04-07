@@ -5,6 +5,8 @@
 using FaceMan.SemanticHub.Generation.ChatGeneration;
 using FaceMan.SemanticHub.Service.ChatCompletion;
 
+using Google.Apis.CustomSearchAPI.v1.Data;
+
 using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
@@ -30,24 +32,28 @@ namespace FaceMan.SemanticHub.ModelExtensions.ZhiPu.Chat
         {
             var settings = OpenAIPromptExecutionSettings.FromExecutionSettings(executionSettings);
             var histroyList = new List<ChatMessage>();
-            //因为智谱AI官方调用的有bug，所以这里做一下处理。
-            histroyList.Add(ChatMessage.FromSystem("1"));
             ChatParameters chatParameters = new ChatParameters()
             {
                 TopP = settings != null && settings.Temperature != 1 ? (float)settings.TopP : (float)0.75,
                 // max_tokens 应该在 [1, 1500]的区间
                 MaxTokens = settings != null ? settings.MaxTokens : 512,
                 Temperature = settings != null && settings.Temperature != 1 ? (float)settings.Temperature : (float)0.95,
+                Stream = isStream,
             };
+
+            var isOnlyOne = chatHistory.Count == 1;
             foreach (var item in chatHistory)
             {
                 var history = new ChatMessage()
                 {
-                    Role = item.Role.Label,
+                    Role = isOnlyOne ? "user" : item.Role.Label,
                     Content = item.Content,
                 };
                 histroyList.Add(history);
             }
+
+            //因为智谱AI官方调用的有bug，所以这里做一下处理。
+            histroyList.Insert(0, ChatMessage.FromSystem("1"));
             return (histroyList, chatParameters);
         }
 
@@ -94,8 +100,11 @@ namespace FaceMan.SemanticHub.ModelExtensions.ZhiPu.Chat
             await foreach (var item in client.ZhiPu.GetStreamingChatMessageContentsAsync(_config.ModelName, histroyList, chatParameters, cancellationToken))
             {
                 IReadOnlyDictionary<string, object?> metadata = GetResponseMetadata(item);
-                var result = new StreamingTextContent(item.Choices[0].Message.Content, metadata: metadata);
-                yield return result;
+                foreach (var choice in item.Choices)
+                {
+                    var result = new StreamingTextContent(choice.Delta.Content, choice.Index, item.Model, metadata: metadata);
+                    yield return result;
+                }
             }
         }
 
@@ -106,8 +115,12 @@ namespace FaceMan.SemanticHub.ModelExtensions.ZhiPu.Chat
             await foreach (var item in client.ZhiPu.GetStreamingChatMessageContentsAsync(_config.ModelName, histroyList, chatParameters, cancellationToken))
             {
                 IReadOnlyDictionary<string, object?> metadata = GetResponseMetadata(item);
-                var result = new StreamingChatMessageContent(AuthorRole.Assistant, item.Choices[0].Message.Content, metadata: metadata);
-                yield return result;
+                foreach (var choice in item.Choices)
+                {
+                    var result = new StreamingChatMessageContent(AuthorRole.Assistant, choice.Delta.Content, choice.Index, modelId: item.Model, metadata: metadata);
+                    yield return result;
+                }
+
             }
         }
 

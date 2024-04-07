@@ -26,7 +26,7 @@ namespace FaceMan.SemanticHub.ModelExtensions
     {
         internal readonly HttpClient HttpClient = null!;
 
-        public ModelClient(string apiKey, ModelType modelType, string url, HttpClient? httpClient = null, string apiVersion = null)
+        public ModelClient(string apiKey, ModelType modelType, string url = null, HttpClient? httpClient = null, string apiVersion = null)
         {
             HttpClient = httpClient ?? new HttpClient();
             switch (modelType)

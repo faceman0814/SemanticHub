@@ -4,14 +4,13 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>disable</Nullable>
-		<Description>.Net 基于SK接入AzureOpenAI、OpenAI、通义千问、讯飞星火、文心一言、智谱AI的SDK，目前仅支持对话模型。</Description>
+		<Description>.Net 基于SK接入AzureOpenAI、OpenAI、通义千问、讯飞星火、文心一言、智谱AI的SDK。</Description>
 		<Copyright>FaceMan</Copyright>
 		<Authors>FaceMan</Authors>
 		<PackageProjectUrl></PackageProjectUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryUrl>https://github.com/faceman0814/SemanticHub</RepositoryUrl>
-		<PackageReleaseNotes>支持返回消耗的token数</PackageReleaseNotes>
-		<Version>1.0.4</Version>
+		<Version>1.0.4.1</Version>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -21,13 +20,6 @@
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
 	  <WarningLevel>7</WarningLevel>
 	</PropertyGroup>
-
-	<ItemGroup>
-	  <None Include="..\README.md">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
-	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Aspose.PDF" Version="24.1.0" />
@@ -45,5 +37,12 @@
 
 	<ItemGroup>
 	  <Folder Include="Generation\EmbeddingGeneration\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="..\README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
 	</ItemGroup>
 </Project>

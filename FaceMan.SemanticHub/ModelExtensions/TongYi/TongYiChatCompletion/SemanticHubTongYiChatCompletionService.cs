@@ -27,7 +27,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Chat
             _log = loggerFactory?.CreateLogger(typeof(SemanticHubTongYiChatCompletionService));
         }
 
-        (List<ChatMessage>, ChatParameters) Init(PromptExecutionSettings executionSettings, ChatHistory chatHistory = null)
+        (List<ChatMessage>, ChatParameters) Init(PromptExecutionSettings executionSettings, ChatHistory chatHistory = null, bool isStream = false)
         {
             var settings = OpenAIPromptExecutionSettings.FromExecutionSettings(executionSettings);
             var histroyList = new List<ChatMessage>();
@@ -36,17 +36,20 @@ namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Chat
                 TopP = settings != null && settings.TopP != 1 ? (float)settings.TopP : (float)0.75,
                 MaxTokens = settings != null ? settings.MaxTokens : 512,
                 Temperature = settings != null ? (float)settings.Temperature : (float)0.95,
+                Stream = isStream
             };
+            var isOnlyOne = chatHistory.Count == 1;
 
             foreach (var item in chatHistory)
             {
                 var history = new ChatMessage()
                 {
-                    Role = item.Role.Label,
+                    Role = isOnlyOne ? "user" : item.Role.Label,
                     Content = item.Content,
                 };
                 histroyList.Add(history);
             }
+
             return (histroyList, chatParameters);
         }
 
@@ -84,7 +87,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Chat
             {
                 new ChatMessageContent(AuthorRole.User, prompt)
             };
-            (var histroyList, var chatParameters) = Init(executionSettings, chatHistroy);
+            (var histroyList, var chatParameters) = Init(executionSettings, chatHistroy, true);
             //返回流式聊天消息内容
             await foreach (var item in client.TongYi.GetStreamingChatMessageContentsAsync(_config.ModelName, histroyList, chatParameters, cancellationToken))
             {
@@ -96,7 +99,7 @@ namespace FaceMan.SemanticHub.ModelExtensions.TongYi.Chat
 
         public async IAsyncEnumerable<StreamingChatMessageContent> GetStreamingChatMessageContentsAsync(ChatHistory chatHistory, PromptExecutionSettings executionSettings = null, Kernel kernel = null, CancellationToken cancellationToken = default)
         {
-            (var histroyList, var chatParameters) = Init(executionSettings, chatHistory);
+            (var histroyList, var chatParameters) = Init(executionSettings, chatHistory, true);
             //返回流式聊天消息内容
             await foreach (var item in client.TongYi.GetStreamingChatMessageContentsAsync(_config.ModelName, histroyList, chatParameters, cancellationToken))
             {
