@@ -1,16 +1,9 @@
 ﻿using Azure.AI.OpenAI;
 
-using DocumentFormat.OpenXml.Spreadsheet;
-
 using FaceMan.SemanticHub.Generation.ImageGeneration;
-using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureChatCompletion;
 using FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureTextToImageCompletion;
 
-using Google.Apis.CustomSearchAPI.v1.Data;
-
 using Microsoft.SemanticKernel;
-
-using static Org.BouncyCastle.Math.EC.ECCurve;
 
 using Task = System.Threading.Tasks.Task;
 

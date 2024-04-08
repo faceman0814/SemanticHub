@@ -1,19 +1,8 @@
 ﻿using Azure;
 using Azure.AI.OpenAI;
 
-using DocumentFormat.OpenXml.Drawing.Charts;
-using DocumentFormat.OpenXml.Spreadsheet;
-
-using FaceMan.SemanticHub.Generation.ImageGeneration;
-
-using Google.Apis.CustomSearchAPI.v1.Data;
-
-using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
-
-using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI.AzureTextToImageCompletion
 {

@@ -8,9 +8,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FaceMan.SemanticHub.Test", "FaceMan.SemanticHub.Test\FaceMan.SemanticHub.Test.csproj", "{F5FE5B51-F469-4CF3-9545-A28DDE5181B5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{39829008-DEC6-4B05-8156-AE3AD53ABDC3}"
-	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
