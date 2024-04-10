@@ -22,6 +22,9 @@ using Microsoft.SemanticKernel.Connectors.OpenAI;
 using Microsoft.SemanticKernel.Embeddings;
 using Microsoft.SemanticKernel.TextGeneration;
 
+using Newtonsoft.Json;
+
+using System.Text;
 using System.Threading;
 
 namespace FaceMan.SemanticHub.Test
@@ -57,8 +60,8 @@ namespace FaceMan.SemanticHub.Test
         };
         private readonly SemanticHubZhiPuConfig inputZhiPu = new SemanticHubZhiPuConfig()
         {
-            Secret = "",
-            ModelName = ""
+            Secret = "9f863130cecc942f5b995813376682f9.wu3Lq531c9E6poBe",
+            ModelName = "chatglm_turbo"
         };
         private readonly SemanticHubWenXinConfig inputWenXin = new SemanticHubWenXinConfig()
         {
@@ -79,10 +82,10 @@ namespace FaceMan.SemanticHub.Test
             kernel = Kernel.CreateBuilder()
             //.AddSemanticHubXunFeiChatCompletion(inputXunFei)
             //.AddSemanticHubAzureOpenAIChatCompletion(inputAzureOpenAI)
-            .AddSemanticHubOpenAIChatCompletion(inputOpenAI)
+            //.AddSemanticHubOpenAIChatCompletion(inputOpenAI)
             //.AddSemanticHubTongYiChatCompletion(inputTongYi)
             //.AddSemanticHubWenXinChatCompletion(inputWenXin)
-            //.AddSemanticHubZhiPuChatCompletion(inputZhiPu)
+            .AddSemanticHubZhiPuChatCompletion(inputZhiPu)
             .Build();
 
             settings = new OpenAIPromptExecutionSettings() { MaxTokens = 10, Temperature = 0.4, TopP = 1 };
@@ -297,6 +300,72 @@ namespace FaceMan.SemanticHub.Test
                     Usage wenXinUsage = (Usage)(Metadata?.GetValueOrDefault("Usage"));
                     Console.WriteLine($"总消耗：{wenXinUsage?.TotalTokens}");
                     break;
+            }
+        }
+
+        private const string GPT4V_KEY = "b3d4d46e0e5847e19c690a58fe106fd9"; // Set your key here
+        private const string IMAGE_PATH = "cs.jpg"; // Set your image path here
+        private const string QUESTION = "解说这张图"; // Set your question here
+
+        private const string GPT4V_ENDPOINT = "https://faceman.openai.azure.com/openai/deployments/gpt-4-vision-preview/extensions/chat/completions?api-version=2023-07-01-preview";
+        [TestMethod]
+        public async Task test()
+        {
+            var encodedImage = Convert.ToBase64String(File.ReadAllBytes(IMAGE_PATH));
+            using (var httpClient = new HttpClient())
+            {
+                httpClient.DefaultRequestHeaders.Add("api-key", GPT4V_KEY);
+                var payload = new
+                {
+                    enhancements = new
+                    {
+                        ocr = new { enabled = true },
+                        grounding = new { enabled = true }
+                    },
+                    messages = new object[]
+                    {
+                          new {
+                              role = "system",
+                              content = new object[] {
+                                  new {
+                                      type = "text",
+                                      text = "You are an AI assistant that helps people find information."
+                                  }
+                              }
+                          },
+                          new {
+                              role = "user",
+                              content = new object[] {
+                                  new {
+                                      type = "image_url",
+                                      image_url = new {
+                                          url = $"data:image/jpeg;base64,{encodedImage}"
+                                      }
+                                  },
+                                  new {
+                                      type = "text",
+                                      text = QUESTION
+                                  }
+                              }
+                          }
+                    },
+                    temperature = 0.7,
+                    top_p = 0.95,
+                    max_tokens = 800,
+                    stream = false
+                };
+
+                var response = await httpClient.PostAsync(GPT4V_ENDPOINT, new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json"));
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseData = JsonConvert.DeserializeObject<dynamic>(await response.Content.ReadAsStringAsync());
+                    Console.WriteLine(responseData);
+                }
+                else
+                {
+                    Console.WriteLine($"Error: {response.StatusCode}, {response.ReasonPhrase}");
+                }
             }
         }
     }
