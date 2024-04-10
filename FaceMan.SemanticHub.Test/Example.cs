@@ -303,11 +303,11 @@ namespace FaceMan.SemanticHub.Test
             }
         }
 
-        private const string GPT4V_KEY = "b3d4d46e0e5847e19c690a58fe106fd9"; // Set your key here
-        private const string IMAGE_PATH = "cs.jpg"; // Set your image path here
+        private const string GPT4V_KEY = ""; // Set your key here
+        private const string IMAGE_PATH = ""; // Set your image path here
         private const string QUESTION = "解说这张图"; // Set your question here
 
-        private const string GPT4V_ENDPOINT = "https://faceman.openai.azure.com/openai/deployments/gpt-4-vision-preview/extensions/chat/completions?api-version=2023-07-01-preview";
+        private const string GPT4V_ENDPOINT = "";
         [TestMethod]
         public async Task test()
         {
