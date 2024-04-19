@@ -107,5 +107,71 @@ namespace FaceMan.SemanticHub.ModelExtensions.AzureOpenAI
 
             return await ModelClient.ReadResponse<SemanticHubAzureOpenAITextEmbeddingResponseWrapper>(resp, cancellationToken);
         }
+
+        public async Task<SemanticHubAzureOpenAIChatResponseWrapper> GetImageToTextAsync(string model, List<SemanticHubAzureOpenAIChatContextMessage> messages, ChatParameters parameters = null, CancellationToken cancellationToken = default)
+        {
+            HttpRequestMessage httpRequest = new(HttpMethod.Post, baseUrl + $"openai/deployments/{model}/extensions/chat/completions?api-version={apiVersion}")
+            {
+                Content = JsonContent.Create(SemanticHubAzureOpenAIChatRequestWrapper.Create(messages, parameters)
+                , options: new JsonSerializerOptions
+                {
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+                })
+            };
+            HttpResponseMessage resp = await Parent.HttpClient.SendAsync(httpRequest, cancellationToken);
+            return await ModelClient.ReadResponse<SemanticHubAzureOpenAIChatResponseWrapper>(resp, cancellationToken);
+        }
+
+        public async IAsyncEnumerable<SemanticHubAzureOpenAIChatResponseWrapper> GetStreamingImageToTextAsync(string model,
+        List<SemanticHubAzureOpenAIChatContextMessage> messages,
+        ChatParameters parameters = null,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        {
+            HttpRequestMessage httpRequest = new(HttpMethod.Post, baseUrl + $"openai/deployments/{model}/extensions/chat/completions?api-version={apiVersion}")
+            {
+                Content = JsonContent.Create(SemanticHubAzureOpenAIChatRequestWrapper.Create(messages, parameters),
+                options: new JsonSerializerOptions
+                {
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+                }),
+            };
+
+            using HttpResponseMessage resp = await Parent.HttpClient.SendAsync(httpRequest, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+            if (!resp.IsSuccessStatusCode)
+            {
+                throw new Exception(await resp.Content.ReadAsStringAsync());
+            }
+
+            using StreamReader reader = new(await resp.Content.ReadAsStreamAsync(), Encoding.UTF8);
+            while (!reader.EndOfStream)
+            {
+                if (cancellationToken.IsCancellationRequested) throw new TaskCanceledException();
+
+                string line = await reader.ReadLineAsync();
+                if (line != null)
+                {
+                    string data = line;
+                    if (line.StartsWith("data:"))
+                    {
+                        data = line["data:".Length..];
+                    }
+
+                    if (data.Equals(" [DONE]") || string.IsNullOrEmpty(data))
+                    {
+                        continue;
+                    }
+                    var result = System.Text.Json.JsonSerializer.Deserialize<SemanticHubAzureOpenAIChatResponseWrapper>(data)!;
+                    if (result.Choices.Any())
+                    {
+                        yield return result;
+                    }
+                    continue;
+                }
+                else if (line.StartsWith("{\"error\":"))
+                {
+                    throw new Exception(line);
+                }
+            }
+        }
     }
 }

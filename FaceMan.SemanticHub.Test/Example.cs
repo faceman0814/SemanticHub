@@ -253,7 +253,7 @@ namespace FaceMan.SemanticHub.Test
         public async Task GenerateImageAsync()
         {
             _imageChatgpt = new SemanticHubTongYiImageCompletionService(inputTongYi);
-            //_imageChatgpt = new SemanticHubAzureOpenAIImageCompletionService(inputAzureOpenAI);
+            //_imageChatgpt = new SemanticHubAzureOpenAITextToImageCompletionService(inputAzureOpenAI);
             //通义万象万象的参数不一样，为了实现ITextToImageService包装了一层，除模型和prompt需要在ImageGenerationOptions传值，其他参数在config里的ImageParameters传值即可。
 
             var imageParameters = new ImageGenerationOptions() //AI画画 Prompt和DeploymentName必填
